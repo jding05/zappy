@@ -6,7 +6,7 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/31 15:16:29 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/03 16:30:45 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/04 14:59:17 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 # define MAX_TEAM 4
 # define MAX_TEAM_NAME 32
 
-# define SOCKET_VARS struct addrinfo hints, *ai, *p; struct protoent *proto;
-# define SELECT_VARS fd_set master, read_fds; int fdmax; int i=0;
+# define SOCKET_VARS struct addrinfo hints, *ai; struct protoent *proto;
+# define SELECT_VARS fd_set master, read_fds; int fdmax;
 
 # define WELCOME_MSG "WELCOME 🙂\n"
 # define TEAM_FULL_MSG "TEAM IS FULL\nBYE 😕\n"

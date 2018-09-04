@@ -6,7 +6,7 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/31 14:54:00 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/03 20:55:37 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/04 15:03:32 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ int		s_create_socket(char *port, int reuse)
 ** connect
 */
 
-void	s_select_accept(int fd, fd_set *master, fd_set *read_fds, int *fdmax)
+void	s_select_accept(int fd, fd_set *master, int *fdmax)
 {
 	int						newfd;
 	struct sockaddr_storage remoteaddr;
@@ -177,7 +177,7 @@ void	s_select_accept(int fd, fd_set *master, fd_set *read_fds, int *fdmax)
 ** receive the buffer then store the data into structs.
 */
 
-void	s_select_recv(int fd, fd_set *master, fd_set *read_fds, int *fdmax)
+void	s_select_recv(int fd, fd_set *master)
 {
 	char	buf[BUF_SIZE];
 	int		nbytes;
@@ -227,22 +227,32 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			if (FD_ISSET(i, read_fds))
 			{
 				if (i == lfd)
-					s_select_accept(i, master, read_fds, fdmax);
+					s_select_accept(i, master, fdmax);
 				else
-					s_select_recv(i, master, read_fds, fdmax);
+					s_select_recv(i, master);
 			}
 			i++;
 		}
 	}
 }
 
+void	server_usage(void)
+{
+	printf("Usage: ./server -p <port> -x <width> -y <height> \
+            -n <team> [<team>] [<team>] ... -c <nb> -t <t>\n");
+	printf("-p port number\n-x world width\n-y world height\n");
+	printf("-n team\\_name\\_1 team\\_name\\_2 ...\n");
+	printf("-c number of clients authorized at the beginning of the game\n");
+	printf("-t time unit divider \
+            (the greater t is, the faster the game will go)\n");
+}
+
 int		main(int ac, char **av)
 {
 	int		listener;
-	int		newfd;
-	char	buf[BUF_SIZE];
-	int		nbytes;
 
+	if (ac != 4)
+		server_usage();
 	g_cmds = NULL;
 	SELECT_VARS;
 	FD_ZERO(&master);
