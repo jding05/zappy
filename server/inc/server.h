@@ -6,6 +6,7 @@
 # include "queue.h"
 # include "cmd.h"
 # include "util.h"
+# include "prototype.h"
 
 # include <stdlib.h>
 # include <unistd.h>

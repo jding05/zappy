@@ -1,0 +1,16 @@
+{
+	"files.associations": {
+		"__bit_reference": "c",
+		"__functional_base": "c",
+		"atomic": "c",
+		"deque": "c",
+		"functional": "c",
+		"iterator": "c",
+		"limits": "c",
+		"memory": "c",
+		"tuple": "c",
+		"type_traits": "c",
+		"vector": "c",
+		"typeinfo": "c"
+	}
+}

@@ -22,14 +22,14 @@ int		cmd_left(t_players players, char *msg)
 	if (--(players.direction) < NORTH)
 		players.direction = WEST;
 	players.request_nb--;
-	if (send(players.fd, "OK", 2, 0) == -1)
-		perror("Send [right]");
-	// maybe update graphic client regarding player position
+	if (send_msg(players.fd, "OK", "Send [left]") == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	//	maybe update graphic client regarding player position
 	return (EXIT_SUCCESS);
 }
 
-
-/* big note::
+/*
+** big note::
 ** after acceptting the new client, we need to add it to global
 ** for players[newfd]; and malloc the t_player
 ** so when we can the player, we can call player[i]->direction

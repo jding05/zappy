@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cmd.h"
+#include <server.h>
 
 t_cmd	g_cmd[] =
 {
@@ -27,6 +27,5 @@ t_cmd	g_cmd[] =
 	{"fork", 42, cmd_fork},
 	{"connect_nbr", 0, cmd_connect_nbr},
 	{"hatch", 600, cmd_hatch}, // this cmd will add to queue after the fork 42 cycle done
-	//{"", 7, cmd_advance},// deadth -> clear out the queue and FD_CLR fd_sets;
 	{NULL, 0, NULL},
-}
+};

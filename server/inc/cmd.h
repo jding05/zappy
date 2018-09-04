@@ -13,11 +13,13 @@
 #ifndef CMD_H
 # define CMD_H
 
+#include "server.h"
+
 typedef struct	s_cmd
 {
 	char		*cmd;
 	int			delay_time;
-	void		(*func)();
+	void		(*func)(t_players players, char *msg);
 }				t_cmd;
 
 /*
@@ -36,7 +38,7 @@ o	{"inventory", 1, cmd_inventory},		// inventory
 o	{"take", 7, cmd_take},					// take an object
 o	{"put", 7, cmd_put},					// put down an object
 o	{"kick", 7, cmd_kick},					// kick a player from the square
-	{"braodcast", 7, cmd_broadcast},		// broadcast
+o	{"braodcast", 7, cmd_broadcast},		// broadcast
 o	{"incantation", 300, cmd_incantation},	// begin the incantation
 	{"fork", 42, cmd_fork},					// fork a player
 o	{"connect_nbr", 0, cmd_connect_nbr},	// know the number of unused connections by the team

@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 /*
-**
+** 
 */
 
 #include <server.h>
@@ -30,17 +30,17 @@ int		cmd_advance(t_players players, char *msg)
 		players.y += 1;
 	else if (d == WEST)
 		players.x -= 1;
-	if (players.x >= g_env.map.x)
+	if (players.x >= g_env.map_x)
 		players.x = 0;
 	else if (players.x < 0)
-		players.x = g_env.map.x - 1;
-	if (players.y >= g_env.map.y)
+		players.x = g_env.map_x - 1;
+	if (players.y >= g_env.map_y)
 		players.y = 0;
 	else if (players.y < 0)
-		players.y = g_env.map.y - 1;
+		players.y = g_env.map_y - 1;
 	players.request_nb--;
-	if (send(players.fd, "OK", 2, 0) == -1)
-		perror("Send [advance]");
+	if (send_msg(players.fd, "OK", "Send [advance]") == EXIT_FAILURE)
+		return (EXIT_FAILURE);
 	// update grahpic client regarding player position
 	return (EXIT_SUCCESS);
 }

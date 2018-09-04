@@ -10,4 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <server.h>
 
+int		cmd_hatch(t_players players, char *msg)
+{
+	printf(BLUE"Player [$d] -> [%s]\n"RESET, players.fd, "hatch");
+	players.block = 0;
+	g_teams[players.team_id].egg_hatched++;
+	return (EXIT_SUCCESS);
+}

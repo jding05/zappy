@@ -14,55 +14,82 @@
 
 int		cmd_incantation(t_players players, char *msg)
 {
+	int		i;
+	int		count;
+	int		fds[100];
+	int		level;
+
 	printf(BLUE"Player [$d] -> [%s]\n"RESET, players.fd, "incantation");
 	players.request_nb--;
-    if (find_cell_player(players.y, players.x, players.level))
-        if (send(players.fd, "OK", 2, 0) == -1)
-		    perror("Send [incantation]");
-    // maybe update graphic client regarding player position
-    return (EXIT_SUCCESS);
+	i = -1;
+	count = 0;
+	level = players.level;
+	while (++i < MAX_FD)
+	{
+		if (g_players[i].y == players.y && g_players[i].x == players.x)
+			if (g_players[i].level == level && check_prerequest(level, i))
+				fds[count++] = i;
+	}
+	if (count >= level_require(level))
+		level_up_and_unblock(count, fds);
+	//	maybe update graphic client regarding player position
+	return (EXIT_SUCCESS);
+}
+
+void	level_up_and_unblock(int count, int fds[100])
+{
+	int		i;
+
+	i = -1;
+	while (++i < count)
+	{
+		g_players[fds[i]].level++;
+		g_players[fds[i]].block = 0;
+		if (g_players[fds[i]].level == 8)
+			g_teams[g_players[fds[i]].team_id].reach_max_level++;
+	}
+}
+
+int		check_prerequest(int level, int i)
+{
+	int		*inv;
+
+	inv = g_players[i].inventory;
+	if (level == 1)
+		return (inv[1] > 0 ? 1 : 0);
+	else if (level == 2)
+		return ((inv[1] > 0 && inv[2] > 0 && inv[3] > 0) ? 1 : 0);
+	else if (level == 3)
+		return ((inv[1] > 1 && inv[3] > 0 && inv[5] > 1) ? 1 : 0);
+	else if (level == 4)
+		return ((inv[1] > 0 && inv[2] > 0 && inv[3] > 1 && inv[5] > 0) ? 1 : 0);
+	else if (level == 5)
+		return ((inv[1] > 0 && inv[2] > 1 && inv[3] > 0 && inv[4] > 2) ? 1 : 0);
+	else if (level == 6)
+		return ((inv[1] > 0 && inv[2] > 1 && inv[3] > 2 && inv[5] > 0) ? 1 : 0);
+	else if (level == 7)
+		return ((inv[1] > 1 && inv[2] > 1 && inv[3] > 1 && inv[4] > 1 && \
+		inv[5] > 1 && inv[6] > 0) ? 1 : 0);
+	return (0);
 }
 
 /*
-** check if the players get level up reach the max level 8
-**    if yes -> update that team's reach_max_level count 
+** get the input "level" and return the nb players needed
+**      for the incantation
 */
-void    update_team_max_level(int level, int team_id)
+
+int		level_require(int level)
 {
-    t_team *team;
-
-    team = g_env.team;
-    while (team)
-    {
-        if (team->team_number == team_id)
-            break;
-        team = team->next;
-    }
-    team->reach_max_level++;
-}
-
-/*
-** level up the players which stored in fds by find_cell_players function
-**    and send the Response message to those player to tell them
-**    which level they are right now after the incantation
-*/
-void    level_up(int count, int fds[])
-{
-    int     i;
-    char    buffer[41];
-
-    i = 0;
-    buffer = "elevation in progress\ncurrent level : k\n";
-    while (i < count)
-    {
-        g_players[i].level++;
-        buffer[38] = g_players[i].level + '0';
-        if (send(players.fd, buffer, 41, 0) == -1)
-		    perror("Send [incantation]");
-        if (g_players[i].level == 8)
-            update_team_max_level(g_players[i].level, g_players[i].team_id);
-        i++;
-    }
+	if (level == 1)
+		return (1);
+	else if (level == 2 || level == 3)
+		return (2);
+	else if (level == 4 || level == 5)
+		return (4);
+	else if (level == 6 || level == 7)
+		return (6);
+	else
+		return (0);
 }
 
 // from cmd_see.c or cmd_kick.c
@@ -77,62 +104,46 @@ void    level_up(int count, int fds[])
 **          if yes -> level up all the player descriptor stored in fds[]
 **             no -> return 0 -> means the incantation command failed
 */
-int     find_cell_player(int y, int x, int level)
-{
-    int         i;
-    t_player    player;
-    int         count;
-    int         fds[100];
-
-    i = -1;
-    count = 0;
-    while (++i < FD_SETSIZE)
-    {
-        if (player = find_player_pos(y, x, i))
-            if (check_level(level, i))
-                fds[count++] = i;
-    }
-    if (count >= level_require(level))
-        level_up(count, fds);
-    else
-        return (0);
-    return (1);
-}
 
 /*
-** get the input "level" and return the nb players needed
-**      for the incantation
+** change -> check if players able to incantate
 */
-int    level_require(int level)
+
+int		cmd_incantation_check(t_players players, char *msg)
 {
-    if (level == 1)
-        return (1);
-    else if (level == 2 || level == 3)
-        return (2);
-    else if (level == 4 || level == 5)
-        return (4);
-    else if (level == 6 || level == 7)
-        return (6);
-    else
-        return (0);
+	int		i;
+	int		count;
+	int		fds[100];
+	int		level;
+
+	i = -1;
+	count = 0;
+	level = players.level;
+	while (++i < MAX_FD)
+	{
+		if (g_players[i].y == players.y && g_players[i].x == players.x)
+			if (g_players[i].level == level && check_prerequest(level, i))
+				fds[count++] = i;
+	}
+	if (count >= level_require(level))
+		blocking(count, fds);
+	else
+		return (0);
+	return (1);
 }
 
-/*
-** find if other player's position match the current players
-** if yes -> return the match player struct
-**    no  -> return NULL
-*/
-static t_players    find_player_pos(int y, int x, int i)
+void	blocking(int count, int fds[100])
 {
-    if (g_players[i].y == y && g_players[i].x == x)
-        return (g_player[i]);
-    return (NULL);
-}
+	int		i;
+	char	buffer[41];
 
-/*
-** check if the player meet the require level to incantate
-*/
-int    check_level(int level, int fd)
-{
-    return(g_players[fd].level == level ? 1 : 0);
+	i = -1;
+	strcpy(buffer, "elevation in progress\ncurrent level : k\n");
+	while (++i < count)
+	{
+		buffer[38] = g_players[i].level + '0';
+		if (send(i, buffer, 41, 0) == -1)
+			perror("Send [incantation]");
+		g_players[fds[i]].block = 1;
+	}
 }

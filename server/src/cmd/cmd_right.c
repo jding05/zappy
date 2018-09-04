@@ -22,8 +22,8 @@ int		cmd_right(t_players players, char *msg)
 	if (++(players.direction) > WEST)
 		players.direction = NORTH;
 	players.request_nb--;
-	if (send(players.fd, "OK", 2, 0) == -1)
-		perror("Send [right]");
+	if (send_msg(players.fd, "OK", "Send [right]") == EXIT_FAILURE)
+		return (EXIT_FAILURE);
 	// maybe update graphic client regarding player position
 	return (EXIT_SUCCESS);
 }

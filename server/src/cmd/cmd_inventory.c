@@ -21,7 +21,7 @@ int		cmd_inventory(t_players players, char *msg)
 	bzero(g_env.buffer, 4096);
 	strcpy(g_env.buffer, "{food ");
 	strcat(g_env.buffer, ft_itoa(players.inventory[0]));
-	strcat(g_env.buffer, , ", linemate ");
+	strcat(g_env.buffer, ", linemate ");
 	strcat(g_env.buffer, ft_itoa(players.inventory[1]));
 	strcat(g_env.buffer, ", deraumere ");
 	strcat(g_env.buffer, ft_itoa(players.inventory[2]));
@@ -34,9 +34,9 @@ int		cmd_inventory(t_players players, char *msg)
 	strcat(g_env.buffer, ", thystame ");
 	strcat(g_env.buffer, ft_itoa(players.inventory[6]));
 	players.request_nb--;
-	if (send(players.fd, g_env.buffer, strlen(g_env.buffer), 0) == -1)
-		perror("Send [inventory]");
-	return (EXIT_SUCCESS)
+	if (send_msg(players.fd, g_env.buffer, "Send [inventory]") == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
 
 /*
