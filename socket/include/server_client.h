@@ -6,7 +6,7 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/31 15:16:29 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/02 12:52:26 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/03 16:30:45 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,10 @@
 # define MAX_FD 16
 # define MAX_TEAM 4
 # define MAX_TEAM_NAME 32
+
+# define SOCKET_VARS struct addrinfo hints, *ai, *p; struct protoent *proto;
+# define SELECT_VARS fd_set master, read_fds; int fdmax; int i=0;
+
 # define WELCOME_MSG "WELCOME 🙂\n"
 # define TEAM_FULL_MSG "TEAM IS FULL\nBYE 😕\n"
 
@@ -34,29 +38,30 @@
 
 typedef struct		s_player
 {
-	int		fd;
-	int		team_id;
-	int		inventory[7];
-	int		pos[2];
-	int		nb_req;
-	int		level;
-	int		dead;
+	int				fd;
+	int				team_id;
+	int				inventory[7];
+	int				pos[2];
+	int				nb_req;
+	int				level;
+	int				dead;
 }					t_player;
 
 typedef struct		s_team
 {
-	int		team_id;
-	char	team_name[MAX_TEAM_NAME];
-	int		nb_client;
+	int				team_id;
+	char			team_name[MAX_TEAM_NAME];
+	int				nb_client;
 }					t_team;
 
 
-extern t_player	g_players[MAX_FD];
-extern t_team	g_teams[MAX_TEAM];
+extern t_player		g_players[MAX_FD];
+extern t_team		g_teams[MAX_TEAM];
+extern t_cmdq		*g_cmds;
 
 
 ///////////// debug ////////////////
-void	print_players(void);
+void				print_players(void);
 
 
 #endif

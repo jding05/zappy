@@ -6,31 +6,13 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/25 22:47:38 by zfeng             #+#    #+#             */
-/*   Updated: 2018/08/09 21:41:16 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/02 12:37:56 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include "server_client.h"
 
-#define BUFF_SIZE 1024
-
-#include <errno.h>
-#include <string.h>
-
-
-typedef struct	s_packet
-{
-	int		size;
-	char	data[1024];
-}				t_packet;
-
-
+//t_player	g_players[MAX_FD];
 
 void	client_usage(char *str)
 {
@@ -57,35 +39,69 @@ int		create_client(char *addr, int port)
 	sin.sin_addr.s_addr = inet_addr(addr);
 	if (connect(sock, (const struct sockaddr *)&sin, sizeof(sin)) == -1)
 	{	
-		printf("ERROR: Connect error\n");
+		//printf("ERROR: Connect error\n");
+		perror(strerror(errno));
 		return (EXIT_FAILURE);
 	}
 	return (sock);
 }
 
+int		validate_cmd(char *cmd)
+{
+	return (1);
+}
+
+void	recv_write(int sock)
+{
+	char	buf[BUF_SIZE];
+	int		nbytes;
+
+	if ((nbytes = recv(sock, buf, BUF_SIZE, 0)) > 0)
+	{
+		buf[nbytes] = '\0';
+		write(1, buf, strlen(buf));
+	}
+	else
+	{
+		perror("recv");
+	}
+}
+
+
 int		main(int ac, char **av)
 {
+	int		team_id;
 	int		port;
 	int		sock;
-	int		r;
-	t_packet	*buf;
+	int		nbytes;
+	char	buf[BUF_SIZE];
 
-	if (ac != 3)
+	if (ac != 4)
 		client_usage(av[0]);
-	port = atoi(av[2]);
-	sock = create_client(av[1], port);
-//	while (1)
-//	{
-		//r = read(STDIN_FILENO, buf, BUFF_SIZE - 1);
-		//buf[r] = '\0';
-		//send(sock, buf, strlen(buf), 0);
-	buf = (t_packet*)malloc(sizeof(t_packet));
-	strcpy(buf->data, "hello world");
-	printf("buf->data = |%s|\n", buf->data);
-	buf->size = 11;
-	printf("t_packet size = |%lu|\n", sizeof(t_packet));
-	send(sock, buf, sizeof(t_packet), 0);
-//	}
+	sock = create_client(av[3], atoi(av[2]));
+	recv_write(sock);
+	send(sock, av[1], strlen(av[1]), 0);
+	if ((nbytes = recv(sock, buf, BUF_SIZE, 0)) > 0)
+	{
+		buf[nbytes] = '\0';	
+		if (strcmp(buf, TEAM_FULL_MSG) == 0)
+		{
+			write(1, buf, strlen(buf));
+			return (EXIT_FAILURE);
+		}
+		printf("%s %s\n", buf, av[1]);
+	}
+	while (1)
+	{
+		nbytes = read(STDIN_FILENO, buf, BUF_SIZE - 1);
+		buf[nbytes - 1] = '\0';
+		if (validate_cmd(buf))
+		{
+			printf("client side buf = |%s|\n", buf);
+			send(sock, buf, strlen(buf), 0);
+			memset(buf, 0, strlen(buf));
+		}
+	}
 	close(sock);
 	return (EXIT_SUCCESS);
 }
