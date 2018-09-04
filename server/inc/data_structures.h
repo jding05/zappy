@@ -25,10 +25,9 @@ typedef struct      s_team
 
     int             max_players;        // sding add it
     int             reach_max_level;    // sding added it
+	int				nb_client; // -> need to check this **********
 
-    // int             default_max;
     t_egg           egg[10]; // need to added it
-    // int             egg_used;        // sding added it
     int             egg_hatched;     // sding added it
     int             egg_laid;        // sding added it
 }                   t_team;
@@ -68,6 +67,7 @@ typedef struct      s_players
 typedef struct          s_env
 {
     int                 port;
+	char				port_name[6];
     int                 authorized_clients;
     int                 time_unit;
     int                 nb_team;          

@@ -14,5 +14,13 @@
 # include <strings.h>
 # include <sys/types.h>
 # include <ctype.h>
+# include <sys/time.h>
+
+# include <string.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <netdb.h>
+# include <errno.h>
 
 #endif

@@ -90,38 +90,77 @@ void	check_dead_player(void)
 **  // the last param in select() need to change for the timeout
 */
 
-void	server_client_connection(void)
+// void	server_client_connection(void)
+// {
+// 	fd_set			*select_fds;
+// 	int				i;
+// 	struct timeval	*timeout;
+// 	int				short_term;
+
+// 	timeout = NULL; // need to fix the value here
+// 	short_term = 1;
+// 	while (select(FD_SETSIZE, &select_fds, NULL, NULL, timeout))
+// 	{
+// 		i = -1;
+// 		while (++i < FD_SETSIZE)
+// 			if (FD_ISSET(i, &select_fds))
+// 				i == g_env.server_fd ? new_client() : handle_cmd(i);
+// 		if (g_env.time_unit > 10)
+// 		{
+// 			exec_event_queue(short_term);
+// 			exec_event_queue(!short_term);
+// 		}
+// 		else
+// 		{
+// 			exec_event_list(short_term);
+// 			exec_event_list(short_term);
+// 		}
+// 		generate_resource();
+// 		check_dead_players();
+// 		// might involve timeout
+// 		if (check_winner())
+// 			break ;
+// 	}
+// }
+
+void	cycle_exec_event_loop(void)
 {
-	fd_set			*select_fds;
-	int				i;
-	struct timeval	*timeout;
 	int				short_term;
 
-	timeout = NULL; // need to fix the value here
 	short_term = 1;
-	while (select(FD_SETSIZE, &select_fds, NULL, NULL, timeout))
+	if (g_env.time_unit > 10)
 	{
-		i = -1;
-		while (++i < FD_SETSIZE)
-			if (FD_ISSET(i, &select_fds))
-				i == g_env.server_fd ? new_client() : handle_cmd(i);
-		if (g_env.time_unit > 10)
-		{
-			exec_event_queue(short_term);
-			exec_event_queue(!short_term);
-		}
-		else
-		{
-			exec_event_list(short_term);
-			exec_event_list(short_term);
-		}
-		generate_resource();
-		check_dead_players();
-		// might involve timeout
-		if (check_winner())
-			break ;
+		exec_event_queue(short_term);
+		exec_event_queue(!short_term);
 	}
+	else
+	{
+		exec_event_list(short_term);
+		exec_event_list(short_term);
+	}
+	generate_resource();
+	check_dead_players();
 }
+
+// void	server_client_connection(void)
+// {
+// 	fd_set			*select_fds;
+// 	int				i;
+// 	struct timeval	*timeout;
+
+// 	timeout = NULL; // need to fix the value here
+// 	while (select(FD_SETSIZE, &select_fds, NULL, NULL, timeout))
+// 	{
+// 		i = -1;
+// 		while (++i < FD_SETSIZE)
+// 			if (FD_ISSET(i, &select_fds))
+// 				i == g_env.server_fd ? new_client() : handle_cmd(i);
+// 		cycle_loop();
+// 		// might involve timeout
+// 		if (check_winner())
+// 			break ;
+// 	}
+// }
 
 void	free_malloc(void)
 {
@@ -133,11 +172,11 @@ void	free_malloc(void)
 ** second  server_client_connect() // this will be a select loop
 */
 
-void	game_loop(void)
+void	zappy_game(void)
 {
 	printf(RED"[GAME START ...]\n"RESET);
 	generate_resource();
-	server_client_connection();
+	setup_socket();
 	printf(RED"[GAME END ...]\n"RESET);
 	free_malloc();
 }
@@ -164,7 +203,7 @@ int		main(int argc, char **argv)
 		server_usage();
 		return (0);
 	}
-	game_loop();
+	zappy_game();
 	// print_flags(&g_env);
 	return (0);
 }

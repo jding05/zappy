@@ -28,7 +28,10 @@ int		set_value(char **flag, int i, int m, t_env *env)
 			return (0);
 	}
 	if (m == 0)
+	{
 		env->port = number;
+		strcpy(env->port_name, flag[i + 1]);
+	}
 	if (m == 1)
 		env->map_x = number;
 	if (m == 2)

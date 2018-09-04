@@ -157,4 +157,19 @@ int		cmd_see(t_players players, char *msg);
 int     check_resource(char *msg);
 int     cmd_take(t_players players, char *msg);
 
+/*
+** socket.c
+*/
+
+int		setup_socket(void);
+void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd);
+void	s_select_recv(int fd, fd_set *master, fd_set *read_fds, int *fdmax);
+void	s_select_accept(int fd, fd_set *master, fd_set *read_fds, int *fdmax);
+int		s_create_socket(char *port, int reuse);
+int		s_iter_sock(struct addrinfo *ai, struct protoent *proto, int reuse);
+void	*get_in_addr(struct sockaddr *sa);
+void	s_reset_player(int fd);
+void	s_add_to_team(char *team_name, int fd, int nb_client);
+int		perror_rv(char *errmsg);
+
 #endif
