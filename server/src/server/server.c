@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <server.h>
+#include "../../inc/server.h"
 
 /*
 ** Usage: ./server -p <port> -x <width> -y <height>
@@ -139,7 +139,7 @@ void	cycle_exec_event_loop(void)
 		exec_event_list(short_term);
 	}
 	generate_resource();
-	check_dead_players();
+	check_dead_player();
 }
 
 // void	server_client_connection(void)

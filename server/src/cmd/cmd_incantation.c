@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <server.h>
+#include "../../inc/server.h"
 
 int		cmd_incantation(t_players players, char *msg)
 {
@@ -19,7 +19,7 @@ int		cmd_incantation(t_players players, char *msg)
 	int		fds[100];
 	int		level;
 
-	printf(BLUE"Player [$d] -> [%s]\n"RESET, players.fd, "incantation");
+	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "incantation");
 	players.request_nb--;
 	i = -1;
 	count = 0;

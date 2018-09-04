@@ -14,11 +14,12 @@
 ** trun left 90 degrees
 ** 0:N , 1:E, 2:S, 3:W
 */
-#include <server.h>
+#include "../../inc/server.h"
 
 int		cmd_left(t_players players, char *msg)
 {
-	printf("Player [$d] -> [%s]\n", players.fd, "left");
+	(void)msg;
+	printf("Player [%d] -> [%s]\n", players.fd, "left");
 	if (--(players.direction) < NORTH)
 		players.direction = WEST;
 	players.request_nb--;

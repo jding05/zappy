@@ -23,13 +23,70 @@
 ** kick a player from the square, return -> OK/KO
 */
 
-#include <server.h>
+#include "../../inc/server.h"
+
+/*
+** # define NORTH 0
+** # define EAST 1
+** # define SOUTH 2
+** # define WEST 3
+**
+** these functions are used in cmd_see.c
+** use cmd_see find_cell_player()
+*/
+
+void		update_player_pos(t_players players)
+{
+	int	y;
+	int	x;
+
+	y = players.y;
+	x = players.x;
+	if (y > g_env.map_y - 1)
+		y = y - g_env.map_y;
+	else if (y < 0)
+		y = y + g_env.map_y;
+	if (x > g_env.map_x - 1)
+		x = x - g_env.map_x;
+	else if (x < 0)
+		x = x + g_env.map_x;
+	players.y = y;
+	players.x = x;
+}
+
+static int	find_cell_players(int y, int x, int direction)
+{
+	int	i;
+	int	check;
+
+	i = -1;
+	check = 0;
+	while (++i < MAX_FD)
+	{
+		if (g_players[i].y == y && g_players[i].x == x) // match player pos
+		{
+			if (direction == NORTH)
+				g_players[i].y -= 1;
+			else if (direction == EAST)
+				g_players[i].x += 1;
+			else if (direction == SOUTH)
+				g_players[i].y += 1;
+			else if (direction == WEST)
+				g_players[i].x -= 1;
+			update_player_pos(g_players[i]);
+			send_kick_msg(g_players[i], direction);
+			check = 1;
+		}
+	}
+	return (check == 1 ? 1 : 0);
+}
 
 int			cmd_kick(t_players players, char *msg)
 {
-	printf(BLUE"Player [$d] -> [%s]\n"RESET, players.fd, "kick");
+	(void)msg;
+	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "kick");
 	players.request_nb--;
-	if (find_cell_player(players.y, players.x, players.direction))
+	if (find_cell_players(players.y, players.x, players.direction))
 	{
 		if (send_msg(players.fd, "OK", "Send [kick]") == EXIT_FAILURE)
 			return (EXIT_FAILURE);
@@ -65,60 +122,4 @@ void		send_kick_msg(t_players players, int direction)
 		if (send(players.fd, "moving <WEST>\n", 15, 0) == -1)
 			perror("Send [kick]");
 	}
-}
-
-void		update_player_pos(t_players players)
-{
-	int	y;
-	int	x;
-
-	y = players.y;
-	x = players.x;
-	if (y > g_env.map_y - 1)
-		y = y - g_env.map_y;
-	else if (y < 0)
-		y = y + g_env.map_y;
-	if (x > g_env.map_x - 1)
-		x = x - g_env.map_x;
-	else if (x < 0)
-		x = x + g_env.map_x;
-	players.y = y;
-	players.x = x;
-}
-
-/*
-** # define NORTH 0
-** # define EAST 1
-** # define SOUTH 2
-** # define WEST 3
-**
-** these functions are used in cmd_see.c
-** use cmd_see find_cell_player()
-*/
-
-static int	find_cell_player(int y, int x, int direction)
-{
-	int	i;
-	int	check;
-
-	i = -1;
-	check = 0;
-	while (++i < MAX_FD)
-	{
-		if (g_players[i].y == y && g_players[i].x == x) // match player pos
-		{
-			if (direction == NORTH)
-				g_players[i].y -= 1;
-			else if (direction == EAST)
-				g_players[i].x += 1;
-			else if (direction == SOUTH)
-				g_players[i].y += 1;
-			else if (direction == WEST)
-				g_players[i].x -= 1;
-			update_players_pos(g_players[i]);
-			send_kick_msg(g_players[i], direction);
-			check = 1;
-		}
-	}
-	return (check == 1 ? 1 : 0);
 }

@@ -13,11 +13,11 @@
 /*
 ** {phiras n, sibur n, ...}
 */
-#include <server.h>
+#include "../../inc/server.h"
 
 int		cmd_inventory(t_players players, char *msg)
 {
-	printf(BLUE"Player [$d] -> [%s]\n"RESET, players.fd, "inventory");
+	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "inventory");
 	bzero(g_env.buffer, 4096);
 	strcpy(g_env.buffer, "{food ");
 	strcat(g_env.buffer, ft_itoa(players.inventory[0]));

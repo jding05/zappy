@@ -3,6 +3,9 @@
 
 
 # include "server.h"
+# include "queue.h"
+// # include "cmd.h"
+# include <sys/time.h>
 
 # define MAX_TEAM_NAME 32
 
@@ -70,7 +73,7 @@ typedef struct          s_env
 	char				port_name[6];
     int                 authorized_clients;
     int                 time_unit;
-    int                 nb_team;          
+    int                 nb_team;
     int                 map[1024][1024][7];
     int                 map_x;
     int                 map_y;
@@ -80,6 +83,15 @@ typedef struct          s_env
     int                 server_fd;
 	struct timeval		time_speed;
 }                       t_env;
+
+
+typedef struct	s_cmd
+{
+	char		*cmd;
+	int			delay_time;
+	int		(*func)(t_players players, char *msg);
+}				t_cmd;
+
 
 # define MAX_TEAM 4
 # define MAX_FD 16

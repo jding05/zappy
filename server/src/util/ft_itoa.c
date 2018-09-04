@@ -12,7 +12,7 @@
 
 #include <server.h>
 
-static char		*ft_strnew(size_t size)
+static char	*ft_strnew(size_t size)
 {
 	char *str;
 

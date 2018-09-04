@@ -39,6 +39,10 @@ int		set_value(char **flag, int i, int m, t_env *env);
 int		isnbr_str(char *str);
 
 /*
+** ft_itoa.c
+*/
+char	*ft_itoa(int n);
+/*
 ** exec_event_queue.c
 */
 
@@ -160,6 +164,7 @@ int     cmd_take(t_players players, char *msg);
 /*
 ** socket.c
 */
+# include <sys/select.h>
 
 int		setup_socket(void);
 void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd);

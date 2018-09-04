@@ -17,14 +17,14 @@
 **  -> to get the max_players in the team
 */
 
-#include <server.h>
+#include "../../inc/server.h"
 
 int		cmd_connect_nbr(t_players players, char *msg)
 {
 	char	*connect_nb;
 	int		team_id;
 
-	printf(BLUE"Player [$d] -> [%s]\n"RESET, players.fd, "connect_nbr");
+	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "connect_nbr");
 	players.request_nb--;
 	team_id = players.team_id;
 	connect_nb = ft_itoa(g_teams[team_id].max_players - \

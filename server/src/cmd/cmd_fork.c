@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <server.h>
+#include "../../inc/server.h"
 
 /*
 ** the unauthorized connection means the dead players
@@ -19,7 +19,7 @@
 */
 int     cmd_fork(t_players players, char *msg)
 {
-    printf(BLUE"Player [$d] -> [%s]\n"RESET, players.fd, "fork");
+    printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "fork");
     players.request_nb--;
 
     laid_egg(&players);
@@ -55,7 +55,7 @@ void	update_live(int fd, int food)
 	g_players[fd].live.tv_sec += 126 * food * g_env.time_speed.tv_sec;
 	g_players[fd].live.tv_usec += 126 * food * g_env.time_speed.tv_usec;
 	g_players[fd].live.tv_sec += (g_players[fd].live.tv_usec) / 1000000;
-	g_players[fd].live.tv_used % 1000000;
+	g_players[fd].live.tv_usec % 1000000;
 }
 
 void	record_time(t_event *node, int delay_time)

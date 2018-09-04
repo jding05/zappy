@@ -11,16 +11,16 @@
 /* ************************************************************************** */
 
 /*
-** 
+**
 */
 
-#include <server.h>
+#include "../../inc/server.h"
 
 int		cmd_advance(t_players players, char *msg)
 {
 	int	d;
 
-	printf(BLUE"Player [$d] -> [%s]"RESET, players.fd, "advance");
+	printf(BLUE"Player [%d] -> [%s]"RESET, players.fd, "advance");
 	d = players.direction;
 	if (d == NORTH)
 		players.y -= 1;

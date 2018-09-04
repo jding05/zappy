@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include <sys/time.h>
-#include <server.h>
+#include "../../inc/server.h"
 
 /*
 ** exec_event_queue()
@@ -44,8 +44,9 @@ void	exec_event_queue(int short_term)
 		return ;
 	while (event)
 	{
-		while (g_cmd[i])
-			(!strcmp(g_cmd[i], event->msg)) ? \
+		i = 0;
+		while (g_cmd[i].cmd)
+			(!strcmp(g_cmd[i].cmd, event->msg)) ? \
 			g_cmd[i].func(g_players[event->fd], event->msg) : i++;
 		tmp = event;
 		event = event->next;
@@ -62,8 +63,8 @@ void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l)
 	int		i;
 
 	i = 0;
-	while (g_cmd[i])
-		(!strcmp(g_cmd[i], (*event)->msg)) ? \
+	while (g_cmd[i].cmd)
+		(!strcmp(g_cmd[i].cmd, (*event)->msg)) ? \
 		g_cmd[i].func(g_players[(*event)->fd], (*event)->msg) : i++;
 	if (!(*prev))
 	{

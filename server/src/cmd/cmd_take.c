@@ -14,20 +14,20 @@
 ** take an object
 */
 
-#include <server.h>
+#include "../../inc/server.h"
 
 int     cmd_take(t_players players, char *msg)
 {
     int res_i;
 
-    printf(BLUE"Player [$d] -> [%s %s]"RESET, players.fd, "take", msg);
+    printf(BLUE"Player [%d] -> [%s %s]"RESET, players.fd, "take", msg);
     players.request_nb--;
     if ((res_i = check_resource(msg)) == 7) // i think this can be handle in parse
 	{
 		if (send_msg(players.fd, "KO", "Send [take]") == EXIT_FAILURE)
 			return (EXIT_FAILURE);
 	}
-    if (g_env.map[players.y][players.x][res_i] = 0)
+    if (g_env.map[players.y][players.x][res_i] == 0)
 	{
 		if (send_msg(players.fd, "KO", "Send [take]") == EXIT_FAILURE)
 			return (EXIT_FAILURE);

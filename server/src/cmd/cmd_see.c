@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <server.h>
+#include "../../inc/server.h"
 
 /*
 ** haven't finished due to printf -> send buffer to player
@@ -204,9 +204,8 @@ void	see_west_area(int level, int y, int x)
 
 int		cmd_see(t_players players, char *msg)
 {
-	char	*connect_nbr;
-
-	printf(BLUE"Player [$d] -> [%s]\n"RESET, players.fd, "see");
+	(void)msg;
+	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "see");
 	players.request_nb--;
 	if (players.direction == NORTH)
 		see_north_area(players.level, players.y, players.x);

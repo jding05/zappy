@@ -20,6 +20,7 @@
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <errno.h>
+# include <sys/select.h>
 
 # define BUF_SIZE 256
 # define MAX_FD 16
@@ -33,7 +34,7 @@
 # define TEAM_FULL_MSG "TEAM IS FULL\nBYE 😕\n"
 
 # include "../../inc/server.h"
-
+# include "../../inc/prototype.h"
 /*
 ** print out the error message then return failure
 */

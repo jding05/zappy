@@ -14,13 +14,13 @@
 ** check_resource function is in cmd_take
 */
 
-#include <server.h>
+#include "../../inc/server.h"
 
 int		cmd_put(t_players players, char *msg)
 {
 	int res_i;
 
-	printf(BLUE"Player [$d] -> [%s %s]\n"RESET, players.fd, "put", msg);
+	printf(BLUE"Player [%d] -> [%s %s]\n"RESET, players.fd, "put", msg);
 	players.request_nb--;
 	if ((res_i = check_resource(msg)) == 7) // i think this can be handle in parse
 	{

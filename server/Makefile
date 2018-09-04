@@ -13,6 +13,9 @@ CC = gcc
 SRCDIR = src/
 SRCDIR_SRV = server/
 SRCDIR_UTIL = util/
+SRCDIR_CMD = cmd/
+SRCDIR_EVENT = event/
+SRCDIR_SOCKET = socket/
 # SRCDIR_BRD = board/
 # SRCDIR_CLN = client/
 # SRCDIR_COM = communication/
@@ -33,6 +36,9 @@ SRCDIR_UTIL = util/
 
 OBJSRC = $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_SRV)), $(SRC_SRV)))
 OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_UTIL)), $(SRC_UTIL)))
+OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_CMD)), $(SRC_CMD)))
+OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_EVENT)), $(SRC_EVENT)))
+OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_SOCKET)), $(SRC_SOCKET)))
 # OBJSRC = $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_BRD)), $(SRC_BRD)))
 # OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_CLN)), $(SRC_CLN)))
 # OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_COM)), $(SRC_COM)))
@@ -55,10 +61,16 @@ OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_UTIL)),
 # SOURCE FILES                                                                 #
 ################################################################################
 
-SRC_SRV = server
+SRC_SRV =	server
 
-SRC_UTIL = read_flags
+SRC_UTIL =	read_flags ft_itoa
 
+SRC_CMD =	cmd_advance cmd_broadcast cmd_connect_nbr cmd_fork cmd_hatch cmd_incantation cmd_inventory \
+			cmd_kick cmd_left cmd_put cmd_right cmd_see cmd_take cmd
+
+SRC_EVENT =	exec_event_queue
+
+SRC_SOCKET = socket
 # SRC_BRD = \
 # 	board \
 # 	tile
@@ -137,15 +149,16 @@ SRC_UTIL = read_flags
 # SOURCE FILES                                                                 #
 ################################################################################
 
-all: $(SRV) #$(LIB) 
+all: $(SRV) #$(LIB)
 
 debug: $(LIBDEBUG)
 debug: $(SRV)
 
 $(SRV): $(OBJSRC)
-	$(CC) $(CFLAGS) $(INCLUDES) $(OBJSRC) -o $(SRV) 
-#$(LINK) 
-	
+	$(CC) $(CFLAGS) $(INCLUDES) $(OBJSRC) -o $(SRV)  # with c flag
+	# $(CC) $(INCLUDES) $(OBJSRC) -o $(SRV) # without c flag
+#$(LINK)
+
 $(LIB):
 	make -C lib/
 
@@ -153,7 +166,8 @@ $(LIB):
 #	make debug -C lib/
 %.o: %.c
 	@ echo "$(YELLOW)Compiling $<...$(RES)"
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@  # with c flag
+	# $(CC) $(INCLUDES) -c $< -o $@ # without c flag
 
 # $(OBJSRC): $(OBJSRC:%.o=%.c)
 # 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
@@ -165,10 +179,9 @@ $(LIB):
 clean:
 	rm -f $(OBJSRC)
 #	make clean -C lib/
-	
+
 fclean: clean
 	rm -f $(SRV)
 #	rm -f lib/$(LIB)
-	
+
 re: fclean all
-	

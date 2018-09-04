@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <server.h>
+#include "../../inc/server.h"
 
 /*
 ** all the players hear the broadcasts without knowing who emits.
@@ -25,7 +25,7 @@
 
 int		cmd_broadcast(t_players players, char *msg)
 {
-	printf(BLUE"Player [$d] -> [%s <%s>]\n"RESET, players.fd, "broadcast", msg);
+	printf(BLUE"Player [%d] -> [%s <%s>]\n"RESET, players.fd, "broadcast", msg);
 	players.request_nb--;
 	broadcast(players.y, players.x, players.fd, msg);
 	if (send_msg(players.fd, "OK", "Send [broadcast]") == EXIT_FAILURE)
@@ -90,6 +90,7 @@ int		get_closest_pos(int pos[4][2], int pos_y, int pos_x)
 		return (2);
 	else if (res[3] < res[0] && res[3] < res[1] && res[3] < res[2])
 		return (3);
+	return (4);
 }
 
 /*
@@ -142,14 +143,15 @@ int		calc_direction(int pos[2], int y, int x, int direction)
 void	send_braodcast_msg(int nb_dir, int fd, char *msg)
 {
 	bzero(g_env.buffer, 4096);
-	strcpy(g_env.buffer, "message K");
-	g_env.buffer[8] = ft_itoa(nb_dir);
+	strcpy(g_env.buffer, "message ");
+	strcat(g_env.buffer, ft_itoa(nb_dir));
 	strcat(g_env.buffer, ",");
 	strcat(g_env.buffer, msg);
 	if (msg[strlen(msg) - 1] != '\n')
 		strcat(g_env.buffer, "\n");
 	if (send(fd, g_env.buffer, strlen(g_env.buffer), 0) == -1)
-		error(0, "send [broadcast mssage]", false);
+		perror("send [broadcast mssage]");
+		// error(0, "send [broadcast mssage]", false);
 }
 
 /*
@@ -185,7 +187,7 @@ void	broadcast(int y, int x, int fd, char *msg)
 			j = get_closest_pos(pos, g_players[i].y, g_players[i].x);
 			nb_dir = calc_direction(pos[j], g_players[i].y, g_players[i].x,\
 									g_players[i].direction);
-			send_broadcast_msg(nb_dir, i);
+			send_broadcast_msg(nb_dir, i, msg);
 		}
 	}
 }
