@@ -25,7 +25,7 @@ void	check_dead_player(void);
 void	server_client_connection(void);
 int		check_winner(void);
 void	generate_resource(void);
-
+void	cycle_exec_event_loop(void);
 /*
 ** read_flags.c
 */
@@ -49,7 +49,12 @@ char	*ft_itoa(int n);
 int		check_event_time(struct timeval *curr_time, struct timeval *exec_time);
 void	exec_event_list(int st_term);
 void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l);
+void	enqueue(int fd, char *msg);
+int		check_valid_cmd(char *msg, char *msg_buf);
+void    long_short_term(t_event *node, int short_term);
+void    init_queue(void);
 void	exec_event_queue(int short_term);
+
 
 /*
 ** cmd [folder]
@@ -66,7 +71,7 @@ int		cmd_advance(t_players players, char *msg);
 */
 
 int		cmd_broadcast(t_players players, char *msg);
-void	cal_four_pos(int pos[4][2], int y, int x);
+void	calc_four_pos(int pos[4][2], int y, int x);
 int		get_closest_pos(int pos[4][2], int pos_y, int pos_x);
 int		calc_direction(int pos[2], int y, int x, int direction);
 void	send_braodcast_msg(int nb_dir, int fd, char *msg);
@@ -87,7 +92,7 @@ void	calc_time_spead(void); /////////////////////// -> this should be in the par
 void	init_live(int fd);
 void	update_live(int fd, int food);
 void	record_time(t_event *node, int delay_time);
-t_event	*init_event_node(int fd, char *msg, int delay_time);
+t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd);
 void    push_cmd_hatch(int fd, char *msg);
 void    laid_egg(t_players *players);
 
@@ -168,8 +173,8 @@ int     cmd_take(t_players players, char *msg);
 
 int		setup_socket(void);
 void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd);
-void	s_select_recv(int fd, fd_set *master, fd_set *read_fds, int *fdmax);
-void	s_select_accept(int fd, fd_set *master, fd_set *read_fds, int *fdmax);
+void	s_select_recv(int fd, fd_set *master);
+void	s_select_accept(int fd, fd_set *master, int *fdmax);
 int		s_create_socket(char *port, int reuse);
 int		s_iter_sock(struct addrinfo *ai, struct protoent *proto, int reuse);
 void	*get_in_addr(struct sockaddr *sa);

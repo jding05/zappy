@@ -19,6 +19,7 @@ int		cmd_incantation(t_players players, char *msg)
 	int		fds[100];
 	int		level;
 
+	(void)msg;
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "incantation");
 	players.request_nb--;
 	i = -1;
@@ -116,6 +117,7 @@ int		cmd_incantation_check(t_players players, char *msg)
 	int		fds[100];
 	int		level;
 
+	(void)msg;
 	i = -1;
 	count = 0;
 	level = players.level;

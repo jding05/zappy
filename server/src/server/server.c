@@ -130,13 +130,17 @@ void	cycle_exec_event_loop(void)
 	short_term = 1;
 	if (g_env.time_unit > 10)
 	{
-		exec_event_queue(short_term);
-		exec_event_queue(!short_term);
+		if (g_env.st_queue)
+			exec_event_queue(short_term);
+		if (g_env.lt_queue)
+			exec_event_queue(!short_term);
 	}
 	else
 	{
-		exec_event_list(short_term);
-		exec_event_list(short_term);
+		if (g_env.st_queue)
+			exec_event_list(short_term);
+		if (g_env.lt_queue)
+			exec_event_list(!short_term);
 	}
 	generate_resource();
 	check_dead_player();
@@ -176,15 +180,24 @@ void	zappy_game(void)
 {
 	printf(RED"[GAME START ...]\n"RESET);
 	generate_resource();
+	init_queue();
 	setup_socket();
 	printf(RED"[GAME END ...]\n"RESET);
 	free_malloc();
 }
 
+static void update_nb_client(void)
+{
+	int	ind;
+
+	ind = -1;
+	while (++ind < g_env.nb_team)
+		g_teams[ind].nb_client = g_env.authorized_clients / g_env.nb_team;
+}
 void	server_usage(void)
 {
-	printf("Usage: ./server -p <port> -x <width> -y <height> \
-			-n <team> [<team>] [<team>] ... -c <nb> -t <t>\n");
+	printf("Usage: ./server -p <port> -x <width> -y <height> ");
+	printf("-n <team> [<team>] [<team>] ... -c <nb> -t <t>\n");
 	printf("-p port number\n-x world width\n-y world height\n");
 	printf("-n team\\_name\\_1 team\\_name\\_2 ...\n");
 	printf("-c number of clients authorized at the beginning of the game\n");
@@ -195,7 +208,7 @@ void	server_usage(void)
 int		main(int argc, char **argv)
 {
 	// t_env   env;
-
+    //
 	// bzero(&g_env, sizeof(t_env);
 	if (argc < 13 || !read_flags(argc, argv, &g_env))
 	{
@@ -203,6 +216,7 @@ int		main(int argc, char **argv)
 		server_usage();
 		return (0);
 	}
+	update_nb_client();
 	zappy_game();
 	// print_flags(&g_env);
 	return (0);

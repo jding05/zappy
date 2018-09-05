@@ -27,8 +27,8 @@
 # define MAX_TEAM 4
 # define MAX_TEAM_NAME 32
 
-# define SOCKET_VARS struct addrinfo hints, *ai, *p; struct protoent *proto;
-# define SELECT_VARS fd_set master, read_fds; int fdmax; int i=0;
+# define SOCKET_VARS struct addrinfo hints, *ai; struct protoent *proto;
+# define SELECT_VARS fd_set master, read_fds; int fdmax;
 
 # define WELCOME_MSG "WELCOME 🙂\n"
 # define TEAM_FULL_MSG "TEAM IS FULL\nBYE 😕\n"
@@ -54,6 +54,10 @@ void	s_add_to_team(char *team_name, int fd, int nb_client)
 	int		i;
 
 	i = 0;
+	// printf("\n|nb_client = %d|\n", nb_client);
+	// printf("\n|team_name = %s|\n", team_name);
+	// printf("\n|*g_teams[i].team_name = %s|\n", g_teams[i].team_name);
+	// printf("\n|g_teams[i].nb_client %d|\n", g_teams[i].nb_client );
 	while (*g_teams[i].team_name)
 	{
 		if (strcmp(g_teams[i].team_name, team_name) == 0)
@@ -70,6 +74,7 @@ void	s_add_to_team(char *team_name, int fd, int nb_client)
 	g_teams[i].nb_client = nb_client;
 	g_players[fd].fd = fd;
 	g_players[fd].team_id = i;
+	printf("\n|g_teams[i].nb_client = %d|\n", g_teams[i].nb_client);
 }
 
 /*
@@ -156,7 +161,7 @@ int		s_create_socket(char *port, int reuse)
 ** connect
 */
 
-void	s_select_accept(int fd, fd_set *master, fd_set *read_fds, int *fdmax)
+void	s_select_accept(int fd, fd_set *master, int *fdmax)
 {
 	int						newfd;
 	struct sockaddr_storage remoteaddr;
@@ -164,7 +169,7 @@ void	s_select_accept(int fd, fd_set *master, fd_set *read_fds, int *fdmax)
 	char					buf[BUF_SIZE];
 	int						nbytes;
 	char					remote_ip[INET6_ADDRSTRLEN];
-	int						i;
+	// int						i;
 
 	addrlen = sizeof(remoteaddr);
 	if ((newfd = accept(fd, (struct sockaddr *)&remoteaddr, &addrlen)) == -1)
@@ -173,8 +178,13 @@ void	s_select_accept(int fd, fd_set *master, fd_set *read_fds, int *fdmax)
 	if ((nbytes = recv(newfd, buf, BUF_SIZE, 0)) < 0)
 		perror(strerror(errno));
 	buf[nbytes] = '\0';
-	i = g_players[newfd].team_id;
-	s_add_to_team(buf, newfd, g_teams[i].max_players + g_teams[i].egg_hatched);
+	bzero(&g_players[newfd], sizeof(t_players));
+	init_live(newfd);
+	// i = g_players[newfd].team_id;
+	// s_add_to_team(buf, newfd, g_teams[i].max_players + g_teams[i].egg_hatched);
+	s_add_to_team(buf, newfd, 3);
+	// printf("\n| team_id = %d|\n", g_players[newfd].team_id);
+	// printf("\n| nb_client = %d|\n", g_teams[g_players[newfd].team_id].nb_client);
 	if (g_teams[g_players[newfd].team_id].nb_client == 0)
 	{
 		send(newfd, TEAM_FULL_MSG, strlen(TEAM_FULL_MSG), 0);
@@ -187,20 +197,25 @@ void	s_select_accept(int fd, fd_set *master, fd_set *read_fds, int *fdmax)
 			*fdmax = newfd;
 		printf("%d\n", g_teams[g_players[newfd].team_id].nb_client);
 		printf("x: | y: \n");
-		send(newfd, "joined team", 11, 0);
+		send(newfd, "joined ", 7, 0);
 		printf("selectserver: new connection from %s on socket %d\n",
-				inet_ntop(remoteaddr.ss_family, 
-					get_in_addr((struct sockaddr*)&remoteaddr), 
+				inet_ntop(remoteaddr.ss_family,
+					get_in_addr((struct sockaddr*)&remoteaddr),
 					remote_ip, INET6_ADDRSTRLEN), newfd);
 	}
 }
+
+// void handle_msg(char *buf)
+// {
+// 	/* code */
+// }
 
 /*
 ** if a fd != listener, i.e. it's already connected to the server,
 ** receive the buffer then store the data into structs.
 */
 
-void	s_select_recv(int fd, fd_set *master, fd_set *read_fds, int *fdmax)
+void	s_select_recv(int fd, fd_set *master)
 {
 	char	buf[BUF_SIZE];
 	int		nbytes;
@@ -222,8 +237,9 @@ void	s_select_recv(int fd, fd_set *master, fd_set *read_fds, int *fdmax)
 		if (g_players[fd].request_nb < 11)
 		{
 			buf[nbytes] = '\0';
-			printf("nb_req = %d\n", g_players[fd].request_nb);
-			enqueue(&(g_env.st_queue->first), fd, buf); // -> need to check *************************
+			printf("request_nb = %d\n", g_players[fd].request_nb);
+			printf("%d bytes received: |%s|\n", nbytes, buf);
+			enqueue(fd, buf); // -> need to check *************************
 			g_players[fd].request_nb++;
 			printf("%d bytes received: |%s|\n", nbytes, buf);
 			memset(buf, 0, strlen(buf));
@@ -250,9 +266,9 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			if (FD_ISSET(i, read_fds))
 			{
 				if (i == lfd)
-					s_select_accept(i, master, read_fds, fdmax);
+					s_select_accept(i, master, fdmax);
 				else
-					s_select_recv(i, master, read_fds, fdmax);
+					s_select_recv(i, master);
 			}
 		}
 		cycle_exec_event_loop();
@@ -264,8 +280,6 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 int		setup_socket(void)
 {
 	int		listener;
-	int		newfd;
-	int		nbytes;
 
 	SELECT_VARS;
 	FD_ZERO(&master);

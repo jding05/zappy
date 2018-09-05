@@ -17,6 +17,7 @@
 
 int		cmd_inventory(t_players players, char *msg)
 {
+	(void)msg;
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "inventory");
 	bzero(g_env.buffer, 4096);
 	strcpy(g_env.buffer, "{food ");

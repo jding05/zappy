@@ -24,6 +24,7 @@ int		cmd_connect_nbr(t_players players, char *msg)
 	char	*connect_nb;
 	int		team_id;
 
+	(void)msg;
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "connect_nbr");
 	players.request_nb--;
 	team_id = players.team_id;

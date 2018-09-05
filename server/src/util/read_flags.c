@@ -37,13 +37,21 @@ int		set_value(char **flag, int i, int m, t_env *env)
 	if (m == 2)
 		env->map_y = number;
 	if (m == 3)
+	{
+		// printf("\nAm I wrong in team_init\n");
 		// env->teams = team_init(flag, i + 1, g_env.nb_team);
 		if (!team_init(flag, i + 1, g_env.nb_team))
 			return (0);
+		// printf("\nNO I am not\n");
+	}
 	if (m == 4)
 		env->authorized_clients = number;
 	if (m == 5)
+	{
 		env->time_unit = number;
+		// printf("\n|%d| |%d|\n", number, env->time_unit);
+	}
+
 	return (1);
 }
 
@@ -58,21 +66,23 @@ int		team_init(char **argv, int i, int nb_team)
 		if (strlen(g_teams[ind].team_name) > MAX_TEAM_NAME)
 			return (0);
 		strcpy(g_teams[ind].team_name, argv[i++]);
-		g_teams[ind].max_players = g_env.authorized_clients / g_env.nb_team;
-
-		// might not need it 
+		// g_teams[ind].max_players = g_env.authorized_clients / g_env.nb_team;
+		g_teams[ind].nb_client = g_env.authorized_clients / g_env.nb_team;
+		// printf("\n%d, %d\n", g_env.authorized_clients, g_env.nb_team);
+		// printf("\n++ | g_teams[ind].nb_client %d|\n", g_env.authorized_clients / g_env.nb_team);
+		// might not need it
 		g_teams[ind].reach_max_level = 0;
 		// g_teams[ind].egg_used = 0;
 		g_teams[ind].egg_hatched = 0;
 		g_teams[ind].egg_laid = 0;
 	}
-	return (0);
+	return (1);
 }
 
 //                         0    1   2    3    4    5
 // char    *options[] = {"-p","-x","-y","-n","-c","-t"};
 /*
-**  asssume every flag follow by 1 arg, there will be 13, 
+**  asssume every flag follow by 1 arg, there will be 13,
 **  so index 7 (-n) + i = index 9 (-c) -> i = argc (13) - 11
 */
 
@@ -84,6 +94,8 @@ int		read_flags(int argc, char **argv, t_env *env)
 	i = 1;
 	m = 0;
 	bzero(env, sizeof(t_env));
+	calc_time_spead();
+	// env->time_speed;
 	env->nb_team = argc - 12;
 	while (i < argc)
 	{

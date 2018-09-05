@@ -20,6 +20,7 @@ int		cmd_advance(t_players players, char *msg)
 {
 	int	d;
 
+	(void)msg;
 	printf(BLUE"Player [%d] -> [%s]"RESET, players.fd, "advance");
 	d = players.direction;
 	if (d == NORTH)

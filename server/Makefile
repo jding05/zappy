@@ -1,7 +1,7 @@
 SRV = server
 LIB = libft.a
 #LIBDEBUG = ""
-CFLAGS += -Wall -Werror -Wextra
+CFLAGS += -Wall -Werror -Wextra -g
 INCLUDES = -I./inc #-I lib/inc/
 #LINK = -L lib/ -l ft
 CC = gcc

@@ -46,7 +46,7 @@ void	exec_event_queue(int short_term)
 	{
 		i = 0;
 		while (g_cmd[i].cmd)
-			(!strcmp(g_cmd[i].cmd, event->msg)) ? \
+			(!strcmp(g_cmd[i].cmd, event->cmd)) ? \
 			g_cmd[i].func(g_players[event->fd], event->msg) : i++;
 		tmp = event;
 		event = event->next;
@@ -57,6 +57,112 @@ void	exec_event_queue(int short_term)
 	}
 }
 
+void 	init_queue(void)
+{
+	g_env.st_queue = NULL;
+	g_env.lt_queue = NULL;
+	// g_env.st_queue->first = NULL;
+	// g_env.st_queue->last = NULL;
+	// g_env.lt_queue->first = NULL;
+	// g_env.lt_queue->last = NULL;
+}
+
+void 	long_short_term(t_event *node, int short_term)
+{
+	if (short_term)
+	{
+		if (!(g_env.st_queue))
+		{
+			g_env.st_queue->first = node;
+			g_env.st_queue->last = node;
+			return ;
+		}
+		g_env.st_queue->last->next = node;
+		g_env.st_queue->last = node;
+	}
+	else
+	{
+		if (!(g_env.st_queue))
+		{
+			g_env.st_queue->first = node;
+			g_env.st_queue->last = node;
+			return ;
+		}
+		g_env.st_queue->last->next = node;
+		g_env.st_queue->last = node;
+	}
+}
+
+/*
+** new added
+** check msg recv from players has cmd inside
+** if the cmd is not in the beginning of str -> false
+** if cmd is not take, put, and broadcast, but have additional msg -> false
+** if cmd is take and put, but the msg is not any of the resources -> false
+** if cmd is broadcast, but doesn't have any additional msg -> false
+*/
+
+int		check_valid_cmd(char *msg, char *msg_buf)
+{
+	int				i;
+	char			*tmp;
+	unsigned long	len;
+
+	i = 0;
+	while (g_cmd[i].cmd)
+	{
+		if (!(tmp = strstr(msg, g_cmd[i].cmd)))
+			i++;
+		else if (tmp != msg)
+			return (13);
+		else
+		{
+			if ((strlen(msg) != (len = strlen(g_cmd[i].cmd))))
+			{
+				if (i != 5 && i != 6 && i != 8)
+					return (13);
+				else
+				{
+					if (i == 8)
+						strcpy(msg_buf, msg + len);
+					else if (check_resource(strcpy(msg_buf, msg + len + 1)) == 7)
+						return (13);
+					return (i);
+				}
+			}
+			if (i != 5 && i != 6 && i != 8)
+				return (i);
+		}
+	}
+	return (13);
+}
+
+void	enqueue(int fd, char *msg)
+{
+	t_event *node;
+	char	msg_buf[1024];
+	int		i;
+	int		short_term;
+
+	// bzero(msg, 1024);
+	if ((i = check_valid_cmd(msg, msg_buf)) == 13)
+	{
+		// printf("\nenqueue : check invalid\n");
+		return ;
+	}
+	printf("\nAM I wrong\n");
+	printf("\n|cmd_ind %d|\n", i);
+	printf("\n|msg_buf %s|\n", msg_buf);
+	// node = init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd);
+	node = init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd);
+	short_term = 1;
+	printf("\nAM I wrong\n");
+	if (i == 9 || i == 12)
+		long_short_term(node, !short_term);
+	else
+		long_short_term(node, short_term);
+}
+
 void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l)
 {
 	t_event	*tmp;
@@ -64,7 +170,7 @@ void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l)
 
 	i = 0;
 	while (g_cmd[i].cmd)
-		(!strcmp(g_cmd[i].cmd, (*event)->msg)) ? \
+		(!strcmp(g_cmd[i].cmd, (*event)->cmd)) ? \
 		g_cmd[i].func(g_players[(*event)->fd], (*event)->msg) : i++;
 	if (!(*prev))
 	{

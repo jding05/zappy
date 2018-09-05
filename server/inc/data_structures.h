@@ -37,18 +37,18 @@ typedef struct      s_team
 
 typedef struct      s_players
 {
-	int				fd;
-    int             team_id;
-	int				inventory[7];
-	int				y;
-	int				x;
-	int				request_nb;
-    int             level;
-    int             dead;
+  int               fd;
+  int               team_id;
+  int               inventory[7];
+  int               y;
+  int               x;
+  int               request_nb;
+  int               level;
+  int               dead;
 
-    int             block;
-	int				direction;	// sding added it --> 0: N, 1: E, 2: S, 3: W
-    struct timeval	live;
+  int               block;
+  int               direction;	// sding added it --> 0: N, 1: E, 2: S, 3: W
+  struct timeval    live;
 }                   t_players;
 
 /*
@@ -70,18 +70,18 @@ typedef struct      s_players
 typedef struct          s_env
 {
     int                 port;
-	char				port_name[6];
+    char				        port_name[6];
     int                 authorized_clients;
     int                 time_unit;
     int                 nb_team;
     int                 map[1024][1024][7];
     int                 map_x;
     int                 map_y;
-	t_st_queue			*st_queue;
+    t_st_queue          *st_queue;
     t_lt_queue          *lt_queue;
-	char				buffer[4096];
+  	char                buffer[4096];
     int                 server_fd;
-	struct timeval		time_speed;
+  	struct timeval		time_speed;
 }                       t_env;
 
 
