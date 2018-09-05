@@ -64,11 +64,13 @@ void	record_time(t_event *node, int delay_time)
 	struct timeval	curr_time;
 	struct timeval	*exec_time;
 
+    // printf("\nrecord time\n");
+    // exec_time = NULL;
 	gettimeofday(&curr_time, NULL);
-    exec_time = NULL;
-	exec_time->tv_sec = curr_time.tv_sec;
-	exec_time->tv_usec = curr_time.tv_usec;
-
+	// exec_time->tv_sec = curr_time.tv_sec;
+	// exec_time->tv_usec = curr_time.tv_usec;
+    exec_time = &curr_time;
+    // printf("\nrecord time\n");
 	exec_time->tv_sec += delay_time * g_env.time_speed.tv_sec;
 	exec_time->tv_usec += delay_time * g_env.time_speed.tv_usec;
 	exec_time->tv_sec += (exec_time->tv_usec) / 1000000;
@@ -82,14 +84,18 @@ t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd)
 	t_event			*node;
 
 	node = (t_event *)malloc(sizeof(t_event));
+
 	bzero(node, sizeof(t_event));
 	node->fd = fd;
     bzero(node->cmd, CMD_LEN);
 	strcpy(node->cmd, cmd);
 	bzero(node->msg, MAX_MSG);
 	strcpy(node->msg, msg);
+    // printf("\nHere\n"); //////////////////
 	record_time(node, delay_time);
+    // printf("\nTHERE\n"); //////////////////
 	node->next = NULL;
+    printf("\n|node->fd %d|\n", node->fd);
 	return (node);
 }
 

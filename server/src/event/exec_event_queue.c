@@ -59,37 +59,41 @@ void	exec_event_queue(int short_term)
 
 void 	init_queue(void)
 {
-	g_env.st_queue = NULL;
-	g_env.lt_queue = NULL;
-	// g_env.st_queue->first = NULL;
-	// g_env.st_queue->last = NULL;
-	// g_env.lt_queue->first = NULL;
-	// g_env.lt_queue->last = NULL;
+	g_env.st_queue = malloc(sizeof(t_st_queue));
+	g_env.lt_queue = malloc(sizeof(t_lt_queue));
+	g_env.st_queue->first = NULL;
+	g_env.st_queue->last = NULL;
+	g_env.lt_queue->first = NULL;
+	g_env.lt_queue->last = NULL;
 }
 
 void 	long_short_term(t_event *node, int short_term)
 {
 	if (short_term)
 	{
-		if (!(g_env.st_queue))
+		if (!(g_env.st_queue->first))
 		{
+			// printf("\nlong_short_term \n");
 			g_env.st_queue->first = node;
 			g_env.st_queue->last = node;
+			// printf("\nlong_short_term add queue success\n");
 			return ;
 		}
+		// printf("\nlong_short_term here\n");
 		g_env.st_queue->last->next = node;
 		g_env.st_queue->last = node;
+		// printf("\nlong_short_term there\n");
 	}
 	else
 	{
-		if (!(g_env.st_queue))
+		if (!(g_env.lt_queue->first))
 		{
-			g_env.st_queue->first = node;
-			g_env.st_queue->last = node;
+			g_env.lt_queue->first = node;
+			g_env.lt_queue->last = node;
 			return ;
 		}
-		g_env.st_queue->last->next = node;
-		g_env.st_queue->last = node;
+		g_env.lt_queue->last->next = node;
+		g_env.lt_queue->last = node;
 	}
 }
 
@@ -127,6 +131,8 @@ int		check_valid_cmd(char *msg, char *msg_buf)
 						strcpy(msg_buf, msg + len);
 					else if (check_resource(strcpy(msg_buf, msg + len + 1)) == 7)
 						return (13);
+					else
+						bzero(msg_buf, sizeof(1024));
 					return (i);
 				}
 			}
@@ -150,17 +156,25 @@ void	enqueue(int fd, char *msg)
 		// printf("\nenqueue : check invalid\n");
 		return ;
 	}
-	printf("\nAM I wrong\n");
-	printf("\n|cmd_ind %d|\n", i);
-	printf("\n|msg_buf %s|\n", msg_buf);
+	// printf("\nAM I wrong\n");
+	// printf("\n|cmd_ind %d|\n", i);
+	// printf("\n|msg_buf %s|\n", msg_buf);
+	// printf("\n|fd %d|\n", fd);
 	// node = init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd);
 	node = init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd);
 	short_term = 1;
-	printf("\nAM I wrong\n");
+	// printf("\nAM I wrong\n");
 	if (i == 9 || i == 12)
+	{
 		long_short_term(node, !short_term);
+		// printf("\nAM I wrong 1\n");
+	}
 	else
+	{
 		long_short_term(node, short_term);
+		// printf("\nAM I wrong 2\n");
+	}
+
 }
 
 void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l)
@@ -169,14 +183,26 @@ void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l)
 	int		i;
 
 	i = 0;
-	while (g_cmd[i].cmd)
-		(!strcmp(g_cmd[i].cmd, (*event)->cmd)) ? \
-		g_cmd[i].func(g_players[(*event)->fd], (*event)->msg) : i++;
+	while (i < 14)
+	{
+		if (!strcmp(g_cmd[i].cmd, (*event)->cmd))
+		{
+			// printf("\n eventssssss->fd %d\n", (*event)->fd);
+			g_cmd[i].func(g_players[(*event)->fd], (*event)->msg);
+			printf(LIGHTBLUE"\n[EXEC]\n"RESET);
+			break ;
+		}
+		i++;
+	}
+		// (!strcmp(g_cmd[i].cmd, (*event)->cmd)) ?
+		// g_cmd[i].func(g_players[(*event)->fd], (*event)->msg) : i++;
+	printf("[cmd_ind after exec %i]\n", i);
 	if (!(*prev))
 	{
 		*event = (*event)->next;
 		tmp = *h;
 		*h = *event;
+		// printf(LIME"\n !prev\n");
 		free(tmp);
 	}
 	else if (!(*event)->next)
@@ -202,17 +228,20 @@ void	exec_event_list(int st_term)
 	t_event			*prev;
 	t_event			*last;
 
+
 	if (!(head = st_term == 1 ? g_env.st_queue->first : g_env.lt_queue->first)
 	|| !(last = st_term == 1 ? g_env.st_queue->last : g_env.lt_queue->last))
 		return ;
+	// printf("\n head->fd %d\n", head->fd);
 	prev = NULL;
 	event = head;
 	while (event)
 	{
 		gettimeofday(&curr_time, NULL);
-		if (check_event_time(&curr_time, event->exec_time) && \
-		!g_players[event->fd].block)
+		if (check_event_time(&curr_time, event->exec_time) &&
+			!g_players[event->fd].block)
 		{
+			// printf("\n event->fd %d\n", event->fd);
 			exec_event(&event, &prev, &head, &last);
 			prev = event;
 		}

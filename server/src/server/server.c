@@ -137,9 +137,9 @@ void	cycle_exec_event_loop(void)
 	}
 	else
 	{
-		if (g_env.st_queue)
+		if (g_env.st_queue->first)
 			exec_event_list(short_term);
-		if (g_env.lt_queue)
+		if (g_env.lt_queue->first)
 			exec_event_list(!short_term);
 	}
 	generate_resource();

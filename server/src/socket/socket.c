@@ -58,17 +58,17 @@ void	s_add_to_team(char *team_name, int fd, int nb_client)
 	// printf("\n|team_name = %s|\n", team_name);
 	// printf("\n|*g_teams[i].team_name = %s|\n", g_teams[i].team_name);
 	// printf("\n|g_teams[i].nb_client %d|\n", g_teams[i].nb_client );
-	while (*g_teams[i].team_name)
-	{
-		if (strcmp(g_teams[i].team_name, team_name) == 0)
-		{
-			if (g_teams[i].nb_client == 0)
-				return ;
-			g_teams[i].nb_client--;
-			return ;
-		}
-		i++;
-	}
+	// while (*g_teams[i].team_name)
+	// {
+	// 	if (strcmp(g_teams[i].team_name, team_name) == 0)
+	// 	{
+	// 		if (g_teams[i].nb_client == 0)
+	// 			return ;
+	// 		g_teams[i].nb_client--;
+	// 		return ;
+	// 	}
+	// 	i++;
+	// }
 	g_teams[i].team_id = i;
 	strcpy(g_teams[i].team_name, team_name);
 	g_teams[i].nb_client = nb_client;
@@ -156,6 +156,11 @@ int		s_create_socket(char *port, int reuse)
 	return (listener);
 }
 
+// static void init_player(int fd)
+// {
+// 	g_players[newfd].fd = fd;
+//
+// }
 /*
 ** if a fd == listener, i.e. there is a new connection request, accept and
 ** connect
@@ -179,10 +184,11 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 		perror(strerror(errno));
 	buf[nbytes] = '\0';
 	bzero(&g_players[newfd], sizeof(t_players));
-	init_live(newfd);
 	// i = g_players[newfd].team_id;
 	// s_add_to_team(buf, newfd, g_teams[i].max_players + g_teams[i].egg_hatched);
 	s_add_to_team(buf, newfd, 3);
+	// init_player(newfd);
+	init_live(newfd);
 	// printf("\n| team_id = %d|\n", g_players[newfd].team_id);
 	// printf("\n| nb_client = %d|\n", g_teams[g_players[newfd].team_id].nb_client);
 	if (g_teams[g_players[newfd].team_id].nb_client == 0)
@@ -247,6 +253,20 @@ void	s_select_recv(int fd, fd_set *master)
 	}
 }
 
+void print_queue(/* arguments */)
+{
+	t_event *event;
+
+	event = g_env.st_queue->first;
+	while (event)
+	{
+		printf("\n-------------------\nEVENT\n");
+		printf("event fd < %d >\n", event->fd);
+		printf("event cmd < %s >\n", event->cmd);
+		printf("event msg < %s >\n", event->msg);
+		event = event->next;
+	}
+}
 /*
 ** keep iterating through all select fds
 */
@@ -254,9 +274,12 @@ void	s_select_recv(int fd, fd_set *master)
 void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 {
 	int		i;
+	// int 	j = 0;
 
 	while (1)
 	{
+	// while (j < 3)
+	// {
 		memcpy(read_fds, master, sizeof(*master));
 		if (select(*fdmax + 1, read_fds, NULL, NULL, NULL) == -1)
 			return ;
@@ -272,6 +295,14 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			}
 		}
 		cycle_exec_event_loop();
+		if (!g_env.st_queue->first)
+		 	printf(RED"\nst_queue empty\n"RESET);
+		else
+			print_queue();
+		if (!g_env.lt_queue->first)
+			printf(RED"lt_queue empty\n"RESET);
+		else
+			print_queue();
 		if (check_winner())
 			break ;
 	}

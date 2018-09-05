@@ -19,7 +19,7 @@
 int		cmd_left(t_players players, char *msg)
 {
 	(void)msg;
-	printf("Player [%d] -> [%s]\n", players.fd, "left");
+	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "left");
 	if (--(players.direction) < NORTH)
 		players.direction = WEST;
 	players.request_nb--;
