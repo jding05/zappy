@@ -12,8 +12,6 @@
 
 #include "server_client.h"
 
-//t_player	g_players[MAX_FD];
-
 void	client_usage(char *str)
 {
 	printf("Usage: %s <addr> <port>\n", str);
@@ -39,7 +37,6 @@ int		create_client(char *addr, int port)
 	sin.sin_addr.s_addr = inet_addr(addr);
 	if (connect(sock, (const struct sockaddr *)&sin, sizeof(sin)) == -1)
 	{	
-		//printf("ERROR: Connect error\n");
 		perror(strerror(errno));
 		return (EXIT_FAILURE);
 	}
@@ -51,22 +48,31 @@ int		validate_cmd(char *cmd)
 	return (1);
 }
 
-void	recv_write(int sock)
+int		recv_print(int fd)
 {
 	char	buf[BUF_SIZE];
 	int		nbytes;
 
-	if ((nbytes = recv(sock, buf, BUF_SIZE, 0)) > 0)
+	if ((nbytes = recv(fd, buf, BUF_SIZE - 1, 0)) > 0)
 	{
 		buf[nbytes] = '\0';
-		write(1, buf, strlen(buf));
+		if (*buf == '#')
+		{
+			write(2, &buf[1], nbytes);
+			return (EXIT_FAILURE);
+		}
+		else
+		{
+			write(1, buf, nbytes);
+		}
 	}
 	else
 	{
-		perror("recv");
+		perror("recv error\n");
+		return (EXIT_FAILURE);
 	}
+	return (EXIT_SUCCESS);
 }
-
 
 int		main(int ac, char **av)
 {
@@ -79,18 +85,30 @@ int		main(int ac, char **av)
 	if (ac != 4)
 		client_usage(av[0]);
 	sock = create_client(av[3], atoi(av[2]));
-	recv_write(sock);
+	recv_print(sock);
 	send(sock, av[1], strlen(av[1]), 0);
-	if ((nbytes = recv(sock, buf, BUF_SIZE, 0)) > 0)
+	if (recv_print(sock) == EXIT_FAILURE)
 	{
-		buf[nbytes] = '\0';	
-		if (strcmp(buf, TEAM_FULL_MSG) == 0)
-		{
-			write(1, buf, strlen(buf));
-			return (EXIT_FAILURE);
-		}
-		printf("%s %s\n", buf, av[1]);
+		return (EXIT_FAILURE);
 	}
+	// if ((nbytes = recv(sock, buf, BUF_SIZE, 0)) > 0)
+	// {
+	// 	buf[nbytes] = '\0';	
+	// 	// if (strcmp(buf, TEAM_FULL_MSG) == 0)
+	// 	// {
+	// 	// 	write(1, buf, strlen(buf));
+	// 	// 	return (EXIT_FAILURE);
+	// 	// }
+	// 	printf("*buf = %c\n", *buf);
+	// 	if (*buf == '#')
+	// 	{
+	// 		write(1, &buf[1], strlen(&buf[1]));
+	// 		return (EXIT_FAILURE);
+	// 	}
+	// 	write(1, buf, strlen(buf));
+	// 	memset(buf, 0, strlen(buf));
+	// }
+
 	while (1)
 	{
 		nbytes = read(STDIN_FILENO, buf, BUF_SIZE - 1);
@@ -99,7 +117,12 @@ int		main(int ac, char **av)
 		{
 			printf("client side buf = |%s|\n", buf);
 			send(sock, buf, strlen(buf), 0);
+			recv_print(sock);
 			memset(buf, 0, strlen(buf));
+		}
+		else
+		{
+			write(1, "invalid command\n", 16);
 		}
 	}
 	close(sock);

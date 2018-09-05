@@ -6,14 +6,16 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/31 14:54:00 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/04 15:03:32 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/05 11:46:47 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server_client.h"
+#include "parse.h"
 
 t_player	g_players[MAX_FD];
 t_team		g_teams[MAX_TEAM];
+t_env		g_env;
 t_cmdq		*g_cmds;
 
 /*
@@ -27,9 +29,6 @@ int		perror_rv(char *errmsg)
 }
 
 /*
-** when a new player is connected, add it to a team
-*/
-
 void	s_add_to_team(char *team_name, int fd, int nb_client)
 {
 	int		i;
@@ -52,18 +51,82 @@ void	s_add_to_team(char *team_name, int fd, int nb_client)
 	g_players[fd].fd = fd;
 	g_players[fd].team_id = i;
 }
+*/
+
+
+void	s_send_msg(int fd, char *msg)
+{
+	send(fd, msg, strlen(msg), 0);
+}
+
+void	recv_print(int fd)
+{
+	char	buf[BUF_SIZE];
+	int		nbytes;
+
+	if ((nbytes = recv(fd, buf, BUF_SIZE - 1, 0)) > 0)
+	{
+		buf[nbytes] = '\0';
+		if (*buf == '#')
+		{
+			write(2, &buf[1], nbytes);
+		}
+		else
+			write(1, buf, nbytes);
+	}
+	else
+	{
+		perror("recv error\n");
+		memset(buf, 0, nbytes);
+	}
+	
+}
 
 /*
+** initialize a player's data
+** or
 ** reset a player's data when the player_client is terminated
 */
 
-void	s_reset_player(int fd)
+void	s_init_player(int fd)
 {
+	g_players[fd].fd = fd;
 	g_players[fd].nb_req = 0;
 	memset(g_players[fd].inventory, 0, 7);
-	memset(g_players[fd].pos, 0, 2);
+	memset(g_players[fd].pos, -1, 2);
 	g_players[fd].level = 0;
 }
+
+/*
+** when a new player is connected, add it to a team
+*/
+
+int		s_add_to_team(char *team_name, int fd)
+{
+	int		i;
+
+	i = 0;
+	while (*g_teams[i].team_name)
+	{
+		if (strcmp(g_teams[i].team_name, team_name) == 0)
+		{
+			if (g_teams[i].nb_client == 0)
+			{
+				s_send_msg(fd, "#team is full\nBYE 😕\n");
+				return (perror_rv("team is full\n")); 
+			}
+			s_init_player(fd);
+			g_players[fd].team_id = i;
+			g_teams[i].nb_client--;
+			s_send_msg(fd, "joind team\n");
+			return (EXIT_SUCCESS);
+		}
+		i++;
+	}
+	s_send_msg(fd, "#team not found\nBYE 😕\n");
+	return (perror_rv("team not found\n"));
+}
+
 
 /*
 ** get sockaddr, IPv4 or IPv6
@@ -113,7 +176,7 @@ int		s_iter_sock(struct addrinfo *ai, struct protoent *proto, int reuse)
 ** create a listener socket
 */
 
-int		s_create_socket(char *port, int reuse)
+int		s_create_socket(char* port, int reuse)
 {
 	int		listener;
 	int		rv;
@@ -151,10 +214,9 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	if ((nbytes = recv(newfd, buf, BUF_SIZE, 0)) < 0)
 		perror(strerror(errno));
 	buf[nbytes] = '\0';
-	s_add_to_team(buf, newfd, 3);
+	s_add_to_team(buf, newfd);
 	if (g_teams[g_players[newfd].team_id].nb_client == 0)
 	{
-		send(newfd, TEAM_FULL_MSG, strlen(TEAM_FULL_MSG), 0);
 		close(newfd);
 	}
 	else
@@ -162,10 +224,9 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 		FD_SET(newfd, master);
 		if (newfd > *fdmax)
 			*fdmax = newfd;
-		printf("%d\n", g_teams[g_players[newfd].team_id].nb_client);
-		printf("x: | y: \n");
-		send(newfd, "joined team", 11, 0);
-		printf("selectserver: new connection from %s on socket %d\n",
+		//printf("nb_client = %d\n", g_teams[g_players[newfd].team_id].nb_client);
+		//printf("x: | y: \n");
+		printf("new connection from %s on socket %d\n",
 				inet_ntop(remoteaddr.ss_family, 
 					get_in_addr((struct sockaddr*)&remoteaddr), 
 					remote_ip, INET6_ADDRSTRLEN), newfd);
@@ -186,7 +247,7 @@ void	s_select_recv(int fd, fd_set *master)
 	{
 		if (nbytes == 0)
 		{
-			s_reset_player(fd);
+			s_init_player(fd);
 			printf("Player on socket %d left\n", fd);
 		}
 		else
@@ -204,6 +265,11 @@ void	s_select_recv(int fd, fd_set *master)
 			g_players[fd].nb_req++;
 			printf("%d bytes received: |%s|\n", nbytes, buf);
 			memset(buf, 0, strlen(buf));
+			s_send_msg(fd, "received\n");
+		}
+		else
+		{
+			s_send_msg(fd, "#request limit exceeded\n");
 		}
 	}
 }
@@ -236,28 +302,20 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 	}
 }
 
-void	server_usage(void)
-{
-	printf("Usage: ./server -p <port> -x <width> -y <height> \
-            -n <team> [<team>] [<team>] ... -c <nb> -t <t>\n");
-	printf("-p port number\n-x world width\n-y world height\n");
-	printf("-n team\\_name\\_1 team\\_name\\_2 ...\n");
-	printf("-c number of clients authorized at the beginning of the game\n");
-	printf("-t time unit divider \
-            (the greater t is, the faster the game will go)\n");
-}
+
 
 int		main(int ac, char **av)
 {
 	int		listener;
 
-	if (ac != 4)
+	if (ac < 13)
 		server_usage();
+	parse_args(av);
 	g_cmds = NULL;
 	SELECT_VARS;
 	FD_ZERO(&master);
 	FD_ZERO(&read_fds);
-	listener = s_create_socket(av[1], 1);
+	listener = s_create_socket(g_env.port, 1);
 	if (listen(listener, 42) == -1)
 		return (EXIT_FAILURE);
 	FD_SET(listener, &master);
