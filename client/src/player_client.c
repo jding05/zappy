@@ -6,11 +6,17 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/25 22:47:38 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/05 21:53:39 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/05 23:34:40 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.h"
+
+char	*g_cmds[] = {"advance", "right", "left", "see", "inventory", \
+	"take", "put", "kick", "incantation", "fork", "connect_nbr", 0};
+
+char	*g_objects[] = {"linemate", "deraumere", "sibur", "mendiane", \
+	"phiras", "thystame", "food", 0};
 
 int		create_client(char *addr, int port)
 {
@@ -37,9 +43,76 @@ int		create_client(char *addr, int port)
 	return (sock);
 }
 
+int		validate_cmd_with_obj(char *str, char *cmd)
+{
+	int		i;
+	int		n;
+
+	i = 0;
+	n = strlen(cmd);
+	if (strnstr(str, cmd, n))
+	{
+		printf("str = %s | cmd = %s | %s\n", str, cmd, strnstr(str, cmd, n));
+		if (strcmp(strnstr(str, cmd, n), str) == 0)
+		{
+			while (g_objects[i])
+			{
+				printf("%s\n", &(str[n + 1]));
+				if (strcmp(&str[n + 1], g_objects[i]) == 0)
+				{
+					printf("%s\n", g_objects[i]);
+					return (EXIT_SUCCESS);
+				}
+				i++;
+			}
+		}
+	}
+	return (EXIT_FAILURE);
+}
+
 int		validate_cmd(char *cmd)
 {
-	return (1);
+	int		i;
+
+	i = 0;
+	while (g_cmds[i])
+	{
+		if (strcmp(g_cmds[i], cmd) == 0)
+			return (EXIT_SUCCESS);
+		if (validate_cmd_with_obj(cmd, g_cmds[i]) == EXIT_SUCCESS)
+			return (EXIT_SUCCESS);
+		i++;
+	}
+	/*
+	i = 0;
+	if (strnstr(cmd, "put", 3))
+	{
+		if (strcmp(strnstr(cmd, "put", 3), cmd) == 0)
+		{
+			write(1, "here\n", 5);
+			while (g_objects[i])
+			{
+				if (strcmp(&cmd[4], g_objects[i]) == 0)
+					return (EXIT_SUCCESS);
+				i++;
+			}
+		}
+	}
+	i = 0;
+	if (strnstr(cmd, "take", 4))
+	{
+		if (strcmp(strnstr(cmd, "take", 4), cmd) == 0)
+		{
+			while (g_objects[i])
+			{
+				if (strcmp(&cmd[5], g_objects[i]) == 0)
+					return (EXIT_SUCCESS);
+				i++;
+			}
+		}
+	}
+	*/
+	return (EXIT_FAILURE);
 }
 
 int		recv_print(int fd)
@@ -86,9 +159,8 @@ int		main(int ac, char **av)
 	{
 		nbytes = read(STDIN_FILENO, buf, BUF_SIZE - 1);
 		buf[nbytes - 1] = '\0';
-		if (validate_cmd(buf))
+		if (validate_cmd(buf) == EXIT_SUCCESS)
 		{
-			write(1, "balalalalalala\n", 15);
 			printf("client side buf = |%s|\n", buf);
 			send(sock, buf, strlen(buf), 0);
 			//if (recv_print(sock) == EXIT_FAILURE)
@@ -105,3 +177,6 @@ int		main(int ac, char **av)
 	close(sock);
 	return (EXIT_SUCCESS);
 }
+
+
+
