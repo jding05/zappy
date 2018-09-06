@@ -1,4 +1,4 @@
-#include "server.h"
+#include "cmds.h"
 
 void	cmd_advance(void)
 {
@@ -44,10 +44,12 @@ void	cmd_left(void)
 {
 	printf("\n******left executed******\n");
 }
+
 void	cmd_put(void)
 {
 	printf("\n******put executed******\n");
 }
+
 void	cmd_right(void)
 {
 	printf("\n******right executed******\n");
@@ -57,3 +59,19 @@ void	cmd_take(void)
 {
 	printf("\n******take executed******\n");
 }
+
+t_cmd	g_cmds[12] = 
+{
+	{"advance", 7, cmd_advance},
+	{"broadcast", 7, cmd_broadcast},
+	{"connect_nbr", 0, cmd_connect_nbr},
+	{"fork", 42, cmd_fork},
+	{"hatch", 600, cmd_hatch},
+	{"incantation", 300, cmd_incantation},
+	{"inventory", 1, cmd_inventory},
+	{"kick", 7, cmd_kick},
+	{"left", 7, cmd_left},
+	{"put", 7, cmd_put},
+	{"right", 7, cmd_right},
+	{"take", 7, cmd_take},
+};

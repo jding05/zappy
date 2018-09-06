@@ -6,7 +6,7 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/31 14:54:00 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/05 18:08:47 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/05 21:41:46 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 t_player	g_players[MAX_FD];
 t_team		g_teams[MAX_TEAM];
 t_env		g_env;
-t_cmdq		*g_cmds;
+t_cmdq		*g_cmdq;
 
 /*
 ** print out the error message then return failure
@@ -166,24 +166,6 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	if ((nbytes = recv(newfd, buf, BUF_SIZE, 0)) < 0)
 		perror(strerror(errno));
 	buf[nbytes] = '\0';
-	//printf("nb_client = %d\n", g_teams[g_players[newfd].team_id].nb_client);
-
-	// if (g_teams[g_players[newfd].team_id].nb_client == 0)
-	// {
-	// 	close(newfd);
-	// }
-	// else
-	// {
-	// 	FD_SET(newfd, master);
-	// 	if (newfd > *fdmax)
-	// 		*fdmax = newfd;
-	// 	//printf("nb_client = %d\n", g_teams[g_players[newfd].team_id].nb_client);
-	// 	//printf("x: | y: \n");
-	// 	printf("new connection from %s on socket %d\n",
-	// 			inet_ntop(remoteaddr.ss_family, 
-	// 				get_in_addr((struct sockaddr*)&remoteaddr), 
-	// 				remote_ip, INET6_ADDRSTRLEN), newfd);
-	// }
 	if (s_add_to_team(buf, newfd) == EXIT_FAILURE)
 		close(newfd);
 	else
@@ -228,7 +210,7 @@ void	s_select_recv(int fd, fd_set *master)
 		{
 			buf[nbytes] = '\0';
 			printf("nb_req = %d\n", g_players[fd].nb_req);
-			enqueue(&g_cmds, fd, buf);
+			enqueue(&g_cmdq, fd, buf);
 			g_players[fd].nb_req++;
 			printf("%d bytes received: |%s|\n", nbytes, buf);
 			memset(buf, 0, strlen(buf));
@@ -238,6 +220,27 @@ void	s_select_recv(int fd, fd_set *master)
 		{
 			s_send_msg(fd, "request limit exceeded WAIT ⛔️\n");
 		}
+	}
+}
+
+void	s_exec_cmd(t_cmdq **head)
+{
+	int		i;
+
+	if (!*head)
+		return ;
+	i = 0;
+	while (i < 13)
+	{
+		if (strcmp((*head)->cmd, g_cmds[i].cmd) == 0)
+		{
+			g_cmds[i].func();
+			g_players[(*head)->fd].nb_req--;
+			send((*head)->fd, "OK\n", 3, 0);
+			dequeue(head);
+			return ;
+		}
+		i++;
 	}
 }
 
@@ -266,6 +269,7 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			}
 			i++;
 		}
+		s_exec_cmd(&g_cmdq);
 	}
 }
 
@@ -278,7 +282,7 @@ int		main(int ac, char **av)
 	if (ac < 13)
 		server_usage();
 	parse_args(av);
-	g_cmds = NULL;
+	g_cmdq = NULL;
 	SELECT_VARS;
 	FD_ZERO(&master);
 	FD_ZERO(&read_fds);

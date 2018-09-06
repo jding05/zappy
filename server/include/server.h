@@ -40,6 +40,7 @@ typedef struct		s_player
 	int				team_id;
 	int				inventory[7];
 	int				pos[2];
+	int				orientation;
 	int				nb_req;
 	int				level;
 	int				dead;
@@ -57,6 +58,6 @@ typedef struct		s_team
 
 extern t_player		g_players[MAX_FD];
 extern t_team		g_teams[MAX_TEAM];
-extern t_cmdq		*g_cmds;
+extern t_cmdq		*g_cmdq;
 
 #endif

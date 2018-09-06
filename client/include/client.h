@@ -6,7 +6,7 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/05 13:38:27 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/05 13:38:32 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/05 20:05:03 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # define MAX_TEAM 4
 # define MAX_TEAM_NAME 32
 //# define SUCCESS_CHAR $
-# define FAILURE_CHAR #
+# define FAILURE_CHAR '#'
 
 # include <stdio.h>
 # include <stdlib.h>

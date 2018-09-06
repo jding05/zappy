@@ -6,7 +6,7 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/25 22:47:38 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/05 18:10:29 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/05 21:53:39 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int		recv_print(int fd)
 	if ((nbytes = recv(fd, buf, BUF_SIZE - 1, 0)) > 0)
 	{
 		buf[nbytes] = '\0';
-		if (*buf == '#')
+		if (*buf == FAILURE_CHAR)
 		{
 			write(2, &buf[1], nbytes);
 			return (EXIT_FAILURE);
@@ -82,37 +82,17 @@ int		main(int ac, char **av)
 	send(sock, g_env.team_name, strlen(g_env.team_name), 0);
 	if (recv_print(sock) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-
-
-//	if (recv_print(sock) == EXIT_FAILURE)
-//	{
-//		return (EXIT_FAILURE);
-//	}
-	// if ((nbytes = recv(sock, buf, BUF_SIZE, 0)) > 0)
-	// {
-	// 	buf[nbytes] = '\0';	
-	// 	// if (strcmp(buf, TEAM_FULL_MSG) == 0)
-	// 	// {
-	// 	// 	write(1, buf, strlen(buf));
-	// 	// 	return (EXIT_FAILURE);
-	// 	// }
-	// 	printf("*buf = %c\n", *buf);
-	// 	if (*buf == '#')
-	// 	{
-	// 		write(1, &buf[1], strlen(&buf[1]));
-	// 		return (EXIT_FAILURE);
-	// 	}
-	// 	write(1, buf, strlen(buf));
-	// 	memset(buf, 0, strlen(buf));
-	// }
 	while (1)
 	{
 		nbytes = read(STDIN_FILENO, buf, BUF_SIZE - 1);
 		buf[nbytes - 1] = '\0';
 		if (validate_cmd(buf))
 		{
+			write(1, "balalalalalala\n", 15);
 			printf("client side buf = |%s|\n", buf);
 			send(sock, buf, strlen(buf), 0);
+			//if (recv_print(sock) == EXIT_FAILURE)
+			//	return (EXIT_FAILURE);
 			if (recv_print(sock) == EXIT_FAILURE)
 				return (EXIT_FAILURE);
 			memset(buf, 0, strlen(buf));
