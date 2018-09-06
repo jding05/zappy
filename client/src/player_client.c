@@ -6,7 +6,7 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/25 22:47:38 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/05 13:46:30 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/05 18:10:29 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ int		recv_print(int fd)
 	return (EXIT_SUCCESS);
 }
 
+
 int		main(int ac, char **av)
 {
 	int		sock;
@@ -76,12 +77,17 @@ int		main(int ac, char **av)
 
 	parse_cargs(av);
 	sock = create_client(g_env.host, atoi(g_env.port));
-	recv_print(sock);
+	if (recv_print(sock) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
 	send(sock, g_env.team_name, strlen(g_env.team_name), 0);
 	if (recv_print(sock) == EXIT_FAILURE)
-	{
 		return (EXIT_FAILURE);
-	}
+
+
+//	if (recv_print(sock) == EXIT_FAILURE)
+//	{
+//		return (EXIT_FAILURE);
+//	}
 	// if ((nbytes = recv(sock, buf, BUF_SIZE, 0)) > 0)
 	// {
 	// 	buf[nbytes] = '\0';	
@@ -107,7 +113,8 @@ int		main(int ac, char **av)
 		{
 			printf("client side buf = |%s|\n", buf);
 			send(sock, buf, strlen(buf), 0);
-			recv_print(sock);
+			if (recv_print(sock) == EXIT_FAILURE)
+				return (EXIT_FAILURE);
 			memset(buf, 0, strlen(buf));
 		}
 		else

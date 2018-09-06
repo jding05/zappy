@@ -1,21 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmdq.c                                             :+:      :+:    :+:   */
+/*   queue.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/31 15:34:42 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/01 12:36:53 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/04 16:24:25 by sding            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cmd_queue.h"
-
-#include <unistd.h>
-#include <stdio.h>
-
-
 
 void	enqueue(t_cmdq **head, int fd, char *cmd)
 {
@@ -24,7 +19,6 @@ void	enqueue(t_cmdq **head, int fd, char *cmd)
 
 	if (!*head)
 	{
-		//write(1, "haha\n", 5);
 		if (!(*head = (t_cmdq*)malloc(sizeof(t_cmdq))))
 			return ;
 		(*head)->fd = fd;
@@ -34,7 +28,6 @@ void	enqueue(t_cmdq **head, int fd, char *cmd)
 	}
 	else
 	{
-		//write(1, "hehe\n", 5);
 		if (!(new = (t_cmdq*)malloc(sizeof(t_cmdq))))
 			return ;
 		new->fd = fd;
@@ -46,6 +39,7 @@ void	enqueue(t_cmdq **head, int fd, char *cmd)
 			tmp = tmp->next;
 		tmp->next = new;
 	}
+	write(1, "added to cmdq\n", 14);
 }
 
 void	dequeue(t_cmdq **head)
@@ -60,6 +54,19 @@ void	dequeue(t_cmdq **head)
 	tmp = NULL;
 }
 
+
+void	print_queue(t_cmdq *head)
+{
+	t_cmdq *tmp;
+
+	tmp = head;
+	while (tmp)
+	{
+		printf("%s -> ", tmp->cmd);
+		tmp = tmp->next;
+	}
+}
+
 /*
 int		main(void)
 {
@@ -68,10 +75,12 @@ int		main(void)
 
 	//cmd = (t_cmdq*)malloc(sizeof(t_cmdq));
 	enqueue(&cmd, 4, "I am the first");
+	print_queue(cmd);
 	enqueue(&cmd, 5, "hello world");
-	printf("fd = %d\n", cmd->next->fd);
-	printf("cmd = |%s|\n", cmd->next->cmd);
-	write(1, "here\n", 5);
+	print_queue(cmd);
+	// printf("fd = %d\n", cmd->next->fd);
+	// printf("cmd = |%s|\n", cmd->next->cmd);
+	// write(1, "here\n", 5);
 	return (0);
 }
 */

@@ -13,7 +13,7 @@
 #ifndef PARSE_H
 # define PARSE_H
 
-# include "server_client.h"
+# include "server.h"
 
 # define SFLAGS pxynct
 

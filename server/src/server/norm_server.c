@@ -6,11 +6,11 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/31 14:54:00 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/05 11:46:47 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/05 18:08:47 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server_client.h"
+#include "server.h"
 #include "parse.h"
 
 t_player	g_players[MAX_FD];
@@ -28,58 +28,10 @@ int		perror_rv(char *errmsg)
 	return (EXIT_FAILURE);
 }
 
-/*
-void	s_add_to_team(char *team_name, int fd, int nb_client)
-{
-	int		i;
-
-	i = 0;
-	while (*g_teams[i].team_name)
-	{
-		if (strcmp(g_teams[i].team_name, team_name) == 0)
-		{
-			if (g_teams[i].nb_client == 0)
-				return ;
-			g_teams[i].nb_client--;
-			return ;
-		}
-		i++;
-	}
-	g_teams[i].team_id = i;
-	strcpy(g_teams[i].team_name, team_name);
-	g_teams[i].nb_client = nb_client;
-	g_players[fd].fd = fd;
-	g_players[fd].team_id = i;
-}
-*/
-
 
 void	s_send_msg(int fd, char *msg)
 {
 	send(fd, msg, strlen(msg), 0);
-}
-
-void	recv_print(int fd)
-{
-	char	buf[BUF_SIZE];
-	int		nbytes;
-
-	if ((nbytes = recv(fd, buf, BUF_SIZE - 1, 0)) > 0)
-	{
-		buf[nbytes] = '\0';
-		if (*buf == '#')
-		{
-			write(2, &buf[1], nbytes);
-		}
-		else
-			write(1, buf, nbytes);
-	}
-	else
-	{
-		perror("recv error\n");
-		memset(buf, 0, nbytes);
-	}
-	
 }
 
 /*
@@ -214,11 +166,26 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	if ((nbytes = recv(newfd, buf, BUF_SIZE, 0)) < 0)
 		perror(strerror(errno));
 	buf[nbytes] = '\0';
-	s_add_to_team(buf, newfd);
-	if (g_teams[g_players[newfd].team_id].nb_client == 0)
-	{
+	//printf("nb_client = %d\n", g_teams[g_players[newfd].team_id].nb_client);
+
+	// if (g_teams[g_players[newfd].team_id].nb_client == 0)
+	// {
+	// 	close(newfd);
+	// }
+	// else
+	// {
+	// 	FD_SET(newfd, master);
+	// 	if (newfd > *fdmax)
+	// 		*fdmax = newfd;
+	// 	//printf("nb_client = %d\n", g_teams[g_players[newfd].team_id].nb_client);
+	// 	//printf("x: | y: \n");
+	// 	printf("new connection from %s on socket %d\n",
+	// 			inet_ntop(remoteaddr.ss_family, 
+	// 				get_in_addr((struct sockaddr*)&remoteaddr), 
+	// 				remote_ip, INET6_ADDRSTRLEN), newfd);
+	// }
+	if (s_add_to_team(buf, newfd) == EXIT_FAILURE)
 		close(newfd);
-	}
 	else
 	{
 		FD_SET(newfd, master);
@@ -229,7 +196,7 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 		printf("new connection from %s on socket %d\n",
 				inet_ntop(remoteaddr.ss_family, 
 					get_in_addr((struct sockaddr*)&remoteaddr), 
-					remote_ip, INET6_ADDRSTRLEN), newfd);
+					remote_ip, INET6_ADDRSTRLEN), newfd);	
 	}
 }
 
@@ -269,7 +236,7 @@ void	s_select_recv(int fd, fd_set *master)
 		}
 		else
 		{
-			s_send_msg(fd, "#request limit exceeded\n");
+			s_send_msg(fd, "request limit exceeded WAIT ⛔️\n");
 		}
 	}
 }
