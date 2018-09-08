@@ -21,18 +21,19 @@
 # include "cmds.h"
 
 
-# define BUF_SIZE 256
+# define BUF_SIZE 32
 # define MAX_FD 16
 # define MAX_TEAM 4
 # define MAX_TEAM_NAME 32
-//# define SUCCESS_CHAR $
-# define FAILURE_CHAR #
+# define FAILURE_CHAR $
 
 # define SOCKET_VARS struct addrinfo hints, *ai; struct protoent *proto;
 # define SELECT_VARS fd_set master, read_fds; int fdmax;
 
-# define WELCOME_MSG "WELCOME 🙂\n"
-//# define TEAM_FULL_MSG "TEAM IS FULL\nBYE 😕\n"
+# define WELCOME "WELCOME"
+# define TEAM_FULL "TEAM IS FULL BYE"
+# define TEAM_NOT_FOUND "TEAM NOT FOUND BYE"
+# define TEAM_JOINED "JOINED TEAM"
 
 typedef struct		s_player
 {
@@ -59,5 +60,13 @@ typedef struct		s_team
 extern t_player		g_players[MAX_FD];
 extern t_team		g_teams[MAX_TEAM];
 extern t_cmdq		*g_cmdq;
+
+
+int		perror_rv(char *errmsg);
+void	s_init_player(int fd);
+int		s_add_to_team(char *team_name, int fd);
+void	s_exec_cmd(t_cmdq **head);
+void	send_msg(int fd, char *msg);
+void	recv_print(int fd);
 
 #endif

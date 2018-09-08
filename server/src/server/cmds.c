@@ -55,6 +55,11 @@ void	cmd_right(void)
 	printf("\n******right executed******\n");
 }
 
+void	cmd_see(void)
+{
+	printf("\n******see executed******\n");
+}
+
 void	cmd_take(void)
 {
 	printf("\n******take executed******\n");

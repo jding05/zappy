@@ -6,7 +6,7 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/31 14:54:00 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/05 21:41:46 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/07 17:14:33 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,67 +17,6 @@ t_player	g_players[MAX_FD];
 t_team		g_teams[MAX_TEAM];
 t_env		g_env;
 t_cmdq		*g_cmdq;
-
-/*
-** print out the error message then return failure
-*/
-
-int		perror_rv(char *errmsg)
-{
-	write(2, errmsg, strlen(errmsg));
-	return (EXIT_FAILURE);
-}
-
-
-void	s_send_msg(int fd, char *msg)
-{
-	send(fd, msg, strlen(msg), 0);
-}
-
-/*
-** initialize a player's data
-** or
-** reset a player's data when the player_client is terminated
-*/
-
-void	s_init_player(int fd)
-{
-	g_players[fd].fd = fd;
-	g_players[fd].nb_req = 0;
-	memset(g_players[fd].inventory, 0, 7);
-	memset(g_players[fd].pos, -1, 2);
-	g_players[fd].level = 0;
-}
-
-/*
-** when a new player is connected, add it to a team
-*/
-
-int		s_add_to_team(char *team_name, int fd)
-{
-	int		i;
-
-	i = 0;
-	while (*g_teams[i].team_name)
-	{
-		if (strcmp(g_teams[i].team_name, team_name) == 0)
-		{
-			if (g_teams[i].nb_client == 0)
-			{
-				s_send_msg(fd, "#team is full\nBYE 😕\n");
-				return (perror_rv("team is full\n")); 
-			}
-			s_init_player(fd);
-			g_players[fd].team_id = i;
-			g_teams[i].nb_client--;
-			s_send_msg(fd, "joind team\n");
-			return (EXIT_SUCCESS);
-		}
-		i++;
-	}
-	s_send_msg(fd, "#team not found\nBYE 😕\n");
-	return (perror_rv("team not found\n"));
-}
 
 
 /*
@@ -162,12 +101,53 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	addrlen = sizeof(remoteaddr);
 	if ((newfd = accept(fd, (struct sockaddr *)&remoteaddr, &addrlen)) == -1)
 		perror("accept");
-	send(newfd, WELCOME_MSG, strlen(WELCOME_MSG), 0);
-	if ((nbytes = recv(newfd, buf, BUF_SIZE, 0)) < 0)
-		perror(strerror(errno));
-	buf[nbytes] = '\0';
-	if (s_add_to_team(buf, newfd) == EXIT_FAILURE)
-		close(newfd);
+
+	
+	send_msg(newfd, WELCOME); // 1
+	
+
+	// recv_print(newfd);
+	// potential blocking here: 
+	// reason for blocking is that recv_print is expecting multiple sends (in while(1)) but there is only one send
+	// need to check if nbytes == bytes_expected
+
+	// printf("team_name = %s\n", g_teams[0].team_name);
+	int		tbytes;
+	char	msg[BUF_SIZE];
+	int		i;
+
+	tbytes = 0;
+	while (tbytes < BUF_SIZE)
+	{
+		nbytes = recv(newfd, buf, BUF_SIZE, 0);
+		if (nbytes < 0)
+		{
+			perror("recv error\n");
+			return ;
+		}
+		if (nbytes == 0)
+		{
+			s_init_player(fd);
+			printf("Player on socket %d left\n", fd);
+		}
+		buf[nbytes] = '\0';
+		tbytes += nbytes;
+		i = 0;
+		while (i < BUF_SIZE)
+		{
+			if (buf[i] == '#')
+				buf[i] = '\0';
+			i++;
+		}
+		strncpy(msg, buf, i);
+		memset(buf, 0, BUF_SIZE);
+		if (tbytes == BUF_SIZE)
+		{
+			break ;
+		}
+	}
+	if (s_add_to_team(msg, newfd) == EXIT_FAILURE)
+		close(newfd);	
 	else
 	{
 		FD_SET(newfd, master);
@@ -189,60 +169,99 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 
 void	s_select_recv(int fd, fd_set *master)
 {
-	char	buf[BUF_SIZE];
 	int		nbytes;
+	int		tbytes;
+	char	buf[BUF_SIZE];
+	char	msg[BUF_SIZE];
+	int		i;
 
-	if ((nbytes = recv(fd, buf, BUF_SIZE, 0)) <= 0)
+	tbytes = 0;
+	while (tbytes < BUF_SIZE)
 	{
-		if (nbytes == 0)
+		nbytes = recv(fd, buf, BUF_SIZE, 0);
+
+		if (nbytes <= 0)
 		{
-			s_init_player(fd);
-			printf("Player on socket %d left\n", fd);
-		}
+			if (nbytes == 0)
+			{
+				s_init_player(fd);
+				printf("Player on socket %d left\n", fd);
+			}
+			else
+			{
+				perror("server recv error\n");
+			}
+			close(fd);
+			FD_CLR(fd, master);
+			return ;
+		}	
 		else
-			perror(strerror(errno));
-		close(fd);
-		FD_CLR(fd, master);
+		{
+			buf[nbytes] = '\0';
+			tbytes += nbytes;
+			i = 0;
+			while (i < BUF_SIZE)
+			{
+				if (buf[i] == '#')
+					buf[i] = '\0';
+				i++;
+			}
+			strncpy(msg, buf, i);
+			memset(buf, 0, BUF_SIZE);
+			if (tbytes == BUF_SIZE)
+			{
+				printf("server recv msg = |%s|\n", msg);
+				break ;
+			}
+		}
+	}
+	if (g_players[fd].nb_req < 11)
+	{
+		// buf[nbytes] = '\0';
+		printf("nb_req = %d\n", g_players[fd].nb_req);
+		enqueue(&g_cmdq, fd, msg);
+		g_players[fd].nb_req++;
+		printf("%d bytes received: |%s|\n", nbytes, msg);
+		memset(buf, 0, BUF_SIZE);
+		send_msg(fd, "received");
 	}
 	else
 	{
-		if (g_players[fd].nb_req < 11)
-		{
-			buf[nbytes] = '\0';
-			printf("nb_req = %d\n", g_players[fd].nb_req);
-			enqueue(&g_cmdq, fd, buf);
-			g_players[fd].nb_req++;
-			printf("%d bytes received: |%s|\n", nbytes, buf);
-			memset(buf, 0, strlen(buf));
-			s_send_msg(fd, "received\n");
-		}
-		else
-		{
-			s_send_msg(fd, "request limit exceeded WAIT ⛔️\n");
-		}
+		send_msg(fd, "nb_req limit");
 	}
+
+	// if ((nbytes = recv(fd, buf, BUF_SIZE, 0)) <= 0)
+	// {
+	// 	if (nbytes == 0)
+	// 	{
+	// 		s_init_player(fd);
+	// 		printf("Player on socket %d left\n", fd);
+	// 	}
+	// 	else
+	// 		perror(strerror(errno));
+	// 	close(fd);
+	// 	FD_CLR(fd, master);
+	// }
+	// else
+	// {
+	// 	if (g_players[fd].nb_req < 11)
+	// 	{
+	// 		buf[nbytes] = '\0';
+	// 		printf("nb_req = %d\n", g_players[fd].nb_req);
+	// 		enqueue(&g_cmdq, fd, buf);
+	// 		g_players[fd].nb_req++;
+	// 		printf("%d bytes received: |%s|\n", nbytes, buf);
+	// 		memset(buf, 0, BUF_SIZE);
+	// 		send_msg(fd, "received");
+	// 	}
+	// 	else
+	// 	{
+	// 		send_msg(fd, "nb_req limit");
+	// 	}
+	// }
 }
 
-void	s_exec_cmd(t_cmdq **head)
-{
-	int		i;
 
-	if (!*head)
-		return ;
-	i = 0;
-	while (i < 13)
-	{
-		if (strcmp((*head)->cmd, g_cmds[i].cmd) == 0)
-		{
-			g_cmds[i].func();
-			g_players[(*head)->fd].nb_req--;
-			send((*head)->fd, "OK\n", 3, 0);
-			dequeue(head);
-			return ;
-		}
-		i++;
-	}
-}
 
 /*
 ** keep iterating through all select fds
@@ -263,16 +282,19 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			if (FD_ISSET(i, read_fds))
 			{
 				if (i == lfd)
+				{
 					s_select_accept(i, master, fdmax);
+				}
 				else
+				{
 					s_select_recv(i, master);
+				}
 			}
 			i++;
 		}
 		s_exec_cmd(&g_cmdq);
 	}
 }
-
 
 
 int		main(int ac, char **av)
@@ -294,3 +316,4 @@ int		main(int ac, char **av)
 	s_select_cycles(&master, &read_fds, &fdmax, listener);
 	return (0);
 }
+

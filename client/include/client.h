@@ -6,19 +6,18 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/05 13:38:27 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/05 20:05:03 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/06 19:59:52 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_H
 # define CLIENT_H
 
-# define BUF_SIZE 256
+# define BUF_SIZE 32
 # define MAX_FD 16
 # define MAX_TEAM 4
 # define MAX_TEAM_NAME 32
-//# define SUCCESS_CHAR $
-# define FAILURE_CHAR '#'
+# define FAILURE_CHAR '$'
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -31,5 +30,9 @@
 # include <netdb.h>
 # include <errno.h>
 # include "cparse.h"
+
+int		validate_cmd(char *cmd);
+void	recv_print(int fd);
+void	send_msg(int fd, char *msg);
 
 #endif
