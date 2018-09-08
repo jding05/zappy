@@ -7,6 +7,9 @@
 #define MAX_Y 15
 #define BUF_SIZE MAX_X*MAX_Y*4+6
 
+// map is in the format:
+// X,Y,1001101(0~127)...,#######
+
 int		main(int ac, char **av)
 {
 	int		x = atoi(av[1]);
