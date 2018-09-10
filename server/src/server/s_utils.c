@@ -36,12 +36,27 @@ int		perror_rv(char *errmsg)
 
 void	s_init_player(int fd)
 {
+	static int	player_id = 0;
+
+	g_players[fd].player_id = player_id++;
 	g_players[fd].fd = fd;
 	g_players[fd].nb_req = 0;
 	memset(g_players[fd].inventory, 0, 7);
 	memset(g_players[fd].pos, -1, 2);
 	g_players[fd].level = 0;
+	printf("player_id = %d\n", g_players[fd].player_id);
 }
+
+
+void	s_reset_player(int fd)
+{
+	// g_players[fd].fd = fd;
+	g_players[fd].nb_req = 0;
+	memset(g_players[fd].inventory, 0, 7);
+	memset(g_players[fd].pos, -1, 2);
+	g_players[fd].level = 0;
+}
+
 
 /*
 ** when a new player is connected, add it to a team

@@ -6,7 +6,7 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/31 14:54:00 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/07 17:14:33 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/08 18:15:55 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,15 +103,8 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 		perror("accept");
 
 	
-	send_msg(newfd, WELCOME); // 1
-	
+	send_msg(newfd, WELCOME);
 
-	// recv_print(newfd);
-	// potential blocking here: 
-	// reason for blocking is that recv_print is expecting multiple sends (in while(1)) but there is only one send
-	// need to check if nbytes == bytes_expected
-
-	// printf("team_name = %s\n", g_teams[0].team_name);
 	int		tbytes;
 	char	msg[BUF_SIZE];
 	int		i;
@@ -120,15 +113,10 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	while (tbytes < BUF_SIZE)
 	{
 		nbytes = recv(newfd, buf, BUF_SIZE, 0);
-		if (nbytes < 0)
+		if (nbytes <= 0)
 		{
-			perror("recv error\n");
+			perror("didn't receive team name\n");
 			return ;
-		}
-		if (nbytes == 0)
-		{
-			s_init_player(fd);
-			printf("Player on socket %d left\n", fd);
 		}
 		buf[nbytes] = '\0';
 		tbytes += nbytes;
@@ -184,7 +172,8 @@ void	s_select_recv(int fd, fd_set *master)
 		{
 			if (nbytes == 0)
 			{
-				s_init_player(fd);
+				// s_init_player(fd);
+				s_reset_player(fd);
 				printf("Player on socket %d left\n", fd);
 			}
 			else

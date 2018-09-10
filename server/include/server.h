@@ -25,7 +25,7 @@
 # define MAX_FD 16
 # define MAX_TEAM 4
 # define MAX_TEAM_NAME 32
-# define FAILURE_CHAR $
+# define FAILURE_CHAR '$'
 
 # define SOCKET_VARS struct addrinfo hints, *ai; struct protoent *proto;
 # define SELECT_VARS fd_set master, read_fds; int fdmax;
@@ -38,6 +38,7 @@
 typedef struct		s_player
 {
 	int				fd;
+	int				player_id;
 	int				team_id;
 	int				inventory[7];
 	int				pos[2];
@@ -64,6 +65,7 @@ extern t_cmdq		*g_cmdq;
 
 int		perror_rv(char *errmsg);
 void	s_init_player(int fd);
+void	s_reset_player(int fd);
 int		s_add_to_team(char *team_name, int fd);
 void	s_exec_cmd(t_cmdq **head);
 void	send_msg(int fd, char *msg);
