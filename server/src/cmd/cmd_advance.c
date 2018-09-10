@@ -16,31 +16,28 @@
 
 #include "../../inc/server.h"
 
-int		cmd_advance(t_players players, char *msg)
+int		cmd_advance(int fd, char *msg)
 {
 	int	d;
 
 	(void)msg;
-	printf(BLUE"Player [%d] -> [%s]"RESET, players.fd, "advance");
-	d = players.direction;
+	printf(CYAN"\n[Exec ADVANCE]\n"RESET);
+	printf(BLUE"Player [%d] -> [%s]"RESET, fd, "advance");
+	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
+	d = g_players[fd].direction;
 	if (d == NORTH)
-		players.y -= 1;
+		g_players[fd].y -= 1;
 	else if (d == EAST)
-		players.x += 1;
+		g_players[fd].x += 1;
 	else if (d == SOUTH)
-		players.y += 1;
+		g_players[fd].y += 1;
 	else if (d == WEST)
-		players.x -= 1;
-	if (players.x >= g_env.map_x)
-		players.x = 0;
-	else if (players.x < 0)
-		players.x = g_env.map_x - 1;
-	if (players.y >= g_env.map_y)
-		players.y = 0;
-	else if (players.y < 0)
-		players.y = g_env.map_y - 1;
-	players.request_nb--;
-	if (send_msg(players.fd, "OK", "Send [advance]") == EXIT_FAILURE)
+		g_players[fd].x -= 1;
+	update_player_pos(fd);
+	g_players[fd].request_nb--;
+	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
+	printf(CYAN"\n[ADVANCE SUCCESS]\n"RESET);
+	if (send_msg(fd, RED"OK\n"RESET, "Send [advance]") == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	// update grahpic client regarding player position
 	return (EXIT_SUCCESS);

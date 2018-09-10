@@ -15,27 +15,41 @@
 */
 #include "../../inc/server.h"
 
-int		cmd_inventory(t_players players, char *msg)
+int		cmd_inventory(int fd, char *msg)
 {
+	char	*str;
+
 	(void)msg;
-	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "inventory");
+	printf(CYAN"\n[Exec INVENTORY]\n"RESET);
+	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "inventory");
 	bzero(g_env.buffer, 4096);
-	strcpy(g_env.buffer, "{food ");
-	strcat(g_env.buffer, ft_itoa(players.inventory[0]));
+	strcpy(g_env.buffer, RED);
+	strcat(g_env.buffer, "{food ");
+	strcat(g_env.buffer, str = ft_itoa(g_players[fd].inventory[0]));
+	free(str);
 	strcat(g_env.buffer, ", linemate ");
-	strcat(g_env.buffer, ft_itoa(players.inventory[1]));
+	strcat(g_env.buffer, str = ft_itoa(g_players[fd].inventory[1]));
+	free(str);
 	strcat(g_env.buffer, ", deraumere ");
-	strcat(g_env.buffer, ft_itoa(players.inventory[2]));
+	strcat(g_env.buffer, str = ft_itoa(g_players[fd].inventory[2]));
+	free(str);
 	strcat(g_env.buffer, ", sibur ");
-	strcat(g_env.buffer, ft_itoa(players.inventory[3]));
+	strcat(g_env.buffer, str = ft_itoa(g_players[fd].inventory[3]));
+	free(str);
 	strcat(g_env.buffer, ", mendiane ");
-	strcat(g_env.buffer, ft_itoa(players.inventory[4]));
+	strcat(g_env.buffer, str = ft_itoa(g_players[fd].inventory[4]));
+	free(str);
 	strcat(g_env.buffer, ", phiras ");
-	strcat(g_env.buffer, ft_itoa(players.inventory[5]));
+	strcat(g_env.buffer, str = ft_itoa(g_players[fd].inventory[5]));
+	free(str);
 	strcat(g_env.buffer, ", thystame ");
-	strcat(g_env.buffer, ft_itoa(players.inventory[6]));
-	players.request_nb--;
-	if (send_msg(players.fd, g_env.buffer, "Send [inventory]") == EXIT_FAILURE)
+	strcat(g_env.buffer, str = ft_itoa(g_players[fd].inventory[6]));
+	free(str);
+	strcat(g_env.buffer, "}\n"RESET);
+	printf("players %d inventory: %s\n", fd, g_env.buffer);
+	printf(CYAN"\n[INVENTORY SUCCESS]\n"RESET);
+	g_players[fd].request_nb--;
+	if (send_msg(fd, g_env.buffer, "Send [inventory]") == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }

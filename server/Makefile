@@ -1,7 +1,7 @@
 SRV = server
 LIB = libft.a
 #LIBDEBUG = ""
-CFLAGS += -Wall -Werror -Wextra -g
+CFLAGS += -Wall -Werror -Wextra -g #-fsanitize=address
 INCLUDES = -I./inc #-I lib/inc/
 #LINK = -L lib/ -l ft
 CC = gcc
@@ -66,11 +66,11 @@ SRC_SRV =	server
 SRC_UTIL =	read_flags ft_itoa
 
 SRC_CMD =	cmd_advance cmd_broadcast cmd_connect_nbr cmd_fork cmd_hatch cmd_incantation cmd_inventory \
-			cmd_kick cmd_left cmd_put cmd_right cmd_see cmd_take cmd
+			cmd_kick cmd_left cmd_put cmd_right cmd_see cmd_take cmd cmd_pos cmd_info
 
 SRC_EVENT =	exec_event_queue
 
-SRC_SOCKET = socket
+SRC_SOCKET = socket s_send_recv s_utils
 # SRC_BRD = \
 # 	board \
 # 	tile

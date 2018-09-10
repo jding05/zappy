@@ -38,8 +38,8 @@ void	find_cell_player(int y, int x)
 	{
 		if (g_players[i].y == y && g_players[i].x == x)
 		{
-			if (!g_players[i].dead)
-				printf(" [player %d] ", i);
+			if (g_players[i].alive)
+				printf("player%d ", i);
 		}
 	}
 }
@@ -49,25 +49,24 @@ void	find_cell_player(int y, int x)
 **	 maybe save all the things to buffer
 */
 
-char	*g_resource[] = \
-{"food", "linemate", "deraumere", "sibur", "mendiane", "phiras", "thystame"};
-
 void	print_resource(int y, int x)
 {
 	int	i;
 	int	count;
 
 	i = -1;
+	// printf(" {%d,%d} ", y, x);
 	while (++i < 7)
 	{
-		while ((count = g_env.map[y][x][i]) > 0)
+		count = g_env.map[y][x][i];
+		while (count > 0)
 		{
-			printf(LIME"%s "RESET, g_resource[i]);
+			printf(LIME"%s "RESET, g_res_name[i]);
 			count--;
 		}
 	}
 	find_cell_player(y, x);
-	printf(", ");
+	// printf(", ");
 }
 
 /*
@@ -99,7 +98,9 @@ void	see_north_area(int level, int y, int x)
 	int	floor;
 	int	x_end;
 	int	x_start;
+	int flag;
 
+	flag = 1;
 	floor = 0;
 	x_end = x + 1;
 	printf("{");
@@ -108,6 +109,11 @@ void	see_north_area(int level, int y, int x)
 		x_start = x - floor;
 		while (x_start < x_end)
 		{
+			// if (flag)
+			// 	flag = 0;
+			// else
+			// 	printf(", ");
+			flag ? flag = 0 : printf(", ");
 			print_cell_value(y, x_start);
 			x_start++;
 		}
@@ -127,7 +133,9 @@ void	see_south_area(int level, int y, int x)
 	int floor;
 	int x_end;
 	int x_start;
+	int	flag;
 
+	flag = 1;
 	floor = 0;
 	x_end = x - 1;
 	printf("{");
@@ -136,6 +144,11 @@ void	see_south_area(int level, int y, int x)
 		x_start = x + floor;
 		while (x_start > x_end)
 		{
+			// if (flag)
+			// 	flag = 0;
+			// else
+			// 	printf(", ");
+			flag ? flag = 0 : printf(", ");
 			print_cell_value(y, x_start);
 			x_start--;
 		}
@@ -155,7 +168,9 @@ void	see_east_area(int level, int y, int x)
 	int floor;
 	int y_end;
 	int y_start;
+	int	flag;
 
+	flag = 1;
 	floor = 0;
 	y_end = y + 1;
 	printf("{");
@@ -164,6 +179,11 @@ void	see_east_area(int level, int y, int x)
 		y_start = y - floor;
 		while (y_start < y_end)
 		{
+			// if (flag)
+			// 	flag = 0;
+			// else
+			// 	printf(", ");
+			flag ? flag = 0 : printf(", ");
 			print_cell_value(y_start, x);
 			y_start++;
 		}
@@ -183,7 +203,9 @@ void	see_west_area(int level, int y, int x)
 	int	floor;
 	int	y_end;
 	int	y_start;
+	int	flag;
 
+	flag = 1;
 	floor = 0;
 	y_end = y - 1;
 	printf("{");
@@ -192,6 +214,11 @@ void	see_west_area(int level, int y, int x)
 		y_start = y + floor;
 		while (y_start > y_end)
 		{
+			// if (flag)
+			// 	flag = 0;
+			// else
+			// 	printf(", ");
+			flag ? flag = 0 : printf(", ");
 			print_cell_value(y_start, x);
 			y_start--;
 		}
@@ -202,19 +229,41 @@ void	see_west_area(int level, int y, int x)
 	printf("}");
 }
 
-int		cmd_see(t_players players, char *msg)
+int		cmd_see(int fd, char *msg)
 {
 	(void)msg;
-	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "see");
-	players.request_nb--;
-	if (players.direction == NORTH)
-		see_north_area(players.level, players.y, players.x);
-	else if (players.direction == SOUTH)
-		see_south_area(players.level, players.y, players.x);
-	else if (players.direction == WEST)
-		see_south_area(players.level, players.y, players.x);
-	else if (players.direction == EAST)
-		see_south_area(players.level, players.y, players.x);
+	printf(CYAN"\n[Exec SEE]\n"RESET);
+	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "see");
+	printf("current level: %d\n", g_players[fd].level);
+	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
+	g_players[fd].request_nb--;
+	if (g_players[fd].direction == NORTH)
+	{
+		// printf("BEFORE player direction: N Y= |%i| X = |%i|\n", g_players[fd].y, g_players[fd].x);
+		see_north_area(g_players[fd].level, g_players[fd].y, g_players[fd].x);
+		// printf("AFTER player direction: N Y= |%i| X = |%i|\n", g_players[fd].y, g_players[fd].x);
+	}
+	else if (g_players[fd].direction == SOUTH)
+	{
+		// printf("player direction: S Y= |%i| X = |%i|\n", g_players[fd].y, g_players[fd].x);
+		see_south_area(g_players[fd].level, g_players[fd].y, g_players[fd].x);
+		// printf("AFTER player direction: S Y= |%i| X = |%i|\n", g_players[fd].y, g_players[fd].x);
+	}
+
+	else if (g_players[fd].direction == WEST)
+	{
+		// printf("player direction: W Y= |%i| X = |%i|\n", g_players[fd].y, g_players[fd].x);
+		see_west_area(g_players[fd].level, g_players[fd].y, g_players[fd].x);
+		// printf("AFTER player direction: W Y= |%i| X = |%i|\n", g_players[fd].y, g_players[fd].x);
+	}
+	else if (g_players[fd].direction == EAST)
+	{
+		// printf("player direction: E Y= |%i| X = |%i|\n", g_players[fd].y, g_players[fd].x);
+		see_east_area(g_players[fd].level, g_players[fd].y, g_players[fd].x);
+		// printf("AFTER player direction: E Y= |%i| X = |%i|\n", g_players[fd].y, g_players[fd].x);
+	}
+	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
+	printf(CYAN"\n[SEE SUCCESS]\n"RESET);
 	// maybe update graphic client regarding player position
 	return (EXIT_SUCCESS);
 }

@@ -17,110 +17,46 @@
 ** once the egg 42/t hit, means it call this function
 ** -> then we call cmd_hatch put into queue (that marked 600/t after)
 */
-int     cmd_fork(t_players players, char *msg)
+int     cmd_fork(int fd, char *msg)
 {
-    printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "fork");
-    players.request_nb--;
+    printf(CYAN"\n[Exec FORK]\n"RESET);
+    printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "fork");
+	printf(BLUE"Player %d, block: %d\n"RESET, fd, g_players[fd].block);
+    g_players[fd].request_nb--;
 	(void)msg;
-    laid_egg(&players);
-    players.block = 1;
-	push_cmd_hatch(players.fd, msg);
-	if (send_msg(players.fd, "OK", "Send [fork]") == EXIT_FAILURE)
+    laid_egg(fd);
+    g_players[fd].block = 0;
+	push_cmd_hatch(fd);
+
+	printf(BLUE"Player %d, block: %d\n"RESET, fd, g_players[fd].block);
+	printf(CYAN"\n[RIGHT SUCCESS]\n"RESET);
+	if (send_msg(fd, RED"OK\n"RESET, "Send [fork]") == EXIT_FAILURE)
 		return (EXIT_FAILURE);
     return(EXIT_SUCCESS);
 }
 
-void	calc_time_spead(void)
+void	update_live(int fd, int nb_food)
 {
-	struct timeval	ret;
-
-	ret.tv_usec = ((double)1 / g_env.time_unit) * 1000000;
-	ret.tv_usec %= 1000000;
-	ret.tv_sec = ((double)1 / g_env.time_unit);
-	g_env.time_speed = ret;
+	printf(BLUE"Player [%d] -> [Update %d live]\n"RESET, fd, nb_food);
+	g_players[fd].live.tv_sec += (g_players[fd].live.tv_usec + nb_food * 126 * g_env.ms_pre_tick) / 1000000;
+	g_players[fd].live.tv_usec = (g_players[fd].live.tv_usec + nb_food * 126 * g_env.ms_pre_tick) % 1000000;
 }
 
-void	init_live(int fd)
+void    push_cmd_hatch(int fd)
 {
-	struct timeval	curr_time;
-
-	gettimeofday(&curr_time, NULL);
-    gettimeofday(&(g_players[fd].live), NULL);
-	g_players[fd].live.tv_sec = curr_time.tv_sec;
-	g_players[fd].live.tv_usec = curr_time.tv_usec;
-	update_live(fd, 10);
+	enqueue(fd, "hatch");
 }
 
-void	update_live(int fd, int food)
-{
-	g_players[fd].live.tv_sec += 126 * food * g_env.time_speed.tv_sec;
-	g_players[fd].live.tv_usec += 126 * food * g_env.time_speed.tv_usec;
-	g_players[fd].live.tv_sec += (g_players[fd].live.tv_usec) / 1000000;
-	g_players[fd].live.tv_usec %= 1000000;
-}
-
-void	record_time(t_event *node, int delay_time)
-{
-	struct timeval	curr_time;
-	struct timeval	*exec_time;
-
-    // printf("\nrecord time\n");
-    // exec_time = NULL;
-	gettimeofday(&curr_time, NULL);
-	// exec_time->tv_sec = curr_time.tv_sec;
-	// exec_time->tv_usec = curr_time.tv_usec;
-    exec_time = &curr_time;
-    // printf("\nrecord time\n");
-	exec_time->tv_sec += delay_time * g_env.time_speed.tv_sec;
-	exec_time->tv_usec += delay_time * g_env.time_speed.tv_usec;
-	exec_time->tv_sec += (exec_time->tv_usec) / 1000000;
-	exec_time->tv_usec %= 1000000;
-
-	node->exec_time = exec_time;
-}
-
-t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd)
-{
-	t_event			*node;
-
-	node = (t_event *)malloc(sizeof(t_event));
-
-	bzero(node, sizeof(t_event));
-	node->fd = fd;
-    bzero(node->cmd, CMD_LEN);
-	strcpy(node->cmd, cmd);
-	bzero(node->msg, MAX_MSG);
-	strcpy(node->msg, msg);
-    // printf("\nHere\n"); //////////////////
-	record_time(node, delay_time);
-    // printf("\nTHERE\n"); //////////////////
-	node->next = NULL;
-    printf("\n|node->fd %d|\n", node->fd);
-	return (node);
-}
-
-void    push_cmd_hatch(int fd, char *msg)
-{
-	t_event *event;
-
-	event = g_env.lt_queue->last;
-	event->next = init_event_node(fd, msg, g_cmd[12].delay_time, g_cmd[12].cmd);
-	event = event->next;
-	event->next = NULL;
-	g_env.lt_queue->last = event;
-}
-
-void    laid_egg(t_players *players)
+void    laid_egg(int fd)
 {
 	int	id;
 
-	id = players->team_id;
+	id = g_players[fd].team_id;
 	g_teams[id].egg[g_teams[id].egg_laid].team_id = id;
 	g_teams[id].egg[g_teams[id].egg_laid].egg_id = g_teams[id].egg_laid;
 	g_teams[id].egg[g_teams[id].egg_laid].hatched = 0;
-	g_teams[id].egg[g_teams[id].egg_laid].direction = rand() % 4;
-	g_teams[id].egg[g_teams[id].egg_laid].father_fd = players->fd;
-	g_teams[id].egg[g_teams[id].egg_laid].y = players->y;
-	g_teams[id].egg[g_teams[id].egg_laid].x = players->x;
+	g_teams[id].egg[g_teams[id].egg_laid].father_fd = fd;
+	g_teams[id].egg[g_teams[id].egg_laid].y = g_players[fd].y;
+	g_teams[id].egg[g_teams[id].egg_laid].x = g_players[fd].x;
 	g_teams[id].egg_laid++;
 }

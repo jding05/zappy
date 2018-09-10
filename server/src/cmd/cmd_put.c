@@ -16,28 +16,31 @@
 
 #include "../../inc/server.h"
 
-int		cmd_put(t_players players, char *msg)
+int		cmd_put(int fd, char *msg)
 {
 	int res_i;
 
-	printf(BLUE"Player [%d] -> [%s %s]\n"RESET, players.fd, "put", msg);
-	players.request_nb--;
+	printf(CYAN"\n[Exec PUT]\n"RESET);
+	printf(BLUE"Player [%d] -> [%s %s]\n"RESET, fd, "put", msg);
+	g_players[fd].request_nb--;
 	if ((res_i = check_resource(msg)) == 7) // i think this can be handle in parse
 	{
-		if (send_msg(players.fd, "KO", "Send [put]") == EXIT_FAILURE)
+		if (send_msg(fd, RED"KO\n"RESET, "Send [put]") == EXIT_FAILURE)
 			return (EXIT_FAILURE);
 	}
-	if (players.inventory[res_i] == 0)
+	if (g_players[fd].inventory[res_i] == 0)
 	{
-		if (send_msg(players.fd, "KO", "Send [put]") == EXIT_FAILURE)
+		if (send_msg(fd, RED"KO\n"RESET, "Send [put]") == EXIT_FAILURE)
 			return (EXIT_FAILURE);
 	}
 	else
 	{
-		players.inventory[res_i]--;
-		g_env.map[players.y][players.x][res_i]++;
+		g_players[fd].inventory[res_i]--;
+		g_env.map[g_players[fd].y][g_players[fd].x][res_i]++;
 	}
-	if (send_msg(players.fd, "OK", "Send [put]") == EXIT_FAILURE)
+	// printf("players %d, finish take -> %s\n", fd, msg);
+	printf(CYAN"\n[PUT SUCCESS]\n"RESET);
+	if (send_msg(fd, RED"OK\n"RESET, "Send [put]") == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	// update graphic client regarding player position
 	return (EXIT_SUCCESS);

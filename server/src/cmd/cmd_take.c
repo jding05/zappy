@@ -16,28 +16,39 @@
 
 #include "../../inc/server.h"
 
-int     cmd_take(t_players players, char *msg)
+void	eat_food_for_living(int fd)
+{
+	g_players[fd].inventory[0]--;
+	update_live(fd, 1);
+}
+
+int     cmd_take(int fd, char *msg)
 {
     int res_i;
 
-    printf(BLUE"Player [%d] -> [%s %s]"RESET, players.fd, "take", msg);
-    players.request_nb--;
+	printf(CYAN"\n[Exec TAKE]\n"RESET);
+    printf(BLUE"Player [%d] -> [%s %s]"RESET, fd, "take", msg);
+    g_players[fd].request_nb--;
     if ((res_i = check_resource(msg)) == 7) // i think this can be handle in parse
 	{
-		if (send_msg(players.fd, "KO", "Send [take]") == EXIT_FAILURE)
+		if (send_msg(fd, RED"KO\n"RESET, "Send [take]") == EXIT_FAILURE)
 			return (EXIT_FAILURE);
 	}
-    if (g_env.map[players.y][players.x][res_i] == 0)
+    if (g_env.map[g_players[fd].y][g_players[fd].x][res_i] == 0)
 	{
-		if (send_msg(players.fd, "KO", "Send [take]") == EXIT_FAILURE)
+		if (send_msg(fd, RED"KO\n"RESET, "Send [take]") == EXIT_FAILURE)
 			return (EXIT_FAILURE);
 	}
     else
     {
-        g_env.map[players.y][players.x][res_i]--;
-        players.inventory[res_i]++;
+        g_env.map[g_players[fd].y][g_players[fd].x][res_i]--;
+        g_players[fd].inventory[res_i]++;
+		if (res_i == 0)
+			eat_food_for_living(fd);
     }
-	if (send_msg(players.fd, "OK", "Send [take]") == EXIT_FAILURE)
+	printf("players %d, finish take -> %s\n", fd, msg);
+	printf(CYAN"\n[TAKE SUCCESS]\n"RESET);
+	if (send_msg(fd, RED"OK\n"RESET, "Send [take]") == EXIT_FAILURE)
 		return (EXIT_FAILURE);
     // update graphic client regarding player position
     return (EXIT_SUCCESS);
@@ -60,5 +71,8 @@ int     check_resource(char *msg)
 	else if (strcmp("thystame", msg) == 0)
 		return (6);
 	else
+	{
+		printf("check_resource, msg_buf for put and take: |%s|\n", msg);
 		return (7);
+	}
 }

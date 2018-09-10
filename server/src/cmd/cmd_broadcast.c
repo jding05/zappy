@@ -54,9 +54,9 @@ void	send_broadcast_msg(int nb_dir, int fd, char *msg)
 	strcat(g_env.buffer, msg);
 	if (msg[strlen(msg) - 1] != '\n')
 		strcat(g_env.buffer, "\n");
+	printf(RED"player %d, %s\n"RESET, fd, g_env.buffer);
 	if (send(fd, g_env.buffer, strlen(g_env.buffer), 0) == -1)
 		perror("send [broadcast mssage]");
-		// error(0, "send [broadcast mssage]", false);
 }
 
 /*
@@ -70,6 +70,7 @@ void	send_broadcast_msg(int nb_dir, int fd, char *msg)
 **            3. send to all the player the msg with square nb
 */
 
+// done norm
 void	broadcast(int y, int x, int fd, char *msg)
 {
 	int i;
@@ -84,14 +85,21 @@ void	broadcast(int y, int x, int fd, char *msg)
 		pos[i][1] = x;
 	}
 	i = -1;
+	// printf("player %d, origin y %d, x %d\n", fd, y, x);
 	calc_four_pos(pos, y, x);
 	while (++i < MAX_FD)
 	{
-		if (i != fd)
+		if (i != fd && g_players[i].alive)
 		{
+			// printf("4 position: 1:{%d,%d}, 2:{%d,%d}, 3:{%d,%d}, 4:{%d,%d}\n",
+			// pos[0][0],pos[0][1], pos[1][0],pos[1][1], pos[2][0],pos[2][1], pos[3][0],pos[3][1]);
+
 			j = get_closest_pos(pos, g_players[i].y, g_players[i].x);
-			nb_dir = calc_direction(pos[j], g_players[i].y, g_players[i].x,\
+			nb_dir = calc_direction(pos[j], g_players[i].y, g_players[i].x,
 									g_players[i].direction);
+			// printf("pos %d -> , {%d,%d}are the closest\n, nb_dir %d\n", j + 1, pos[j][0], pos[j][1], nb_dir);
+			// printf(RED"broadcast player %d, y: %d, x: %d, d: %d\n"RESET, fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
+			// printf(RED"got msg player %d, y: %d, x: %d, d: %d\n"RESET, i, g_players[i].y, g_players[i].x, g_players[i].direction);
 			send_broadcast_msg(nb_dir, i, msg);
 		}
 	}
@@ -108,12 +116,19 @@ void	broadcast(int y, int x, int fd, char *msg)
 **	the sound between the transmitter to the player for which we calculate
 */
 
-int		cmd_broadcast(t_players players, char *msg)
+// done norm
+int		cmd_broadcast(int fd, char *msg)
 {
-	printf(BLUE"Player [%d] -> [%s <%s>]\n"RESET, players.fd, "broadcast", msg);
-	players.request_nb--;
-	broadcast(players.y, players.x, players.fd, msg);
-	if (send_msg(players.fd, "OK", "Send [broadcast]") == EXIT_FAILURE)
+	printf(CYAN"\n[Exec BROADCAST]\n"RESET);
+	printf(BLUE"Player [%d] -> [%s <%s>]\n"RESET, fd, "broadcast", msg);
+	g_players[fd].request_nb--;
+	broadcast(g_players[fd].y, g_players[fd].x, fd, msg);
+
+
+	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
+	printf(CYAN"\n[BROADCAST SUCCESS]\n"RESET);
+
+	if (send_msg(fd, "OK", "Send [broadcast]") == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
@@ -124,6 +139,7 @@ int		cmd_broadcast(t_players players, char *msg)
 **   -> compare 4 value to find the shortest one
 */
 
+// done norm
 int		get_closest_pos(int pos[4][2], int pos_y, int pos_x)
 {
 	int		y;
@@ -138,6 +154,7 @@ int		get_closest_pos(int pos[4][2], int pos_y, int pos_x)
 		x = (pos[i][1] - pos_x);
 		res[i++] = sqrt(y * y + x * x);
 	}
+	// printf("4 distance: 1. %f, 2. %f, 3. %f, 4. %f\n", res[0], res[1], res[2], res[3]);
 	if (res[0] < res[1] && res[0] < res[2] && res[0] < res[3])
 		return (0);
 	else if (res[1] < res[0] && res[1] < res[2] && res[1] < res[3])
@@ -146,7 +163,7 @@ int		get_closest_pos(int pos[4][2], int pos_y, int pos_x)
 		return (2);
 	else if (res[3] < res[0] && res[3] < res[1] && res[3] < res[2])
 		return (3);
-	return (4);
+	return (0);
 }
 
 /*
@@ -173,21 +190,27 @@ int		calc_direction(int pos[2], int y, int x, int direction)
 
 	y_diff = pos[0] - y;
 	x_diff = pos[1] - x;
-	if (y_diff == x_diff)
+	if (y_diff == 0 && x_diff == 0)
+		return (0);
+	else if (y_diff == x_diff)
 		d = pos[1] < x ? 2 : 6;
 	else if (y_diff + x_diff == 0)
 		d = pos[1] < x ? 4 : 8;
 	else if (y_diff > x_diff)
-		d = abs(y_diff) > abs(x_diff) ? 1 : 7;
+		d = abs(y_diff) > abs(x_diff) ? 5 : 3;
 	else if (y_diff < x_diff)
-		d = abs(y_diff) < abs(x_diff) ? 3 : 5;
-	if (direction == NORTH)
-		return (d);
-	else if (direction == EAST)
+		d = abs(y_diff) < abs(x_diff) ? 7 : 1;
+	else // not sure for this case
+		d = 1;
+	// printf("before adjust by got msg player nb_dir: %d\n", d);
+	// if (direction == NORTH)
+	// 	return (d);
+	if (direction == EAST)
 		d = (d < 7) ? d + 2 : d - 6;
 	else if (direction == SOUTH)
 		d = (d < 5) ? d + 4 : d - 4;
 	else if (direction == WEST)
 		d = (d > 2) ? d - 2 : d + 6;
+	// printf("before adjust by got msg player nb_dir: %d\n", d);
 	return (d);
 }

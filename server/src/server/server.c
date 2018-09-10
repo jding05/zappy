@@ -30,32 +30,97 @@
 **  2. while loop (fixed number of set) square root of map_x
 **  3. while loop (fixed width + height times)
 */
+# define FOOD
+# define LINEMATE 54
+# define DERAUMERE 60
+# define SIBUR 60
+# define MENDIANE 30
+# define PHIRAS 36
+# define THYSTAME 6
+
+/*
+** for a team to win the game, there should be at least 6 players reach level 6
+** -> for 6 players to reach max level, the min requirement resource to end the game
+** -> should be linemate 60, deraumere 60, sibur 60, mendiane 30, phiras 36, thystame 6
+** -> for total min resource should be 246, and the portion of each resources are:
+** -> linemate 22%, deraumere 24%, sibur 24% mendiane 12%, phiras 15%, thystame 2%
+** -> the chance to generate the stone resource in one random cell, it's the percentage value
+** -> and the total per stone resource should be [nb resource per stone * nb_team]
+*/
+
+static int	resource_dropping_rate(void)
+{
+	int		res;
+	int		rand_nb;
+
+	rand_nb = rand() % 100;
+	res = 0;
+	if (rand_nb < 22)
+		res = 1;
+	else if (rand_nb < (22 + 24))
+		res = 2;
+	else if (rand_nb < (22 + 24 + 24))
+		res = 3;
+	else if (rand_nb < (22 + 24 + 24 + 12))
+		res = 4;
+	else if (rand_nb < (22 + 24 + 24 + 12 + 15))
+		res = 5;
+	else if (rand_nb < (22 + 24 + 24 + 12 + 15 + 2))
+		res = 6;
+	// printf("rand_nb: %d res: %d\n", rand_nb, res);
+	return (res);
+}
 
 void	generate_resource(void)
 {
 	int		res;
-	int		count;
+	int		food;
+	int		y;
+	int		x;
 
-	res = 0;
 	printf(YELLOW"[Generate Resource]\n"RESET);
-	count = (int)sqrt(g_env.map_x) * (g_env.map_x + g_env.map_y);
-	while (count-- > 0)
-		while (res < 7)
-			g_env.map[rand() % g_env.map_y][rand() % g_env.map_x][res++]++;
+	y = rand() % g_env.map_y;
+	x = rand() % g_env.map_x;
+	res = resource_dropping_rate();
+	// if (!g_env.map[y][x][0] && food < 50)
+	if ((food = rand() % 100) < 50)
+		g_env.map[y][x][0]++;
+	if (!g_env.map[y][x][res])
+	{
+		if (g_env.res[res] < g_max_res[res] * g_env.nb_team)
+		{
+			g_env.map[y][x][res]++;
+			// printf(DARKYELLOW"< map: y: %d x: %d res: %s >\n\n"RESET, y, x, g_res_name[res]);
+			g_env.res[res]++;
+		}
+		// else
+		// 	printf("< map: y: %d x: %d res: %s ->> reach max >\n\n", y, x, g_res_name[res]);
+	}
+	// else
+	// 	printf("< map: y: %d x: %d res: %s ->> has existed>\n\n", y, x, g_res_name[res]);
+	printf("[Finish Generate]\n");
 }
 
 int		check_winner(void)
 {
 	int		i;
 	int		check;
+	int		fd;
 
 	check = 0;
+	fd = 1;
 	i = -1;
 	while (++i < g_env.nb_team)
 	{
 		if (g_teams[i].reach_max_level == 6)
 		{
-			printf(RED"[WINNER IS TEAM <%s>]\n"RESET, g_teams[i].team_name);
+			printf(YELLOW"\n\n[ WINNER IS TEAM < %s >]\n\n"RESET, g_teams[i].team_name);
+			while (fd < MAX_FD && g_players[fd].alive)
+			{
+				if (g_players[fd].team_id == i)
+				// printf("\n[ TEAM < %s > HAS WON ]\n", g_teams[i].team_name);
+				send_msg(fd, YELLOW"\n\n[[[[YOUR TEAM HAS WON THE GAME ]]]]\n\n"RESET, "Send [WINNER]");
+			}
 			check = 1;
 		}
 	}
@@ -65,7 +130,6 @@ int		check_winner(void)
 void	check_dead_player(void)
 {
 	int				i;
-	int				food;
 	struct timeval	curr_time;
 
 	i = -1;
@@ -74,101 +138,30 @@ void	check_dead_player(void)
 	{
 		if (g_players[i].fd && !g_players[i].dead)
 		{
-			if ((food = g_players[i].inventory[0]) > 0)
-				update_live(i, food);
 			if (check_event_time(&curr_time, &(g_players[i].live)))
 			{
 				g_players[i].dead = 1;
-				// clear_queue(i);
+				g_players[i].alive = 0;
+				send_msg(i, DARKYELLOW"\n[ Your player is dead ]\n"RESET, "Send [DEATH]");
 			}
 		}
 	}
 }
 
-/*
-** rought select loop()
-**  // the last param in select() need to change for the timeout
-*/
-
-// void	server_client_connection(void)
-// {
-// 	fd_set			*select_fds;
-// 	int				i;
-// 	struct timeval	*timeout;
-// 	int				short_term;
-
-// 	timeout = NULL; // need to fix the value here
-// 	short_term = 1;
-// 	while (select(FD_SETSIZE, &select_fds, NULL, NULL, timeout))
-// 	{
-// 		i = -1;
-// 		while (++i < FD_SETSIZE)
-// 			if (FD_ISSET(i, &select_fds))
-// 				i == g_env.server_fd ? new_client() : handle_cmd(i);
-// 		if (g_env.time_unit > 10)
-// 		{
-// 			exec_event_queue(short_term);
-// 			exec_event_queue(!short_term);
-// 		}
-// 		else
-// 		{
-// 			exec_event_list(short_term);
-// 			exec_event_list(short_term);
-// 		}
-// 		generate_resource();
-// 		check_dead_players();
-// 		// might involve timeout
-// 		if (check_winner())
-// 			break ;
-// 	}
-// }
-
-void	cycle_exec_event_loop(void)
-{
-	int				short_term;
-
-	short_term = 1;
-	if (g_env.time_unit > 10)
-	{
-		if (g_env.st_queue)
-			exec_event_queue(short_term);
-		if (g_env.lt_queue)
-			exec_event_queue(!short_term);
-	}
-	else
-	{
-		if (g_env.st_queue->first)
-			exec_event_list(short_term);
-		if (g_env.lt_queue->first)
-			exec_event_list(!short_term);
-	}
-	generate_resource();
-	check_dead_player();
-}
-
-// void	server_client_connection(void)
-// {
-// 	fd_set			*select_fds;
-// 	int				i;
-// 	struct timeval	*timeout;
-
-// 	timeout = NULL; // need to fix the value here
-// 	while (select(FD_SETSIZE, &select_fds, NULL, NULL, timeout))
-// 	{
-// 		i = -1;
-// 		while (++i < FD_SETSIZE)
-// 			if (FD_ISSET(i, &select_fds))
-// 				i == g_env.server_fd ? new_client() : handle_cmd(i);
-// 		cycle_loop();
-// 		// might involve timeout
-// 		if (check_winner())
-// 			break ;
-// 	}
-// }
-
 void	free_malloc(void)
 {
 	return ;
+}
+
+void	init_res(void)
+{
+	memset(g_env.res, 0, 7);
+}
+
+void 	init_queue(void)
+{
+	g_env.queue_head = NULL;
+	printf("[init_queue]\n");
 }
 
 /*
@@ -179,8 +172,10 @@ void	free_malloc(void)
 void	zappy_game(void)
 {
 	printf(RED"[GAME START ...]\n"RESET);
+	init_res();
 	generate_resource();
 	init_queue();
+	// calc_time_spead();
 	setup_socket();
 	printf(RED"[GAME END ...]\n"RESET);
 	free_malloc();
@@ -207,9 +202,7 @@ void	server_usage(void)
 
 int		main(int argc, char **argv)
 {
-	// t_env   env;
-    //
-	// bzero(&g_env, sizeof(t_env);
+	bzero(&g_env, sizeof(t_env));
 	if (argc < 13 || !read_flags(argc, argv, &g_env))
 	{
 		printf("reading flags\n");

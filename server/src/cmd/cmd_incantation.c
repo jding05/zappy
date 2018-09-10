@@ -12,28 +12,33 @@
 
 #include "../../inc/server.h"
 
-int		cmd_incantation(t_players players, char *msg)
+int		cmd_incantation(int fd, char *msg)
 {
 	int		i;
 	int		count;
 	int		fds[100];
 	int		level;
+	int		nb;
 
 	(void)msg;
-	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "incantation");
-	players.request_nb--;
+	printf(CYAN"\n[Exec INCANTATION]\n"RESET);
+	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "incantation");
+	printf("players %d, level %d\n", fd, g_players[fd].level);
+	g_players[fd].request_nb--;
 	i = -1;
 	count = 0;
-	level = players.level;
+	level = g_players[fd].level;
 	while (++i < MAX_FD)
 	{
-		if (g_players[i].y == players.y && g_players[i].x == players.x)
+		if (g_players[i].y == g_players[fd].y && g_players[i].x == g_players[fd].x)
 			if (g_players[i].level == level && check_prerequest(level, i))
 				fds[count++] = i;
 	}
-	if (count >= level_require(level))
+	if (count >= (nb = level_require(level)) && nb > 0)
 		level_up_and_unblock(count, fds);
 	//	maybe update graphic client regarding player position
+	printf(CYAN"\n[INCANTATION SUCCESS]\n"RESET);
+	printf("players %d, level %d\n", fd, g_players[fd].level);
 	return (EXIT_SUCCESS);
 }
 
@@ -110,24 +115,38 @@ int		level_require(int level)
 ** change -> check if players able to incantate
 */
 
-int		cmd_incantation_check(t_players players, char *msg)
+int		cmd_incantation_check(int fd) // need to norm
 {
 	int		i;
 	int		count;
 	int		fds[100];
 	int		level;
+	int		nb_players_require;
 
-	(void)msg;
 	i = -1;
 	count = 0;
-	level = players.level;
+	level = g_players[fd].level;
+	// printf("player: |%d|, level: |%d|\n", fd, level);
+	bzero(fds, sizeof(int) * 100);
+	if (level >= 8)
+	{
+		send_msg(fd, RED"KO\n"RESET, "Send [incantation]");
+		// printf("Player level: %d > 8\n",level);
+		return (0);
+	}
 	while (++i < MAX_FD)
 	{
-		if (g_players[i].y == players.y && g_players[i].x == players.x)
+		if (g_players[i].y == g_players[fd].y && g_players[i].x == g_players[fd].x &&
+			g_players[i].alive && !g_players[i].block)
+		{
 			if (g_players[i].level == level && check_prerequest(level, i))
 				fds[count++] = i;
+		}
 	}
-	if (count >= level_require(level))
+	// printf(RED"\n[level %d]\n"RESET, level);
+	nb_players_require = level_require(level);
+	// printf("count: |%d|, nb_players_require: |%d|\n", count, nb_players_require);
+	if (count >= nb_players_require)
 		blocking(count, fds);
 	else
 		return (0);
@@ -137,15 +156,14 @@ int		cmd_incantation_check(t_players players, char *msg)
 void	blocking(int count, int fds[100])
 {
 	int		i;
-	char	buffer[41];
 
 	i = -1;
-	strcpy(buffer, "elevation in progress\ncurrent level : k\n");
+	bzero(g_env.buffer, 4096);
+	strcpy(g_env.buffer, RED"elevation in progress\ncurrent level : k\n"RESET);
 	while (++i < count)
 	{
-		buffer[38] = g_players[i].level + '0';
-		if (send(i, buffer, 41, 0) == -1)
-			perror("Send [incantation]");
+		g_env.buffer[38] = g_players[i].level + '0';
+		send_msg(i, g_env.buffer, "Send [incantation]");
 		g_players[fds[i]].block = 1;
 	}
 }

@@ -14,7 +14,7 @@ typedef struct      s_egg
     int				team_id;
     int             egg_id;
     int             hatched;
-    int             direction;
+    // int             direction;
     int             father_fd;
     int             y;
     int             x;
@@ -30,25 +30,27 @@ typedef struct      s_team
     int             reach_max_level;    // sding added it
 	int				nb_client; // -> need to check this **********
 
-    t_egg           egg[10]; // need to added it
+    t_egg           egg[100]; // need to added it
     int             egg_hatched;     // sding added it
     int             egg_laid;        // sding added it
 }                   t_team;
 
 typedef struct      s_players
 {
-  int               fd;
-  int               team_id;
-  int               inventory[7];
-  int               y;
-  int               x;
-  int               request_nb;
-  int               level;
-  int               dead;
+	int				fd;
+	int				team_id;
+	int				inventory[7];
+	int				y;
+	int				x;
+	int				request_nb;
+	int				level;
+	int				dead;
 
-  int               block;
-  int               direction;	// sding added it --> 0: N, 1: E, 2: S, 3: W
-  struct timeval    live;
+	int				block;
+	int				direction;	// sding added it --> 0: N, 1: E, 2: S, 3: W
+	int				alive;
+	struct timeval	live;
+	struct timeval	block_time;
 }                   t_players;
 
 /*
@@ -69,37 +71,40 @@ typedef struct      s_players
 
 typedef struct          s_env
 {
-    int                 port;
-    char				        port_name[6];
+    char				port_name[6];
     int                 authorized_clients;
     int                 time_unit;
     int                 nb_team;
-    int                 map[1024][1024][7];
+    int                 map[20][20][7];
     int                 map_x;
     int                 map_y;
-    t_st_queue          *st_queue;
-    t_lt_queue          *lt_queue;
+    t_event             *queue_head;
   	char                buffer[4096];
     int                 server_fd;
-  	struct timeval		time_speed;
+	long int			ms_pre_tick;
+	int					res[7];
 }                       t_env;
 
 
-typedef struct	s_cmd
+typedef struct			s_cmd
 {
-	char		*cmd;
-	int			delay_time;
-	int		(*func)(t_players players, char *msg);
-}				t_cmd;
+	char				*cmd;
+	int					delay_time;
+	int					(*func)(int fd, char *msg);
+}						t_cmd;
 
 
-# define MAX_TEAM 4
-# define MAX_FD 16
+# define MAX_TEAM 10
+# define MAX_FD 420
+# define MAX_TIME_UNIT 100
 
-t_env       g_env;
-t_team      g_teams[MAX_TEAM];
-t_players   g_players[MAX_FD];
-t_cmd	    g_cmd[14];
+t_env       			g_env;
+t_team      			g_teams[MAX_TEAM];
+t_players   			g_players[MAX_FD];
+extern const t_cmd 		g_cmd[16];
+extern const int		g_max_res[7];
+extern const char		*g_res_name[7];
+extern const char		*g_options[6];
 
 
 #endif

@@ -19,18 +19,29 @@
 
 #include "../../inc/server.h"
 
-int		cmd_connect_nbr(t_players players, char *msg)
+int		cmd_connect_nbr(int fd, char *msg)
 {
-	char	*connect_nb;
-	int		team_id;
+	char	connect_nbr[100];
+	char	*str;
 
 	(void)msg;
-	printf(BLUE"Player [%d] -> [%s]\n"RESET, players.fd, "connect_nbr");
-	players.request_nb--;
-	team_id = players.team_id;
-	connect_nb = ft_itoa(g_teams[team_id].max_players - \
-		g_teams[team_id].connected_players + g_teams[team_id].egg_hatched);// need to double check for egg_used
-	if (send_msg(players.fd, connect_nb, "Send [connect_nbr]") == EXIT_FAILURE)
+	printf(CYAN"\n[Exec CONNECT_NBR]\n"RESET);
+	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "connect_nbr");
+
+	printf("Player %d, team: %s, nb_client %d\n", fd, g_teams[g_players[fd].team_id].team_name, g_teams[g_players[fd].team_id].nb_client);
+
+	g_players[fd].request_nb--;
+	bzero(connect_nbr, 100);
+	strcpy(connect_nbr, RED);
+	strcat(connect_nbr, str = ft_itoa(g_teams[g_players[fd].team_id].nb_client));
+	free(str);
+	strcat(connect_nbr, "\n");
+	strcat(connect_nbr, RESET);
+
+	printf("Player %d, team: %s, nb_client %d\n", fd, g_teams[g_players[fd].team_id].team_name, g_teams[g_players[fd].team_id].nb_client);
+	printf(CYAN"\n[CONNECT_NBR SUCCESS]\n"RESET);
+
+	if (send_msg(fd, connect_nbr, "Send [connect_nbr]") == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	// update graphic client regarding player position
 	return (EXIT_SUCCESS);

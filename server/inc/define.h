@@ -43,4 +43,13 @@
 # define YELLOW		"\033[1;33m"
 # define RESET		"\033[0m"
 
+/*
+** socket.c
+*/
+# define FAILURE_CHAR $
+# define WELCOME "WELCOME"
+# define TEAM_FULL "TEAM IS FULL BYE"
+# define TEAM_NOT_FOUND "TEAM NOT FOUND BYE"
+# define TEAM_JOINED "JOINED TEAM"
+
 #endif

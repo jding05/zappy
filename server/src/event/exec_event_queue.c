@@ -31,72 +31,6 @@
 **			-> if the event time is not ready to execute ->stop, else continue
 */
 
-void	exec_event_queue(int short_term)
-{
-	struct timeval	curr_time;
-	t_event			*event;
-	t_event			*tmp;
-	int				i;
-
-	gettimeofday(&curr_time, NULL);
-	event = short_term == 1 ? g_env.st_queue->first : g_env.lt_queue->first;
-	if (!event || !check_event_time(&curr_time, event->exec_time))
-		return ;
-	while (event)
-	{
-		i = 0;
-		while (g_cmd[i].cmd)
-			(!strcmp(g_cmd[i].cmd, event->cmd)) ? \
-			g_cmd[i].func(g_players[event->fd], event->msg) : i++;
-		tmp = event;
-		event = event->next;
-		free(tmp);
-		gettimeofday(&curr_time, NULL);
-		if (!check_event_time(&curr_time, event->exec_time))
-			break ;
-	}
-}
-
-void 	init_queue(void)
-{
-	g_env.st_queue = malloc(sizeof(t_st_queue));
-	g_env.lt_queue = malloc(sizeof(t_lt_queue));
-	g_env.st_queue->first = NULL;
-	g_env.st_queue->last = NULL;
-	g_env.lt_queue->first = NULL;
-	g_env.lt_queue->last = NULL;
-}
-
-void 	long_short_term(t_event *node, int short_term)
-{
-	if (short_term)
-	{
-		if (!(g_env.st_queue->first))
-		{
-			// printf("\nlong_short_term \n");
-			g_env.st_queue->first = node;
-			g_env.st_queue->last = node;
-			// printf("\nlong_short_term add queue success\n");
-			return ;
-		}
-		// printf("\nlong_short_term here\n");
-		g_env.st_queue->last->next = node;
-		g_env.st_queue->last = node;
-		// printf("\nlong_short_term there\n");
-	}
-	else
-	{
-		if (!(g_env.lt_queue->first))
-		{
-			g_env.lt_queue->first = node;
-			g_env.lt_queue->last = node;
-			return ;
-		}
-		g_env.lt_queue->last->next = node;
-		g_env.lt_queue->last = node;
-	}
-}
-
 /*
 ** new added
 ** check msg recv from players has cmd inside
@@ -118,29 +52,87 @@ int		check_valid_cmd(char *msg, char *msg_buf)
 		if (!(tmp = strstr(msg, g_cmd[i].cmd)))
 			i++;
 		else if (tmp != msg)
-			return (13);
+			return (15);
 		else
 		{
 			if ((strlen(msg) != (len = strlen(g_cmd[i].cmd))))
 			{
 				if (i != 5 && i != 6 && i != 8)
-					return (13);
+					return (16);
 				else
 				{
 					if (i == 8)
 						strcpy(msg_buf, msg + len);
 					else if (check_resource(strcpy(msg_buf, msg + len + 1)) == 7)
-						return (13);
-					else
-						bzero(msg_buf, sizeof(1024));
+						return (17);
 					return (i);
 				}
 			}
-			if (i != 5 && i != 6 && i != 8)
-				return (i);
+			printf(LIGHTBLUE"\n\nstrlen(msg): |%lu|,msg: |%s|\n\n"RESET,strlen(msg),msg);
+			// if (i != 5 && i != 6 && i != 8)
+			// 	return (i);
+			// else
+			// 	return (18); // no text or object behind, only broadcast
+			return ((i != 5 && i != 6 && i != 8) ? i : 18);
 		}
 	}
-	return (13);
+	return (18);
+}
+
+void	record_time(t_event *node, int delay_time)
+{
+	struct timeval	exec_time;
+
+	gettimeofday(&exec_time, NULL);
+
+	exec_time.tv_sec += (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) / 1000000;
+	exec_time.tv_usec = (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) % 1000000;
+
+	// printf("\n|delaytime:%d| pretic:%ld| mod:%ld|\n", delay_time, g_env.ms_pre_tick, g_env.ms_pre_tick % 1000000);
+	// printf("\n|delaytime:%d| pretic:%ld| div:%ld|\n", delay_time, g_env.ms_pre_tick, g_env.ms_pre_tick / 1000000);
+
+	node->exec_time = exec_time;
+}
+
+void	set_block_time(int fd)
+{
+	struct timeval	block_time;
+
+	gettimeofday(&block_time, NULL);
+
+	g_players[fd].block_time.tv_sec = block_time.tv_sec;
+	g_players[fd].block_time.tv_usec = block_time.tv_usec;
+	printf(LIME"\n[Finished set Block time]\n"RESET);
+}
+
+t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd)
+{
+	t_event			*node;
+
+	node = (t_event *)malloc(sizeof(t_event));
+
+	bzero(node, sizeof(t_event));
+	node->fd = fd;
+    bzero(node->cmd, CMD_LEN);
+	strcpy(node->cmd, cmd);
+	bzero(node->msg, MAX_MSG);
+	strcpy(node->msg, msg);
+	record_time(node, delay_time);
+	if (!strcmp(msg, "fork") || !strcmp(msg, "incantation"))
+		set_block_time(fd);
+	node->next = NULL;
+    printf("\n|node->fd %d|\n", node->fd);
+	return (node);
+}
+
+void	send_back_invalid_cmd(int fd, char *msg)
+{
+	bzero(g_env.buffer, 4096);
+	strcpy(g_env.buffer, YELLOW"Invalid command: "RESET);
+	strcat(g_env.buffer, GREY"|");
+	strcat(g_env.buffer, msg);
+	strcat(g_env.buffer, "|\n"RESET);
+	send_msg(fd, g_env.buffer, "Send [Invalid cmd]");
 }
 
 void	enqueue(int fd, char *msg)
@@ -148,109 +140,193 @@ void	enqueue(int fd, char *msg)
 	t_event *node;
 	char	msg_buf[1024];
 	int		i;
-	int		short_term;
-
-	// bzero(msg, 1024);
-	if ((i = check_valid_cmd(msg, msg_buf)) == 13)
-	{
-		// printf("\nenqueue : check invalid\n");
-		return ;
-	}
-	// printf("\nAM I wrong\n");
-	// printf("\n|cmd_ind %d|\n", i);
-	// printf("\n|msg_buf %s|\n", msg_buf);
-	// printf("\n|fd %d|\n", fd);
-	// node = init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd);
-	node = init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd);
-	short_term = 1;
-	// printf("\nAM I wrong\n");
-	if (i == 9 || i == 12)
-	{
-		long_short_term(node, !short_term);
-		// printf("\nAM I wrong 1\n");
-	}
-	else
-	{
-		long_short_term(node, short_term);
-		// printf("\nAM I wrong 2\n");
-	}
-
-}
-
-void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l)
-{
 	t_event	*tmp;
-	int		i;
 
 	i = 0;
-	while (i < 14)
+	bzero(msg_buf, 1024);
+	printf("[enqueue start: %s]\n", msg);
+	if (!msg || (i = check_valid_cmd(msg, msg_buf)) >= 15)
+	{
+		printf("check_valid_cmd: %d\n", i);
+		send_back_invalid_cmd(fd, msg);
+		return ;
+	}
+	if (i == 9 || i == 10)
+	{
+		if (i == 9 && !cmd_incantation_check(fd))
+		{
+			send_msg(fd, RED"KO\n"RESET, "Send [incantation]");
+			printf("cmd_incantation_check: failed\n");
+			return ;
+		}
+		g_players[fd].block = 1;
+	}
+	if (i == 11)
+		cmd_connect_nbr(fd, msg);
+	else
+		node = init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd);
+	if (!(g_env.queue_head))
+		g_env.queue_head = node;
+	else
+	{
+		tmp = g_env.queue_head;
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = node;
+	}
+	printf("[enqueue end: %s]\n", msg);
+}
+
+/*
+void	dequeue(void)
+{
+	t_event	*tmp;
+
+	tmp = g_env.queue_head;
+	while (!tmp)
+		return ;
+	g_env.queue_head = g_env.queue_head->next;
+	free(tmp);
+	tmp = NULL;
+	// tmp = *queue_head;
+	// if (!tmp)
+	// 	return ;
+	// *queue_head = (*queue_head)->next;
+	// free(tmp);
+	// tmp = NULL;
+}
+*/
+
+void	print_queue(void)
+{
+	t_event *event;
+	int		i;
+	struct timeval now;
+
+	gettimeofday(&now, NULL);
+	printf("event curr.tv_usec < %d >\n", now.tv_usec);
+	printf("event curr.tv_sec < %ld >\n", now.tv_sec);
+	i = 0;
+	event = g_env.queue_head;
+	if (event)
+	{
+		while (event)
+		{
+			printf("--------EVENT-----------\n");
+			printf("event fd < %d >\n", event->fd);
+			printf("event cmd < %s >\n", event->cmd);
+			printf("event msg < %s >\n", event->msg);
+			printf("event exec_time.tv_usec < %d >\n", event->exec_time.tv_usec);
+			printf("event exec_time.tv_sec < %ld >\n", event->exec_time.tv_sec);
+			event = event->next;
+			printf("|event index: %d|\n", i++);
+			printf("--------EVENT-----------\n");
+		}
+	}
+	else
+		printf(RED"\n----- [ queue is empty ] -- \n"RESET);
+}
+
+
+// void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l)
+void	exec_event(t_event **event)
+{
+	int				i;
+	struct timeval	now;
+
+	i = 0;
+	gettimeofday(&now, NULL);
+	while (i < 15)
 	{
 		if (!strcmp(g_cmd[i].cmd, (*event)->cmd))
 		{
-			// printf("\n eventssssss->fd %d\n", (*event)->fd);
-			g_cmd[i].func(g_players[(*event)->fd], (*event)->msg);
-			printf(LIGHTBLUE"\n[EXEC]\n"RESET);
+			if (!g_players[(*event)->fd].dead)
+			{
+				g_cmd[i].func((*event)->fd, (*event)->msg);
+				printf(LIGHTBLUE"\n[EXEC]\n"RESET);
+			}
+			else
+				printf(LIGHTBLUE"\n[Player %d Dead, so no EXEC]\n"RESET, (*event)->fd);
 			break ;
 		}
 		i++;
 	}
-		// (!strcmp(g_cmd[i].cmd, (*event)->cmd)) ?
-		// g_cmd[i].func(g_players[(*event)->fd], (*event)->msg) : i++;
 	printf("[cmd_ind after exec %i]\n", i);
-	if (!(*prev))
-	{
-		*event = (*event)->next;
-		tmp = *h;
-		*h = *event;
-		// printf(LIME"\n !prev\n");
-		free(tmp);
-	}
-	else if (!(*event)->next)
-	{
-		tmp = *event;
-		(*prev)->next = NULL;
-		*l = *prev;
-		free(tmp);
-	}
-	else
-	{
-		tmp = *event;
-		(*prev)->next = (*event)->next;
-		free(tmp);
-	}
 }
 
-void	exec_event_list(int st_term)
+void	exec_event_list(void)
 {
 	struct timeval	curr_time;
 	t_event			*event;
 	t_event			*head;
 	t_event			*prev;
-	t_event			*last;
+	t_event			*tmp;
 
-
-	if (!(head = st_term == 1 ? g_env.st_queue->first : g_env.lt_queue->first)
-	|| !(last = st_term == 1 ? g_env.st_queue->last : g_env.lt_queue->last))
-		return ;
-	// printf("\n head->fd %d\n", head->fd);
-	prev = NULL;
+	head = g_env.queue_head;
 	event = head;
+	prev = NULL;
+	// int count = 1;
+	tmp = NULL;
 	while (event)
 	{
+		// printf("\n\n ---------- start -----event_list------------\n\n");
 		gettimeofday(&curr_time, NULL);
-		if (check_event_time(&curr_time, event->exec_time) &&
-			!g_players[event->fd].block)
+
+		if (check_event_time(&curr_time, &(event->exec_time)) &&
+			((!g_players[event->fd].block) ||
+			check_event_time(&(event->exec_time), &(g_players[event->fd].block_time))))
 		{
-			// printf("\n event->fd %d\n", event->fd);
-			exec_event(&event, &prev, &head, &last);
-			prev = event;
+			printf(PURPLE"\n >>>>>>>>>>>>>> before exec_event ||\n"RESET);
+			exec_event(&event);
+			tmp = event;
+			if (!prev)
+			{
+				printf(GREEN"[!prev]\n"RESET);
+				g_env.queue_head = g_env.queue_head->next;
+				event = event->next;
+				free(tmp);
+				printf(GREEN"[!prev]\n"RESET);
+			}
+			else if (!event->next)
+			{
+				printf(GREEN"[!event->next]\n"RESET);
+				free(tmp);
+				prev->next = NULL;
+				event = NULL;
+				printf(GREEN"[!event->next]\n"RESET);
+			}
+			else
+			{
+				printf(GREEN"[event in the middle]\n"RESET);
+				event = event->next;
+				prev->next = event;
+				free(tmp);
+				printf(GREEN"[event in the middle]\n"RESET);
+			}
+			printf(PURPLE"\n|| after exec_event <<<<<<<<<<<<<<||\n"RESET);
 		}
 		else
 		{
+			printf(GREY"[ your event doesn't exec ]\n"RESET);
+			printf("|check_event_time: <%d> == 1, means should exec|\n", check_event_time(&curr_time, &(event->exec_time)));
+			printf("|check_event_time: <%d> == 1, means event [ %s ] is created after block |\n",
+				check_event_time(&curr_time, &(g_players[event->fd].block_time)), event->cmd);
+			printf("cmd: [%s]\n", event->cmd);
 			prev = event;
 			event = event->next;
 		}
+		// printf("number times iter thru event list:  %d\n", count++);
 	}
+	print_queue();
+	printf("\n\n ------------ end -------event_list---------------\n\n");
+
+}
+
+void	cycle_exec_event_loop(void)
+{
+	exec_event_list();
+	generate_resource();
+	check_dead_player();
 }
 
 /*
@@ -261,10 +337,12 @@ void	exec_event_list(int st_term)
 
 int		check_event_time(struct timeval *curr_time, struct timeval *exec_time)
 {
-	if (curr_time->tv_sec > exec_time->tv_sec)
+	long int x;
+
+	x = (curr_time->tv_sec - exec_time->tv_sec) * 1000000
+		+ (curr_time->tv_usec - exec_time->tv_usec);
+	if (x >= 0)
 		return (1);
-	else if (curr_time->tv_sec < exec_time->tv_sec)
-		return (0);
 	else
-		return (curr_time->tv_usec > exec_time->tv_usec);
+		return (0);
 }

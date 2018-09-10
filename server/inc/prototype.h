@@ -25,19 +25,20 @@ void	check_dead_player(void);
 void	server_client_connection(void);
 int		check_winner(void);
 void	generate_resource(void);
-void	cycle_exec_event_loop(void);
+void	init_res(void);
+
 /*
 ** read_flags.c
 */
 
-void	print_flags(t_env *env);
+void	print_flags(void);
 void	update_max_player_per_team(void);
 void	print_team(void);
 int		read_flags(int argc, char **argv, t_env *env);
 int		team_init(char **argv, int i, int nb_team);
 int		set_value(char **flag, int i, int m, t_env *env);
 int		isnbr_str(char *str);
-
+void	calc_time_spead(void);
 /*
 ** ft_itoa.c
 */
@@ -47,14 +48,21 @@ char	*ft_itoa(int n);
 */
 
 int		check_event_time(struct timeval *curr_time, struct timeval *exec_time);
-void	exec_event_list(int st_term);
-void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l);
+void	cycle_exec_event_loop(void);
+void	exec_event_list(void);
+// void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l);
+void	exec_event(t_event **event);
+t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd);
 void	enqueue(int fd, char *msg);
 int		check_valid_cmd(char *msg, char *msg_buf);
-void    long_short_term(t_event *node, int short_term);
+// void    long_short_term(t_event *node, int short_term);
 void    init_queue(void);
-void	exec_event_queue(int short_term);
-
+void	print_queue(void);
+void	record_time(t_event *node, int delay_time);
+int		print_time(struct timeval *now);
+// void	exec_event_queue(int short_term);
+void	set_block_time(int fd);
+// void	dequeue(void);
 
 /*
 ** cmd [folder]
@@ -64,13 +72,13 @@ void	exec_event_queue(int short_term);
 ** advance
 */
 
-int		cmd_advance(t_players players, char *msg);
+int		cmd_advance(int fd, char *msg);
 
 /*
 ** broadcast
 */
 
-int		cmd_broadcast(t_players players, char *msg);
+int		cmd_broadcast(int fd, char *msg);
 void	calc_four_pos(int pos[4][2], int y, int x);
 int		get_closest_pos(int pos[4][2], int pos_y, int pos_x);
 int		calc_direction(int pos[2], int y, int x, int direction);
@@ -81,69 +89,65 @@ void	broadcast(int y, int x, int fd, char *msg);
 ** connect_nbr
 */
 
-int		cmd_connect_nbr(t_players players, char *msg);
+int		cmd_connect_nbr(int fd, char *msg);
 
 /*
 ** fork
 */
 
-int     cmd_fork(t_players players, char *msg);
-void	calc_time_spead(void); /////////////////////// -> this should be in the parsing
-void	init_live(int fd);
+int     cmd_fork(int fd, char *msg);
 void	update_live(int fd, int food);
-void	record_time(t_event *node, int delay_time);
-t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd);
-void    push_cmd_hatch(int fd, char *msg);
-void    laid_egg(t_players *players);
+void    push_cmd_hatch(int fd);
+void    laid_egg(int fd);
 
 /*
 ** hatch
 */
 
-int		cmd_hatch(t_players players, char *msg);
+int		cmd_hatch(int fd, char *msg);
 
 /*
 ** incantation
 */
 
-int		cmd_incantation(t_players players, char *msg);
+int		cmd_incantation(int fd, char *msg);
 void	level_up_and_unblock(int count, int fds[100]);
 int		check_prerequest(int level, int i);
 int		level_require(int level);
-int		cmd_incantation_check(t_players players, char *msg);
+int		cmd_incantation_check(int fd);
 void	blocking(int count, int fds[100]);
 
 /*
 ** inventory
 */
 
-int		cmd_inventory(t_players players, char *msg);
+int		cmd_inventory(int fd, char *msg);
 
 /*
 ** kcik
 */
 
-int		cmd_kick(t_players players, char *msg);
-void	send_kick_msg(t_players players, int direction);
-void	update_player_pos(t_players players);
+int		cmd_kick(int fd, char *msg);
+void	send_kick_msg(int fd, int direction);
+void	update_player_pos(int fd);
 
 /*
 ** left
 */
 
-int		cmd_left(t_players players, char *msg);
+int		cmd_left(int fd, char *msg);
 
 /*
 ** put
 */
 
-int		cmd_put(t_players players, char *msg);
+int		cmd_put(int fd, char *msg);
 int		send_msg(int fd, char *status, char *error_msg);
 /*
 ** right
 */
 
-int		cmd_right(t_players players, char *msg);
+int		cmd_right(int fd, char *msg);
 
 /*
 ** see
@@ -157,14 +161,27 @@ void	see_north_area(int level, int y, int x);
 void	see_south_area(int level, int y, int x);
 void	see_east_area(int level, int y, int x);
 void	see_west_area(int level, int y, int x);
-int		cmd_see(t_players players, char *msg);
+int		cmd_see(int fd, char *msg);
 
 /*
 ** take
 */
 
 int     check_resource(char *msg);
-int     cmd_take(t_players players, char *msg);
+int     cmd_take(int fd, char *msg);
+void	eat_food_for_living(int fd);
+
+/*
+** pos
+*/
+
+int		cmd_pos(int fd, char *msg);
+
+/*
+** info
+*/
+
+int		cmd_info(int fd, char *msg);
 
 /*
 ** socket.c
@@ -178,8 +195,25 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax);
 int		s_create_socket(char *port, int reuse);
 int		s_iter_sock(struct addrinfo *ai, struct protoent *proto, int reuse);
 void	*get_in_addr(struct sockaddr *sa);
-void	s_reset_player(int fd);
-void	s_add_to_team(char *team_name, int fd, int nb_client);
+
+/*
+** s_send_recv
+*/
+void	s_send_msg(int fd, char *msg);
+void	recv_print(int fd);
+
+/*
+** s_send.c
+*/
+// void	s_send_msg(int fd, char *msg);
+
+/*
+** s_utils
+*/
 int		perror_rv(char *errmsg);
+void	s_init_new_player(int fd);
+void	s_init_egg_player(int fd, int team_id, int egg_id);
+int	    s_add_to_team(char *team_name, int fd);
+void	init_live(int fd);
 
 #endif

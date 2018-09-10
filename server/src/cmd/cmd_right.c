@@ -16,14 +16,19 @@
 */
 #include "../../inc/server.h"
 
-int		cmd_right(t_players players, char *msg)
+int		cmd_right(int fd, char *msg)
 {
 	(void)msg;
-	printf(BLUE"Player [%d] -> [%s]"RESET, players.fd, "right");
-	if (++(players.direction) > WEST)
-		players.direction = NORTH;
-	players.request_nb--;
-	if (send_msg(players.fd, "OK", "Send [right]") == EXIT_FAILURE)
+	printf(CYAN"\n[Exec RIGHT]\n"RESET);
+	printf(BLUE"Player [%d] -> [%s]"RESET, fd, "right");
+	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
+	if (++(g_players[fd].direction) > WEST)
+		g_players[fd].direction = NORTH;
+	g_players[fd].request_nb--;
+
+	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
+	printf(CYAN"\n[RIGHT SUCCESS]\n"RESET);
+	if (send_msg(fd, RED"OK\n"RESET, "Send [right]") == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	// maybe update graphic client regarding player position
 	return (EXIT_SUCCESS);

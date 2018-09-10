@@ -20,23 +20,23 @@
 
 typedef struct		s_event
 {
-	int							fd;
-	char						cmd[CMD_LEN];
-	char						msg[MAX_MSG];
-	struct timeval	*exec_time;
+	int				fd;
+	char			cmd[CMD_LEN];
+	char			msg[MAX_MSG];
+	struct timeval	exec_time;
 	struct s_event	*next;
-}									t_event;
+}					t_event;
 
-typedef struct		s_st_queue
-{
-	t_event					*first;
-	t_event					*last;
-}									t_st_queue;
-
-typedef struct		s_lt_queue
-{
-	t_event					*first;
-	t_event					*last;
-}									t_lt_queue;
+// typedef struct		s_st_queue
+// {
+// 	t_event					*first;
+// 	t_event					*last;
+// }									t_st_queue;
+//
+// typedef struct		s_lt_queue
+// {
+// 	t_event					*first;
+// 	t_event					*last;
+// }									t_lt_queue;
 
 #endif
