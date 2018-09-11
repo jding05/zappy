@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../../inc/server.h"
+#include "../../inc/server.h"
 
 /*
 ** cmd_hatch will add to queue after the fork 42 cycle done
@@ -38,6 +38,6 @@ const t_cmd		g_cmd[16] =
 
 const int		g_max_res[7] = {0, 54, 60, 60, 30, 36, 6};
 const char		*g_res_name[7] =
-{"food", "linemate", "deraumere","sibur", "mendiane", "phiras", "thystame"};
+{"food", "linemate", "deraumere", "sibur", "mendiane", "phiras", "thystame"};
 
-const char		*g_options[6] = {"-p","-x","-y","-n","-c","-t"};
+const char		*g_options[6] = {"-p", "-x", "-y", "-n", "-c", "-t"};

@@ -331,10 +331,11 @@ void	s_select_recv(int fd, fd_set *master)
 	else
 		s_send_msg(fd, "nb_req limit");
 }
-// /*
-// ** keep iterating through all select fds
-// */
-//
+
+/*
+** keep iterating through all select fds
+*/
+
 void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 {
 	int		i;
@@ -357,19 +358,10 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			}
 		}
 		cycle_exec_event_loop();
-		// s_exec_cmd(&g_cmdq);
-		// if (!g_env.st_queue->first)
-		//  	printf(RED"\nst_queue empty\n"RESET);
+		// if (!g_env.queue_head)
+		// 	printf(RED"\n{ event queue empty }\n"RESET);
 		// else
 		// 	print_queue();
-		// if (!g_env.lt_queue->first)
-		// 	printf(RED"lt_queue empty\n"RESET);
-		// else
-		// 	print_queue();
-		if (!g_env.queue_head)
-			printf(RED"\n{ event queue empty }\n"RESET);
-		else
-			print_queue();
 		if (check_winner())
 			break ;
 		printf("[Finish s_select_cycle]\n");

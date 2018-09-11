@@ -54,7 +54,7 @@ void	exec_event_list(void);
 void	exec_event(t_event **event);
 t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd);
 void	enqueue(int fd, char *msg);
-int		check_valid_cmd(char *msg, char *msg_buf);
+int		check_valid_cmd(char *msg, char *msg_buf, int i);
 // void    long_short_term(t_event *node, int short_term);
 void    init_queue(void);
 void	print_queue(void);
@@ -63,6 +63,8 @@ int		print_time(struct timeval *now);
 // void	exec_event_queue(int short_term);
 void	set_block_time(int fd);
 // void	dequeue(void);
+void	insert(t_event *node);
+void	exec_event_and_delete(t_event **event, t_event **prev);
 
 /*
 ** cmd [folder]
@@ -124,7 +126,7 @@ void	blocking(int count, int fds[100]);
 int		cmd_inventory(int fd, char *msg);
 
 /*
-** kcik
+** kick
 */
 
 int		cmd_kick(int fd, char *msg);

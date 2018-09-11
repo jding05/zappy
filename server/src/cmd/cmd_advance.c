@@ -11,7 +11,16 @@
 /* ************************************************************************** */
 
 /*
-**
+** this command [advance], depends on the direction, toward the direction and
+** -> move foward one cell in the map.
+** MACRO for the direction are
+** ->  NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3
+** after moving foward one step, the current player might go over the map,
+**     in that case, we need to update to pos
+** for example:
+**     0 1 2  -> if the player is at pos 1, facing NORTH, call advance command
+**     3 4 5         the update position will be at pos 7
+**     6 7 8 -> if pos 8, facing EAST, update positon will be at pos 6
 */
 
 #include "../../inc/server.h"

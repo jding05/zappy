@@ -175,7 +175,6 @@ void	zappy_game(void)
 	init_res();
 	generate_resource();
 	init_queue();
-	// calc_time_spead();
 	setup_socket();
 	printf(RED"[GAME END ...]\n"RESET);
 	free_malloc();

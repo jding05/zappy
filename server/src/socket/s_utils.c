@@ -45,6 +45,7 @@ void	s_init_egg_player(int fd, int team_id, int egg_id)
 	g_players[fd].block = 0;
 	g_players[fd].direction = rand() % 4;
 	init_live(fd);
+	// printf("[use the egg player %d, y: %d, x: %d]\n", fd, g_players[fd].y, g_players[fd].x);
 }
 /*
 ** reset a player's data when the player_client is terminated
@@ -61,7 +62,7 @@ void	s_init_new_player(int fd)
 	g_players[fd].inventory[4] = 10;
 	g_players[fd].inventory[5] = 10;
 	g_players[fd].inventory[6] = 10;
-	g_players[fd].y = 5;
+	g_players[fd].y = 2;
 	g_players[fd].x = 5;
 	// g_players[fd].y = rand() % g_env.map_y;
 	// g_players[fd].x = rand() % g_env.map_x;
