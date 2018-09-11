@@ -1,7 +1,0 @@
-- all cmds: 
-	-> printf(), [$d] typo?
-- broadcast, line 138: extra ) at the end
-- connect_nbr: 
-	-> for the server argument -c is the total clients authorized
-	or the number of clients authorized for a team
-
