@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   c_validate_cmds.c                                  :+:      :+:    :+:   */
+/*   validate_cmds.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/07 13:37:05 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/07 13:37:07 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/10 23:08:51 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.h"
 
-char	*g_cmds[] = {"advance", "right", "left", "see", "inventory", \
+char	*g_cmd_table[] = {"advance", "right", "left", "see", "inventory", \
 	"take", "put", "kick", "incantation", "fork", "connect_nbr", 0};
 
 char	*g_objects[] = {"linemate", "deraumere", "sibur", "mendiane", \
@@ -56,18 +56,18 @@ int		validate_broadcast(char *str)
 	return EXIT_FAILURE;
 }
 
-int		validate_cmd(char *cmd)
+int		validate_cmd(char *str)
 {
 	int		i;
 
 	i = 0;
-	while (g_cmds[i])
+	while (g_cmd_table[i])
 	{
-		if (strcmp(g_cmds[i], cmd) == 0)
+		if (strcmp(g_cmd_table[i], str) == 0)
 			return (EXIT_SUCCESS);
-		if (validate_cmd_with_obj(cmd, g_cmds[i]) == EXIT_SUCCESS)
+		if (validate_cmd_with_obj(str, g_cmd_table[i]) == EXIT_SUCCESS)
 			return (EXIT_SUCCESS);
-		if (validate_broadcast(cmd) == EXIT_SUCCESS)
+		if (validate_broadcast(str) == EXIT_SUCCESS)
 			return (EXIT_SUCCESS);
 		i++;
 	}

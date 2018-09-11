@@ -1,36 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_queue.h                                        :+:      :+:    :+:   */
+/*   reqq.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/31 15:37:38 by zfeng             #+#    #+#             */
-/*   Updated: 2018/08/31 16:52:45 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/10 23:18:14 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CMD_QUEUE_H
-# define CMD_QUEUE_H
-# define MAX_CMD 1024
-# define MAX_MSG 1024
+#ifndef REQQ_H
+# define REQQ_H
 
 # include <unistd.h>
 # include <stdlib.h>
 # include <string.h>
 # include <stdio.h>
 
-typedef struct		s_cmdq
+# define REQ_SIZE 64
+# define CMD_SIZE 16
+# define PARAM_SIZE 32
+
+typedef struct		s_reqq
 {
 	int				fd;
-	char			cmd[MAX_CMD];
-	char			msg[MAX_MSG];
-	char			ret[1024];
-	struct s_cmdq	*next;
-}					t_cmdq;
+	char			cmd[CMD_SIZE];
+	char			param[PARAM_SIZE];
+	struct s_reqq	*next;
+}					t_reqq;
 
-void	enqueue(t_cmdq **head, int fd, char *cmd);
-void	dequeue(t_cmdq **head);
+void	enqueue(t_reqq **head, int fd, char *req);
+void	dequeue(t_reqq **head);
 
-void	print_queue(t_cmdq *head);
+void	print_queue(t_reqq *head);
 #endif

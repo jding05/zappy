@@ -1,71 +1,89 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cmds.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/10 23:06:58 by zfeng             #+#    #+#             */
+/*   Updated: 2018/09/10 23:07:00 by zfeng            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cmds.h"
 
-void	cmd_advance(void)
+void	cmd_advance(t_reqq	*reqq)
 {
-	printf("\n******advance executed******\n");
+	// send_data("ok", MSG_SIZE);
+	printf("\n******advance executed******\n");	
 }
 
-void	cmd_broadcast(void)
+void	cmd_broadcast(t_reqq	*reqq)
 {
-	printf("\n******boradcast executed******\n");
+	char	*text;
+
+	// text = ft_strsplit(cmd)[1];
+	printf("\n******broadcast executed******\n");	
 }
 
-void	cmd_connect_nbr(void)
+void	cmd_connect_nbr(t_reqq	*reqq)
 {
 	printf("\n******connect_nbr executed******\n");
 }
 
-void	cmd_fork(void)
+void	cmd_fork(t_reqq	*reqq)
 {
 	printf("\n******fork executed******\n");
 }
 
-void	cmd_hatch(void)
+void	cmd_hatch(t_reqq	*reqq)
 {
 	printf("\n******hatch executed******\n");
 }
 
-void	cmd_incantation(void)
+void	cmd_incantation(t_reqq	*reqq)
 {
 	printf("\n******incantation executed******\n");
 }
 
-void	cmd_inventory(void)
+void	cmd_inventory(t_reqq	*reqq)
 {
 	printf("\n******inventory executed******\n");
 }
 
-void	cmd_kick(void)
+void	cmd_kick(t_reqq	*reqq)
 {
 	printf("\n******kick executed******\n");
 }
 
-void	cmd_left(void)
+void	cmd_left(t_reqq	*reqq)
 {
 	printf("\n******left executed******\n");
 }
 
-void	cmd_put(void)
+void	cmd_put(t_reqq	*reqq)
 {
+	
 	printf("\n******put executed******\n");
 }
 
-void	cmd_right(void)
+void	cmd_right(t_reqq	*reqq)
 {
 	printf("\n******right executed******\n");
 }
 
-void	cmd_see(void)
+void	cmd_see(t_reqq	*reqq)
 {
 	printf("\n******see executed******\n");
 }
 
-void	cmd_take(void)
+void	cmd_take(t_reqq	*reqq)
 {
+	
 	printf("\n******take executed******\n");
 }
 
-t_cmd	g_cmds[12] = 
+t_cmd	g_cmd_table[13] = 
 {
 	{"advance", 7, cmd_advance},
 	{"broadcast", 7, cmd_broadcast},
@@ -78,5 +96,6 @@ t_cmd	g_cmds[12] =
 	{"left", 7, cmd_left},
 	{"put", 7, cmd_put},
 	{"right", 7, cmd_right},
+	{"see", 7, cmd_see},
 	{"take", 7, cmd_take},
 };

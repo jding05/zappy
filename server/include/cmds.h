@@ -1,6 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cmds.h                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/10 23:18:04 by zfeng             #+#    #+#             */
+/*   Updated: 2018/09/10 23:18:05 by zfeng            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CMDS_H
 # define CMDS_H
 # include "server.h"
+
+# define REQ_SIZE 64
 
 typedef struct	s_cmd
 {
@@ -9,20 +23,20 @@ typedef struct	s_cmd
 	void	(*func)();
 }				t_cmd;
 
-void	cmd_advance(void);
-void	cmd_broadcast(void);
-void	cmd_connect_nbr(void);
-void	cmd_fork(void);
-void	cmd_hatch(void);
-void	cmd_incantation(void);
-void	cmd_inventory(void);
-void	cmd_kick(void);
-void	cmd_left(void);
-void	cmd_put(void);
-void	cmd_right(void);
-void	cmd_see(void);
-void	cmd_take(void);
+void	cmd_advance(t_reqq	*reqq);
+void	cmd_broadcast(t_reqq	*reqq);
+void	cmd_connect_nbr(t_reqq	*reqq);
+void	cmd_fork(t_reqq	*reqq);
+void	cmd_hatch(t_reqq	*reqq);
+void	cmd_incantation(t_reqq	*reqq);
+void	cmd_inventory(t_reqq	*reqq);
+void	cmd_kick(t_reqq	*reqq);
+void	cmd_left(t_reqq	*reqq);
+void	cmd_put(t_reqq	*reqq);
+void	cmd_right(t_reqq	*reqq);
+void	cmd_see(t_reqq	*reqq);
+void	cmd_take(t_reqq	*reqq);
 
-extern t_cmd	g_cmds[12];
+extern t_cmd	g_cmd_table[13];
 
 #endif

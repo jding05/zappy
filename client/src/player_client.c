@@ -6,7 +6,7 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/25 22:47:38 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/07 13:35:03 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/10 23:08:42 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,31 +41,29 @@ int		create_client(char *addr, int port)
 int		main(int ac, char **av)
 {
 	int		sock;
+	char	*msg;
 	int		nbytes;
 	char	buf[BUF_SIZE];
 
 	parse_cargs(av);
 	sock = create_client(g_env.host, atoi(g_env.port));
-
-	recv_print(sock);
-	
-	send_msg(sock, g_env.team_name);
-
-	recv_print(sock);
-
+	msg = recv_data(sock, MSG_SIZE);	// recv WELCOME msg
+	printf("%s\n", msg);
+	memset(msg, 0, MSG_SIZE);
+	send_data(sock, g_env.team_name, MAX_TEAM_NAME);	// send team name
+	msg = recv_data(sock, MSG_SIZE);	// recv joined team OR team is full
+	printf("%s\n", msg);
+	if (strcmp(msg, TEAM_FULL) == 0 || strcmp(msg, NAME_NOT_FOUND) == 0)
+		return (EXIT_FAILURE);
+	memset(msg, 0, MSG_SIZE);
 	while (1)
 	{
-
-		nbytes = read(STDIN_FILENO, buf, BUF_SIZE - 1);
+		nbytes = read(STDIN_FILENO, buf, BUF_SIZE - 1);		// read stdin request
 		buf[nbytes - 1] = '\0';
 		if (validate_cmd(buf) == EXIT_SUCCESS)
 		{
-			printf("client side buf = |%s|\n", buf);
-			// send(sock, buf, strlen(buf), 0);
-			send_msg(sock, buf);
-			// if (recv_print(sock) == EXIT_FAILURE)
-			// 	return (EXIT_FAILURE);
-			recv_print(sock);
+			send_data(sock, buf, REQ_SIZE);		// send request
+			recv_data(sock, MSG_SIZE);		// recv either received or exceed limit
 			memset(buf, 0, strlen(buf));
 		}
 		else
