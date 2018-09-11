@@ -101,10 +101,25 @@ typedef struct			s_cmd
 t_env       			g_env;
 t_team      			g_teams[MAX_TEAM];
 t_players   			g_players[MAX_FD];
-extern const t_cmd 		g_cmd[16];
-extern const int		g_max_res[7];
-extern const char		*g_res_name[7];
-extern const char		*g_options[6];
 
+/*
+** declaring the (global) array variable
+** Fact: the C compiler will ignore any text between the brackets [...]
+**		in any array declaration
+*/
+
+extern const t_cmd 		g_cmd[];
+extern const int		g_max_res[];
+extern const char		*g_res_name[];
+extern const char		*g_options[];
+
+/*
+** ^ suppose the C compiler processed the following array declaration
+** the C compiler will handle accessing the array element g_cmd[i] as follows:
+** -> it generate a dummy base address x,
+** -> the C compiler will use the <type> information, (int is 4 bytes) to
+** generate the address of x + i * 4 for the array element g_max_res[i]
+** this memory will be in the RAM memory
+*/
 
 #endif
