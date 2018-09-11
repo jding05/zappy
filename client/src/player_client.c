@@ -44,6 +44,7 @@ int		main(int ac, char **av)
 	char	*msg;
 	int		nbytes;
 	char	buf[BUF_SIZE];
+	char	*rv;
 
 	parse_cargs(av);
 	sock = create_client(g_env.host, atoi(g_env.port));
@@ -64,12 +65,17 @@ int		main(int ac, char **av)
 		{
 			send_data(sock, buf, REQ_SIZE);		// send request
 			recv_data(sock, MSG_SIZE);		// recv either received or exceed limit
-			memset(buf, 0, strlen(buf));
+			memset(buf, 0, BUF_SIZE);
+			rv = recv_data(sock, BUF_SIZE);		// recv return value from a command execution
+			if (NULL != rv)
+				printf("%s\n", rv);
+			memset(rv, 0, BUF_SIZE);
 		}
 		else
 		{
 			write(1, "invalid command\n", 16);
 		}
+		
 	}
 	close(sock);
 	return (EXIT_SUCCESS);

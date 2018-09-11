@@ -15,7 +15,7 @@
 void	enqueue(t_reqq **head, int fd, char *req)
 {
 	t_reqq	*new;
-	t_reqq *tmp;
+	t_reqq	*tmp;
 	char	*cmd;
 	char	*param;
 
@@ -30,7 +30,6 @@ void	enqueue(t_reqq **head, int fd, char *req)
 		strcpy((*head)->cmd, cmd);
 		if (param)
 		{
-			write(1, "here\n", 5);
 			strcpy((*head)->param, param);
 		}
 		(*head)->next = NULL;

@@ -14,25 +14,31 @@
 
 void	cmd_advance(t_reqq	*reqq)
 {
-	// send_data("ok", MSG_SIZE);
+	send_data(reqq->fd, "ok", MSG_SIZE);
 	printf("\n******advance executed******\n");	
 }
 
 void	cmd_broadcast(t_reqq	*reqq)
 {
-	char	*text;
-
-	// text = ft_strsplit(cmd)[1];
+	if (0 != *(reqq->param))
+		send_data(reqq->fd, "ok", MSG_SIZE);
 	printf("\n******broadcast executed******\n");	
 }
 
 void	cmd_connect_nbr(t_reqq	*reqq)
 {
+	int		team_id;
+	char	connect_nbr;
+
+	team_id = g_players[reqq->fd].team_id;
+	connect_nbr = g_teams[team_id].connect_nbr + '0';
+	send_data(reqq->fd, &connect_nbr, MSG_SIZE);
 	printf("\n******connect_nbr executed******\n");
 }
 
 void	cmd_fork(t_reqq	*reqq)
 {
+	send_data(reqq->fd, "ok", MSG_SIZE);
 	printf("\n******fork executed******\n");
 }
 
@@ -48,38 +54,43 @@ void	cmd_incantation(t_reqq	*reqq)
 
 void	cmd_inventory(t_reqq	*reqq)
 {
+	send_data(reqq->fd, "rocks and food", MSG_SIZE);
 	printf("\n******inventory executed******\n");
 }
 
 void	cmd_kick(t_reqq	*reqq)
 {
+	send_data(reqq->fd, "ok/ko", MSG_SIZE);
 	printf("\n******kick executed******\n");
 }
 
 void	cmd_left(t_reqq	*reqq)
 {
+	send_data(reqq->fd, "ok", MSG_SIZE);
 	printf("\n******left executed******\n");
 }
 
 void	cmd_put(t_reqq	*reqq)
 {
-	
+	send_data(reqq->fd, "ok/ko", MSG_SIZE);
 	printf("\n******put executed******\n");
 }
 
 void	cmd_right(t_reqq	*reqq)
 {
+	send_data(reqq->fd, "ok", MSG_SIZE);
 	printf("\n******right executed******\n");
 }
 
 void	cmd_see(t_reqq	*reqq)
 {
+	send_data(reqq->fd, "rocks and food", MSG_SIZE);	
 	printf("\n******see executed******\n");
 }
 
 void	cmd_take(t_reqq	*reqq)
 {
-	
+	send_data(reqq->fd, "ok/ko", MSG_SIZE);
 	printf("\n******take executed******\n");
 }
 

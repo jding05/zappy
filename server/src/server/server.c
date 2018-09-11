@@ -124,8 +124,7 @@ void	select_recv(int fd, fd_set *master)
 {
 	char	*req;
 
-	req = recv_data(fd, REQ_SIZE);
-	if (!req)
+	if (!(req = recv_data(fd, REQ_SIZE)))
 		return ;
 	if (g_players[fd].nb_req < 11)
 	{
