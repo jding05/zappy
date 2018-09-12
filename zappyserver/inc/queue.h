@@ -1,34 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse.h                                            :+:      :+:    :+:   */
+/*   queue.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
+/*   By: sding <sding@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/09/04 16:38:55 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/10 23:18:09 by zfeng            ###   ########.fr       */
+/*   Created: 2018/08/17 18:14:45 by sding             #+#    #+#             */
+/*   Updated: 2018/08/17 18:14:47 by sding            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSE_H
-# define PARSE_H
+#ifndef QUEUE_H
+# define QUEUE_H
 
 # include "server.h"
 
-# define SFLAGS pxynct
+# define MAX_MSG 256
+# define CMD_LEN 12
 
-typedef struct	s_env
+typedef struct		s_event
 {
-	char	port[8];
-	int		map_x;
-	int		map_y;
-	int		max_player;
-	int		nb_team;
-	int		nb_client;
-	int		tud;
-}				t_env;
-
-void	parse_args(char **argv);
-void	server_usage(void);
+	int				fd;
+	char			cmd[CMD_LEN];
+	char			msg[MAX_MSG];
+	struct timeval	exec_time;
+	struct s_event	*next;
+}					t_event;
 
 #endif

@@ -1,26 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   s_utils.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/07 13:41:07 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/10 23:07:43 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/08 17:17:39 by sding            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.h"
-#include "parse.h"
-
-t_player	g_players[MAX_FD];
-t_team		g_teams[MAX_TEAM];
-t_env		g_env;
-t_reqq		*g_reqq;
-
-/*
-** print out the error message then return failure
-*/
+# include "../../inc/server.h"
 
 int		perror_rv(char *errmsg)
 {
@@ -53,45 +43,66 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (NULL);
 }
 
-/*
-** initialize a player's data
-*/
-
-void	init_player(int fd)
+void	init_live(int fd)
 {
-	static int	player_id = 0;
+	struct timeval	curr_time;
 
-	g_players[fd].player_id = player_id++;
+	gettimeofday(&curr_time, NULL);
+    gettimeofday(&(g_players[fd].live), NULL);
+	g_players[fd].live.tv_sec = curr_time.tv_sec;
+	g_players[fd].live.tv_usec = curr_time.tv_usec;
+	g_players[fd].block_time.tv_sec = curr_time.tv_sec;
+	g_players[fd].block_time.tv_usec = curr_time.tv_usec;
+	update_live(fd, 1000);
+}
+
+void	s_init_egg_player(int fd, int team_id, int egg_id)
+{
 	g_players[fd].fd = fd;
-	g_players[fd].nb_req = 0;
+	g_players[fd].request_nb = 0;
 	memset(g_players[fd].inventory, 0, 7);
-	memset(g_players[fd].pos, -1, 2);
-	g_players[fd].level = 0;
-	printf("player_id = %d\n", g_players[fd].player_id);
+	g_players[fd].y = g_teams[team_id].egg[egg_id].y;
+	g_players[fd].x = g_teams[team_id].egg[egg_id].x;
+	g_players[fd].request_nb = 0;
+	g_players[fd].level = 1;
+	g_players[fd].alive = 1;
+	g_players[fd].dead = 0;
+	g_players[fd].block = 0;
+	g_players[fd].direction = rand() % 4;
+	init_live(fd);
 }
 
 /*
 ** reset a player's data when the player_client is terminated
 */
 
-void	reset_player(int fd)
+void	s_init_new_player(int fd)
 {
-	g_players[fd].nb_req = 0;
+	g_players[fd].fd = fd;
+	g_players[fd].request_nb = 0;
 	memset(g_players[fd].inventory, 0, 7);
-	memset(g_players[fd].pos, -1, 2);
-	g_players[fd].level = 0;
+	g_players[fd].y = rand() % g_env.map_y;
+	g_players[fd].x = rand() % g_env.map_x;
+	g_players[fd].request_nb = 0;
+	g_players[fd].level = 1;
+	g_players[fd].alive = 1;
+	g_players[fd].dead = 0;
+	g_players[fd].block = 0;
+	g_players[fd].direction = rand() % 4;
+	init_live(fd);
 }
 
 /*
 ** when a new player is connected, add it to a team
 */
 
-int		add_to_team(char *team_name, int fd)
+int		s_add_to_team(char *team_name, int fd)
 {
 	int		i;
+	int		egg_id;
 	char	*msg;
 
-	i = 0;
+ 	i = 0;
 	while (*g_teams[i].team_name)
 	{
 		if (strcmp(g_teams[i].team_name, team_name) == 0)
@@ -99,12 +110,16 @@ int		add_to_team(char *team_name, int fd)
 			if (g_teams[i].nb_client == 0)
 			{
 				send_data(fd, TEAM_FULL, MSG_SIZE);
-				return (EXIT_FAILURE); 
+				return (EXIT_FAILURE);
 			}
-			init_player(fd);
+
+			if ((egg_id = g_teams[i].max_players - g_teams[i].connected_players++) > 0)
+				s_init_new_player(fd);
+			else
+				s_init_egg_player(fd, i, egg_id);
 			g_players[fd].team_id = i;
 			g_teams[i].nb_client--;
-			g_teams[i].connect_nbr++;
+			g_teams[i].connected_players++;
 			msg = ft_strjoin("joined team ", team_name);
 			send_data(fd, msg, MSG_SIZE);
 			free(msg);
@@ -112,27 +127,6 @@ int		add_to_team(char *team_name, int fd)
 		}
 		i++;
 	}
-	send_data(fd, NAME_NOT_FOUND, MSG_SIZE);
+	send_data(fd, TEAM_NOT_FOUND, MSG_SIZE);
 	return (EXIT_FAILURE);
-}
-
-void	exec_cmd(t_reqq **head)
-{
-	int		i;
-
-	if (!*head)
-		return ;
-	i = 0;
-	printf("cmd = %s | param = %s\n", (*head)->cmd, (*head)->param);
-	while (i < 14)
-	{
-		if (strcmp((*head)->cmd, g_cmd_table[i].cmd) == 0)
-		{
-			g_cmd_table[i].func(*head);
-			g_players[(*head)->fd].nb_req--;
-			dequeue(head);
-			return ;
-		}
-		i++;
-	}
 }

@@ -1,22 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   sock.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/31 14:54:00 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/10 23:07:37 by zfeng            ###   ########.fr       */
+/*   Updated: 2018/09/03 20:55:37 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.h"
-#include "parse.h"
-
-t_player	g_players[MAX_FD];
-t_team		g_teams[MAX_TEAM];
-t_env		g_env;
-t_reqq		*g_reqq;
+//# define BUF_SIZE32 32
+# include "../../inc/server.h"
 
 /*
 ** get sockaddr, IPv4 or IPv6
@@ -33,7 +28,7 @@ void	*get_in_addr(struct sockaddr *sa)
 ** iterate through the return link list of sockets from getaddrinfo()
 */
 
-int		iter_sock(struct addrinfo *ai, struct protoent *proto, int reuse)
+int		s_iter_sock(struct addrinfo *ai, struct protoent *proto, int reuse)
 {
 	struct addrinfo *p;
 	int				listener;
@@ -66,7 +61,7 @@ int		iter_sock(struct addrinfo *ai, struct protoent *proto, int reuse)
 ** create a listener socket
 */
 
-int		create_socket(char* port, int reuse)
+int		s_create_socket(char* port, int reuse)
 {
 	int		listener;
 	int		rv;
@@ -79,7 +74,7 @@ int		create_socket(char* port, int reuse)
 	hints.ai_flags = AI_PASSIVE;
 	if ((rv = getaddrinfo(NULL, port, &hints, &ai)) != 0)
 		perror_rv((char*)gai_strerror(rv));
-	listener = iter_sock(ai, proto, reuse);
+	listener = s_iter_sock(ai, proto, reuse);
 	return (listener);
 }
 
@@ -88,7 +83,7 @@ int		create_socket(char* port, int reuse)
 ** connect
 */
 
-void	select_accept(int fd, fd_set *master, int *fdmax)
+void	s_select_accept(int fd, fd_set *master, int *fdmax)
 {
 	int						newfd;
 	struct sockaddr_storage remoteaddr;
@@ -101,17 +96,17 @@ void	select_accept(int fd, fd_set *master, int *fdmax)
 		perror("accept");
 	send_data(newfd, WELCOME, MSG_SIZE);
 	team_name = recv_data(newfd, MAX_TEAM_NAME);
-	if (add_to_team(team_name, newfd) == EXIT_FAILURE)
-		close(newfd);	
+	if (s_add_to_team(team_name, newfd) == EXIT_FAILURE)
+		close(newfd);
 	else
 	{
 		FD_SET(newfd, master);
 		if (newfd > *fdmax)
 			*fdmax = newfd;
 		printf("new connection from %s on socket %d\n",
-				inet_ntop(remoteaddr.ss_family, 
-					get_in_addr((struct sockaddr*)&remoteaddr), 
-					remote_ip, INET6_ADDRSTRLEN), newfd);	
+				inet_ntop(remoteaddr.ss_family,
+					get_in_addr((struct sockaddr*)&remoteaddr),
+					remote_ip, INET6_ADDRSTRLEN), newfd);
 	}
 }
 
@@ -120,22 +115,25 @@ void	select_accept(int fd, fd_set *master, int *fdmax)
 ** receive the buffer then store the data into structs.
 */
 
-void	select_recv(int fd, fd_set *master)
+void	s_select_recv(int fd, fd_set *master)
 {
 	char	*req;
 
-	if (!(req = recv_data(fd, REQ_SIZE)))
-		return ;
-	if (g_players[fd].nb_req < 11)
+	if (!(req = recv_data(fd, MSG_SIZE)))
 	{
-		// printf("nb_req = %d\n", g_players[fd].nb_req);
-		enqueue(&g_reqq, fd, req);
-		g_players[fd].nb_req++;
+		FD_CLR(fd, master);
+		return ;
+	}
+	if (g_players[fd].request_nb < 11)
+	{
+		// printf("request_nb = %d\n", g_players[fd].request_nb);
+		enqueue(fd, req);
+		g_players[fd].request_nb++;
 		send_data(fd, "received", MSG_SIZE);
 	}
 	else
 	{
-		send_data(fd, "nb_req limit", MSG_SIZE);
+		send_data(fd, "request_nb limit", MSG_SIZE);
 	}
 }
 
@@ -143,7 +141,7 @@ void	select_recv(int fd, fd_set *master)
 ** keep iterating through all select fds
 */
 
-void	select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
+void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 {
 	int		i;
 
@@ -159,36 +157,36 @@ void	select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			{
 				if (i == lfd)
 				{
-					select_accept(i, master, fdmax);
+					s_select_accept(i, master, fdmax);
 				}
 				else
 				{
-					select_recv(i, master);
+					s_select_recv(i, master);
 				}
 			}
 			i++;
 		}
-		exec_cmd(&g_reqq);
+		cycle_exec_event_loop();
+		if (check_winner())
+			break ;
+		printf("[Finish s_select_cycle]\n");
 	}
 }
 
-int		main(int ac, char **av)
+int		setup_socket(void)
 {
 	int		listener;
 
-	if (ac < 13)
-		server_usage();
-	parse_args(av);
-	g_reqq = NULL;
+	printf("[Start Setup_socket]\n");
 	SELECT_VARS;
 	FD_ZERO(&master);
 	FD_ZERO(&read_fds);
-	listener = create_socket(g_env.port, 1);
+	listener = s_create_socket(g_env.port_name, 1);
 	if (listen(listener, 42) == -1)
 		return (EXIT_FAILURE);
 	FD_SET(listener, &master);
 	fdmax = listener;
-	select_cycles(&master, &read_fds, &fdmax, listener);
+	printf("[Finish Setup_socket]\n");
+	s_select_cycles(&master, &read_fds, &fdmax, listener);
 	return (0);
 }
-

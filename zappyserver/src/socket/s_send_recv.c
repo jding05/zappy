@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   send_recv.c                                        :+:      :+:    :+:   */
+/*   s_send_recv.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
+/*   By: sding <sding@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/09/07 18:25:18 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/10 23:07:29 by zfeng            ###   ########.fr       */
+/*   Created: 2018/09/08 17:28:01 by sding             #+#    #+#             */
+/*   Updated: 2018/09/08 17:28:20 by sding            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.h"
+# include "../../inc/server.h"
 
 int		send_data(int fd, char *data, int ebytes)
 {
@@ -91,5 +91,4 @@ char	*recv_data(int fd, int ebytes)
 			return (data);
 		}
 	}
-
 }
