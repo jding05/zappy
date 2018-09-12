@@ -137,30 +137,15 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	char					buf[BUF_SIZE32];
 	int						nbytes;
 	char					remote_ip[INET6_ADDRSTRLEN];
-	// int						i;
+	int		tbytes;
+	char	msg[BUF_SIZE32];
+	int		i;
 
 	addrlen = sizeof(remoteaddr);
 	if ((newfd = accept(fd, (struct sockaddr *)&remoteaddr, &addrlen)) == -1)
 		perror("accept");
-	// send(newfd, WELCOME_MSG, strlen(WELCOME_MSG), 0);
-
 	s_send_msg(newfd, WELCOME);
-	// if ((nbytes = recv(newfd, buf, BUF_SIZE, 0)) < 0)
-	// 	perror(strerror(errno));
-	// buf[nbytes] = '\0';
-	// bzero(&g_players[newfd], sizeof(t_players));
-    //
-	// s_add_to_team(buf, newfd);
-	// if (g_teams[g_players[newfd].team_id].nb_client == 0)
-	// {
-	// 	// send(newfd, TEAM_FULL_MSG, strlen(TEAM_FULL_MSG), 0);
-	// 	close(newfd);
-	// }
 
-	// // new update part from zfeng start
-	int		tbytes;
-	char	msg[BUF_SIZE32];
-	int		i;
 
 	tbytes = 0;
 	while (tbytes < BUF_SIZE32)
@@ -174,26 +159,23 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 		}
 		if (nbytes == 0)
 		{
-			// s_init_new_player(fd);
 			printf("recv nothing\n");
 		}
 		buf[nbytes] = '\0';
 		tbytes += nbytes;
-		i = 0; //******************************
+		i = 0;
 		while (i < BUF_SIZE32)
 		{
 			if (buf[i] == '#')
 				buf[i] = '\0';
 			i++;
 		}
-		strncpy(msg, buf, i); //*****************
-		//strcpy(msg, buf);
+		strncpy(msg, buf, i);
 		memset(buf, 0, BUF_SIZE32);
-		if (tbytes == BUF_SIZE32) //*****************
+		if (tbytes == BUF_SIZE32)
 		{
 			break ;
-		} //****************************************
-		printf("\n{ in reading loop}\n");
+		}
 	}
 	if (s_add_to_team(msg, newfd) == EXIT_FAILURE)
 	{
@@ -201,17 +183,12 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 		close(newfd);
 	}
 
-	// new update part from zfeng end
 	else
 	{
 		printf("\n\n error after add to team \n\n");
 		FD_SET(newfd, master);
 		if (newfd > *fdmax)
 			*fdmax = newfd;
-		// printf("%d\n", g_teams[g_players[newfd].team_id].nb_client);
-		// printf("x: | y: \n");
-		// send(newfd, "joined ", 7, 0);
-		// printf("selectserver: new connection from %s on socket %d\n",
 		printf("\n\n error here \n\n");
 		printf("new connection from %s on socket %d\n",
 				inet_ntop(remoteaddr.ss_family,
