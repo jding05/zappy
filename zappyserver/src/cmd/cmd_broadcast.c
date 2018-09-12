@@ -55,8 +55,9 @@ void	send_broadcast_msg(int nb_dir, int fd, char *msg)
 	if (msg[strlen(msg) - 1] != '\n')
 		strcat(g_env.buffer, "\n");
 	printf(RED"player %d, %s\n"RESET, fd, g_env.buffer);
-	if (send(fd, g_env.buffer, strlen(g_env.buffer), 0) == -1)
-		perror("send [broadcast mssage]");
+	send_data(fd, g_env.buffer, strlen(g_env.buffer));
+	// if (send(fd, g_env.buffer, strlen(g_env.buffer), 0) == -1)
+	// 	perror("send [broadcast mssage]");
 }
 
 /*
@@ -125,8 +126,10 @@ int		cmd_broadcast(int fd, char *msg)
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 	printf(CYAN"\n[BROADCAST SUCCESS]\n"RESET);
 
-	if (send_msg(fd, "OK", "Send [broadcast]") == EXIT_FAILURE)
+	if (!send_data(fd, RED"OK\n"RESET, strlen(RED"OK\n"RESET)))
 		return (EXIT_FAILURE);
+	// if (send_msg(fd, "OK", "Send [broadcast]") == EXIT_FAILURE)
+	// 	return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 

@@ -31,7 +31,8 @@ void	print_player_info(t_players players)
 
 void	find_cell_player(int y, int x)
 {
-	int i;
+	int		i;
+	char	*id;
 
 	i = -1;
 	while (++i < MAX_FD)
@@ -39,7 +40,12 @@ void	find_cell_player(int y, int x)
 		if (g_players[i].y == y && g_players[i].x == x)
 		{
 			if (g_players[i].alive)
-				printf("player%d ", i);
+			{
+				// printf("player%d ", i);
+				strcat(g_env.buffer, "player");
+				strcat(g_env.buffer, (id = ft_itoa(i)));
+			}
+
 		}
 	}
 }
@@ -61,7 +67,9 @@ void	print_resource(int y, int x)
 		count = g_env.map[y][x][i];
 		while (count > 0)
 		{
-			printf(LIME"%s "RESET, g_res_name[i]);
+			// printf(LIME"%s "RESET, g_res_name[i]);
+			strcat(g_env.buffer, g_res_name[i]);
+			strcat(g_env.buffer, " ");
 			count--;
 		}
 	}
@@ -103,7 +111,8 @@ void	see_north_area(int level, int y, int x)
 	flag = 1;
 	floor = 0;
 	x_end = x + 1;
-	printf("{");
+	// printf("{");
+	strcpy(g_env.buffer, "{");
 	while (floor < level + 1)
 	{
 		x_start = x - floor;
@@ -113,7 +122,12 @@ void	see_north_area(int level, int y, int x)
 			// 	flag = 0;
 			// else
 			// 	printf(", ");
-			flag ? flag = 0 : printf(", ");
+			// flag ? flag = 0 : printf(", ");
+			// flag ? flag = 0 : strcat(g_env.buffer, ", ");
+			if (flag)
+				flag = 0;
+			else
+				strcat(g_env.buffer, ", ");
 			print_cell_value(y, x_start);
 			x_start++;
 		}
@@ -121,7 +135,8 @@ void	see_north_area(int level, int y, int x)
 		y--;
 		x_end++;
 	}
-	printf("}");
+	// printf("}");
+	strcat(g_env.buffer, "}");
 }
 
 /*
@@ -138,7 +153,8 @@ void	see_south_area(int level, int y, int x)
 	flag = 1;
 	floor = 0;
 	x_end = x - 1;
-	printf("{");
+	// printf("{");
+	strcpy(g_env.buffer, "{");
 	while (floor <= level)
 	{
 		x_start = x + floor;
@@ -148,7 +164,12 @@ void	see_south_area(int level, int y, int x)
 			// 	flag = 0;
 			// else
 			// 	printf(", ");
-			flag ? flag = 0 : printf(", ");
+			// flag ? flag = 0 : printf(", ");
+			// flag ? flag = 0 : strcat(g_env.buffer, ", ");
+			if (flag)
+				flag = 0;
+			else
+				strcat(g_env.buffer, ", ");
 			print_cell_value(y, x_start);
 			x_start--;
 		}
@@ -156,7 +177,8 @@ void	see_south_area(int level, int y, int x)
 		y++;
 		x_end--;
 	}
-	printf("}");
+	// printf("}");
+	strcat(g_env.buffer, "}");
 }
 
 /*
@@ -173,7 +195,8 @@ void	see_east_area(int level, int y, int x)
 	flag = 1;
 	floor = 0;
 	y_end = y + 1;
-	printf("{");
+	// printf("{");
+	strcpy(g_env.buffer, "{");
 	while (floor <= level)
 	{
 		y_start = y - floor;
@@ -183,7 +206,12 @@ void	see_east_area(int level, int y, int x)
 			// 	flag = 0;
 			// else
 			// 	printf(", ");
-			flag ? flag = 0 : printf(", ");
+			// flag ? flag = 0 : printf(", ");
+			// flag ? flag = 0 : strcat(g_env.buffer, ", ");
+			if (flag)
+				flag = 0;
+			else
+				strcat(g_env.buffer, ", ");
 			print_cell_value(y_start, x);
 			y_start++;
 		}
@@ -191,7 +219,8 @@ void	see_east_area(int level, int y, int x)
 		x++;
 		y_end++;
 	}
-	printf("}");
+	// printf("}");
+	strcat(g_env.buffer, "}");
 }
 
 /*
@@ -208,7 +237,8 @@ void	see_west_area(int level, int y, int x)
 	flag = 1;
 	floor = 0;
 	y_end = y - 1;
-	printf("{");
+	// printf("{");
+	strcpy(g_env.buffer, "{");
 	while (floor <= level)
 	{
 		y_start = y + floor;
@@ -218,7 +248,12 @@ void	see_west_area(int level, int y, int x)
 			// 	flag = 0;
 			// else
 			// 	printf(", ");
-			flag ? flag = 0 : printf(", ");
+			// flag ? flag = 0 : printf(", ");
+			// flag ? flag = 0 : strcat(g_env.buffer, ", ");
+			if (flag)
+				flag = 0;
+			else
+				strcat(g_env.buffer, ", ");
 			print_cell_value(y_start, x);
 			y_start--;
 		}
@@ -226,7 +261,8 @@ void	see_west_area(int level, int y, int x)
 		x--;
 		y_end--;
 	}
-	printf("}");
+	// printf("}");
+	strcat(g_env.buffer, "}");
 }
 
 int		cmd_see(int fd, char *msg)
@@ -237,6 +273,7 @@ int		cmd_see(int fd, char *msg)
 	printf("current level: %d\n", g_players[fd].level);
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 	g_players[fd].request_nb--;
+	bzero(g_env.buffer, 4096);
 	if (g_players[fd].direction == NORTH)
 	{
 		// printf("BEFORE player direction: N Y= |%i| X = |%i|\n", g_players[fd].y, g_players[fd].x);

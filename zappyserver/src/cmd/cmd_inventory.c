@@ -25,6 +25,7 @@ int		cmd_inventory(int fd, char *msg)
 	bzero(g_env.buffer, 4096);
 	strcpy(g_env.buffer, RED);
 	strcat(g_env.buffer, "{food ");
+	strcpy(g_env.buffer, "{food ");
 	strcat(g_env.buffer, str = ft_itoa(g_players[fd].inventory[0]));
 	free(str);
 	strcat(g_env.buffer, ", linemate ");
@@ -46,11 +47,14 @@ int		cmd_inventory(int fd, char *msg)
 	strcat(g_env.buffer, str = ft_itoa(g_players[fd].inventory[6]));
 	free(str);
 	strcat(g_env.buffer, "}\n"RESET);
+	// strcat(g_env.buffer, "}\n");
 	printf("players %d inventory: %s\n", fd, g_env.buffer);
 	printf(CYAN"\n[INVENTORY SUCCESS]\n"RESET);
 	g_players[fd].request_nb--;
-	if (send_msg(fd, g_env.buffer, "Send [inventory]") == EXIT_FAILURE)
-		return (EXIT_FAILURE);
+
+	send_data(fd, g_env.buffer, strlen(g_env.buffer));
+	// if (send_msg(fd, g_env.buffer, "Send [inventory]") == EXIT_FAILURE)
+	// 	return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 

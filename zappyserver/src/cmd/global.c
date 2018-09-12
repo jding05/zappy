@@ -46,8 +46,6 @@ const t_cmd		g_cmd[] =
 	{"fork", 42, cmd_fork},
 	{"connect_nbr", 0, cmd_connect_nbr},
 	{"hatch", 600, cmd_hatch},
-	{"pos", 0, cmd_pos},
-	{"info", 0, cmd_info},
 	{NULL, 0, NULL}
 };
 

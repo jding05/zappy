@@ -130,7 +130,8 @@ int		cmd_incantation_check(int fd) // need to norm
 	bzero(fds, sizeof(int) * 100);
 	if (level >= 8)
 	{
-		send_msg(fd, RED"KO\n"RESET, "Send [incantation]");
+		send_data(fd, RED"KO\n"RESET, strlen(RED"KO\n"RESET));
+		// send_msg(fd, RED"KO\n"RESET, "Send [incantation]");
 		// printf("Player level: %d > 8\n",level);
 		return (0);
 	}
@@ -163,7 +164,8 @@ void	blocking(int count, int fds[100])
 	while (++i < count)
 	{
 		g_env.buffer[38] = g_players[i].level + '0';
-		send_msg(i, g_env.buffer, "Send [incantation]");
+		send_data(i, g_env.buffer, strlen(g_env.buffer));
+		// send_msg(i, g_env.buffer, "Send [incantation]");
 		g_players[fds[i]].block = 1;
 	}
 }

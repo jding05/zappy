@@ -92,13 +92,13 @@ int			cmd_kick(int fd, char *msg)
 	g_players[fd].request_nb--;
 	if (find_cell_players(g_players[fd].y, g_players[fd].x, g_players[fd].direction, fd))
 	{
-		if (send_msg(fd, RED"OK\n"RESET, "Send [kick]") == EXIT_FAILURE)
+		if (!send_data(fd, RED"OK\n"RESET, strlen(RED"OK\n"RESET)))
 			return (EXIT_FAILURE);
 	}
 	else
 	{
-		if (send_msg(fd, RED"KO\n"RESET, "Send [kick]") == EXIT_FAILURE)
-		return (EXIT_FAILURE);
+		if (!send_data(fd, RED"KO\n"RESET, strlen(RED"KO\n"RESET)))
+			return (EXIT_FAILURE);
 	}
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 
@@ -115,25 +115,33 @@ void		send_kick_msg(int fd, int direction)
 	if (direction == NORTH)
 	{
 		printf(RED"player %d, moving <NORTH>\n"RESET, fd);
-		if (send(fd, RED"moving <NORTH>\n"RESET, 26, 0) == -1)
+		if (!send_data(fd, RED"moving <NORTH>\n"RESET, strlen(RED"moving <NORTH>\n"RESET)))
 			perror("Send [kick]");
+		// if (send(fd, RED"moving <NORTH>\n"RESET, 26, 0) == -1)
+		// 	perror("Send [kick]");
 	}
 	else if (direction == EAST)
 	{
 		printf(RED"player %d, moving <EAST>\n"RESET, fd);
-		if (send(fd, RED"moving <EAST>\n"RESET, 25, 0) == -1)
+		if (!send_data(fd, RED"moving <EAST>\n"RESET, strlen(RED"moving <EAST>\n"RESET)))
 			perror("Send [kick]");
+		// if (send(fd, RED"moving <EAST>\n"RESET, 25, 0) == -1)
+		// 	perror("Send [kick]");
 	}
 	else if (direction == SOUTH)
 	{
 		printf(RED"player %d, moving <SOUTH>\n"RESET, fd);
-		if (send(fd, RED"moving <SOUTH>\n"RESET, 26, 0) == -1)
+		if (!send_data(fd, RED"moving <SOUTH>\n"RESET, strlen(RED"moving <SOUTH>\n"RESET)))
 			perror("Send [kick]");
+		// if (send(fd, RED"moving <SOUTH>\n"RESET, 26, 0) == -1)
+		// 	perror("Send [kick]");
 	}
 	else if (direction == WEST)
 	{
 		printf(RED"player %d, moving <WEST>\n"RESET, fd);
-		if (send(fd, RED"moving <WEST>\n"RESET, 25, 0) == -1)
+		if (!send_data(fd, RED"moving <WEST>\n"RESET, strlen(RED"moving <WEST>\n"RESET)))
 			perror("Send [kick]");
+		// if (send(fd, RED"moving <WEST>\n"RESET, 25, 0) == -1)
+		// 	perror("Send [kick]");
 	}
 }

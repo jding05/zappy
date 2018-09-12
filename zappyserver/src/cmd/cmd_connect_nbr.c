@@ -41,8 +41,9 @@ int		cmd_connect_nbr(int fd, char *msg)
 	printf("Player %d, team: %s, nb_client %d\n", fd, g_teams[g_players[fd].team_id].team_name, g_teams[g_players[fd].team_id].nb_client);
 	printf(CYAN"\n[CONNECT_NBR SUCCESS]\n"RESET);
 
-	if (send_msg(fd, connect_nbr, "Send [connect_nbr]") == EXIT_FAILURE)
-		return (EXIT_FAILURE);
+	send_data(fd, RED"OK\n"RESET, strlen(RED"OK\n"RESET));
+	// if (send_msg(fd, connect_nbr, "Send [connect_nbr]") == EXIT_FAILURE)
+	// 	return (EXIT_FAILURE);
 	// update graphic client regarding player position
 	return (EXIT_SUCCESS);
 }

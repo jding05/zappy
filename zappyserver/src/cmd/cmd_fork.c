@@ -30,8 +30,9 @@ int     cmd_fork(int fd, char *msg)
 
 	printf(BLUE"Player %d, block: %d\n"RESET, fd, g_players[fd].block);
 	printf(CYAN"\n[RIGHT SUCCESS]\n"RESET);
-	if (send_msg(fd, RED"OK\n"RESET, "Send [fork]") == EXIT_FAILURE)
-		return (EXIT_FAILURE);
+	send_data(fd, RED"OK\n"RESET, strlen(RED"OK\n"RESET));
+	// if (send_msg(fd, RED"OK\n"RESET, "Send [fork]") == EXIT_FAILURE)
+	// 	return (EXIT_FAILURE);
     return(EXIT_SUCCESS);
 }
 

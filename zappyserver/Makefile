@@ -1,6 +1,6 @@
 SRV = server
 LIB = libft.a
-CFLAGS += -Wall -Werror -Wextra -g #-fsanitize=address
+CFLAGS += -Wall -Werror -Wextra -g -fsanitize=address
 INCLUDES = -I./inc
 CC = gcc
 
@@ -30,7 +30,7 @@ SRC_MAIN =	main
 SRC_UTIL =	read_flags ft_itoa
 
 SRC_CMD =	cmd_advance cmd_broadcast cmd_connect_nbr cmd_fork cmd_hatch cmd_incantation cmd_inventory \
-			cmd_kick cmd_left cmd_put cmd_right cmd_see cmd_take global cmd_pos cmd_info
+			cmd_kick cmd_left cmd_put cmd_right cmd_see cmd_take global
 
 SRC_EVENT =	exec_event_queue
 

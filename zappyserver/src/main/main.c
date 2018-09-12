@@ -103,6 +103,8 @@ int		check_winner(void)
 	check = 0;
 	fd = 1;
 	i = -1;
+	bzero(g_env.buffer, 4096);
+	strcpy(g_env.buffer, YELLOW"\n\n[[[[YOUR TEAM HAS WON THE GAME ]]]]\n\n"RESET);
 	while (++i < g_env.nb_team)
 	{
 		if (g_teams[i].reach_max_level == 6)
@@ -112,7 +114,7 @@ int		check_winner(void)
 			{
 				if (g_players[fd].team_id == i)
 				// printf("\n[ TEAM < %s > HAS WON ]\n", g_teams[i].team_name);
-				send_msg(fd, YELLOW"\n\n[[[[YOUR TEAM HAS WON THE GAME ]]]]\n\n"RESET, "Send [WINNER]");
+				send_data(fd, g_env.buffer, strlen(g_env.buffer));
 			}
 			check = 1;
 		}
@@ -126,6 +128,8 @@ void	check_dead_player(void)
 	struct timeval	curr_time;
 
 	i = -1;
+	bzero(g_env.buffer, 4096);
+	strcpy(g_env.buffer, DARKYELLOW"\n[ Your player is dead ]\n"RESET);
 	gettimeofday(&curr_time, NULL);
 	while (++i < MAX_FD)
 	{
@@ -135,7 +139,7 @@ void	check_dead_player(void)
 			{
 				g_players[i].dead = 1;
 				g_players[i].alive = 0;
-				send_msg(i, DARKYELLOW"\n[ Your player is dead ]\n"RESET, "Send [DEATH]");
+				send_data(i, g_env.buffer, strlen(g_env.buffer));
 			}
 		}
 	}

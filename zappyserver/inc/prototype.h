@@ -144,7 +144,8 @@ int		cmd_left(int fd, char *msg);
 */
 
 int		cmd_put(int fd, char *msg);
-int		send_msg(int fd, char *status, char *error_msg);
+// int		send_msg(int fd, char *status, char *error_msg);
+
 /*
 ** right
 */
@@ -172,18 +173,6 @@ int		cmd_see(int fd, char *msg);
 int     check_resource(char *msg);
 int     cmd_take(int fd, char *msg);
 void	eat_food_for_living(int fd);
-
-/*
-** pos
-*/
-
-int		cmd_pos(int fd, char *msg);
-
-/*
-** info
-*/
-
-int		cmd_info(int fd, char *msg);
 
 /*
 ** socket.c

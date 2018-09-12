@@ -28,9 +28,10 @@ int		cmd_left(int fd, char *msg)
 	g_players[fd].request_nb--;
 
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
-
-	if (send_msg(fd, RED"OK\n"RESET, "Send [left]") == EXIT_FAILURE)
+	if (!send_data(fd, RED"OK\n"RESET, strlen(RED"OK\n"RESET)))
 		return (EXIT_FAILURE);
+	// if (send_msg(fd, RED"OK\n"RESET, "Send [left]") == EXIT_FAILURE)
+	// 	return (EXIT_FAILURE);
 	//	maybe update graphic client regarding player position
 	printf(CYAN"\n[LEFT success]\n"RESET);
 	return (EXIT_SUCCESS);

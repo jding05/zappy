@@ -28,8 +28,10 @@ int		cmd_right(int fd, char *msg)
 
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 	printf(CYAN"\n[RIGHT SUCCESS]\n"RESET);
-	if (send_msg(fd, RED"OK\n"RESET, "Send [right]") == EXIT_FAILURE)
-		return (EXIT_FAILURE);
+	// send_data(fd, "OK\n", 3);
+	send_data(fd, RED"OK\n"RESET, strlen(RED"OK\n"RESET));
+	// if (send_msg(fd, RED"OK\n"RESET, "Send [right]") == EXIT_FAILURE)
+	// 	return (EXIT_FAILURE);
 	// maybe update graphic client regarding player position
 	return (EXIT_SUCCESS);
 }
