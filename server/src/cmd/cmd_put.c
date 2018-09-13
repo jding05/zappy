@@ -23,27 +23,11 @@ int		cmd_put(int fd, char *msg)
 	printf(CYAN"\n[Exec PUT]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s %s]\n"RESET, fd, "put", msg);
 	g_players[fd].request_nb--;
-	if ((res_i = check_resource(msg)) == 7 || res_i == 0) // i think this can be handle in parse
+	if ((res_i = check_resource(msg)) == 7 || res_i == 0 ||
+			g_players[fd].inventory[res_i] == 0) // i think this can be handle in parse
 	{
-
-		// if (send_msg(fd, RED"KO\n"RESET, "Send [put]") == EXIT_FAILURE)
-		// 	return (EXIT_FAILURE);
-
 		send_data(fd, RED"PUT KO"RESET, MSG_SIZE);
-
-	}
-	if (g_players[fd].inventory[res_i] == 0)
-	{
-		// if (send_msg(fd, RED"KO\n"RESET, "Send [put]") == EXIT_FAILURE)
-		// 	return (EXIT_FAILURE);
-
-		send_data(fd, RED"PUT KO"RESET, MSG_SIZE);
-
-	}
-	if (g_players[fd].inventory[res_i] == 0)
-	{
-		send_data(fd, RED"KO\n"RESET, MSG_SIZE);
-
+		return (EXIT_FAILURE);
 	}
 	else
 	{
