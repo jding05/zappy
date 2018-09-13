@@ -18,58 +18,34 @@ char	*g_cmd_table[] = {"advance", "right", "left", "see", "inventory", \
 char	*g_objects[] = {"linemate", "deraumere", "sibur", "mendiane", \
 	"phiras", "thystame", "food", 0};
 
-int		validate_cmd_with_obj(char *str, char *cmd)
+int		validate_req(char *req)
 {
+	char	*cmd;
+	char	*param;
 	int		i;
-	int		n;
 
-	i = 0;
-	n = strlen(cmd);
-	if (strnstr(str, cmd, n))
+	cmd = strtok(req, " ");
+	param = strtok(NULL, " ");
+	i = -1;
+	if (0 == strcmp(cmd, "take") || 0 == strcmp(cmd, "put"))
 	{
-		//printf("str = %s | cmd = %s | %s\n", str, cmd, strnstr(str, cmd, n));
-		if (strcmp(strnstr(str, cmd, n), str) == 0)
+		while (g_objects[++i])
 		{
-			while (g_objects[i])
-			{
-				//printf("%s\n", &(str[n + 1]));
-				if (str[n] == ' ' && str[n + 1] && strcmp(&str[n + 1], g_objects[i]) == 0)
-				{
-					//printf("%s\n", g_objects[i]);
-					return (EXIT_SUCCESS);
-				}
-				i++;
-			}
+			if (NULL != param && (0 == strcmp(g_objects[i], param)))
+				return (EXIT_SUCCESS);
 		}
+		return (EXIT_FAILURE);
 	}
-	return (EXIT_FAILURE);
-}
-
-int		validate_broadcast(char *str)
-{
-	if (strnstr(str, "broadcast", 9))
+	if (0 == strcmp(cmd, "broadcast"))
 	{
-		if (strcmp(strnstr(str, "broadcast", 9), str) == 0)
-			if (str[9] == ' ' && str[10])
-				return EXIT_SUCCESS;
+		if (NULL != param)
+			return (EXIT_SUCCESS);
+		return (EXIT_FAILURE);
 	}
-	return EXIT_FAILURE;
-}
-
-int		validate_cmd(char *str)
-{
-	int		i;
-
-	i = 0;
-	while (g_cmd_table[i])
+	while (g_cmd_table[++i])
 	{
-		if (strcmp(g_cmd_table[i], str) == 0)
+		if (0 == strcmp(req, g_cmd_table[i]) && NULL == param)
 			return (EXIT_SUCCESS);
-		if (validate_cmd_with_obj(str, g_cmd_table[i]) == EXIT_SUCCESS)
-			return (EXIT_SUCCESS);
-		if (validate_broadcast(str) == EXIT_SUCCESS)
-			return (EXIT_SUCCESS);
-		i++;
 	}
 	return (EXIT_FAILURE);
 }
