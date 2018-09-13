@@ -29,22 +29,11 @@ int     cmd_take(int fd, char *msg)
 	printf(CYAN"\n[Exec TAKE]\n"RESET);
     printf(BLUE"Player [%d] -> [%s %s]"RESET, fd, "take", msg);
     g_players[fd].request_nb--;
-    if ((res_i = check_resource(msg)) == 7) // i think this can be handle in parse
+    if ((res_i = check_resource(msg)) == 7 ||
+			g_env.map[g_players[fd].y][g_players[fd].x][res_i] == 0) // i think this can be handle in parse
 	{
-		// if (send_msg(fd, RED"KO\n"RESET, "Send [take]") == EXIT_FAILURE)
-		// 	return (EXIT_FAILURE);
-
-
 		send_data(fd, RED"TAKE KO"RESET, MSG_SIZE);
-
-	}
-    if (g_env.map[g_players[fd].y][g_players[fd].x][res_i] == 0)
-	{
-		// if (send_msg(fd, RED"KO\n"RESET, "Send [take]") == EXIT_FAILURE)
-		// 	return (EXIT_FAILURE);
-
-		send_data(fd, RED"TAKE KO"RESET, MSG_SIZE);
-
+		return (EXIT_FAILURE);
 	}
     else
     {
@@ -56,12 +45,8 @@ int     cmd_take(int fd, char *msg)
 	printf("players %d, finish take -> %s\n", fd, msg);
 	printf(CYAN"\n[TAKE SUCCESS]\n"RESET);
 
-	// if (send_msg(fd, RED"OK\n"RESET, "Send [take]") == EXIT_FAILURE)
-	// 	return (EXIT_FAILURE);
-
 	send_data(fd, RED"TAKE OK"RESET, MSG_SIZE);
 
-    // update graphic client regarding player position
     return (EXIT_SUCCESS);
 }
 

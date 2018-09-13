@@ -30,7 +30,7 @@ int		create_client(char *addr, int port)
 	sin.sin_port = htons(port);
 	sin.sin_addr.s_addr = inet_addr(addr);
 	if (connect(sock, (const struct sockaddr *)&sin, sizeof(sin)) == -1)
-	{	
+	{
 		perror(strerror(errno));
 		return (EXIT_FAILURE);
 	}
@@ -43,7 +43,7 @@ int		main(int ac, char **av)
 	int		sock;
 	char	*msg;
 	int		nbytes;
-	char	buf[BUF_SIZE];
+	char	buf[MSG_SIZE];
 	char	*rv;
 
 	parse_cargs(av);
@@ -60,23 +60,23 @@ int		main(int ac, char **av)
 	while (1)
 	{
 		nbytes = read(STDIN_FILENO, buf, BUF_SIZE - 1);		// read stdin request
-		buf[nbytes - 1] = '\0';
+		buf[nbytes - 1] = '\0';  // -1 to remove \n
 		if (validate_cmd(buf) == EXIT_SUCCESS)
 		{
-			send_data(sock, buf, BUF_SIZE);		// send request
+			send_data(sock, buf, MSG_SIZE);		// send request
 			rv = recv_data(sock, MSG_SIZE);		// recv either received or exceed limit
 			printf("%s\n", rv);
-			memset(buf, 0, BUF_SIZE);
-			rv = recv_data(sock, BUF_SIZE);		// recv return value from a command execution
+			memset(buf, 0, MSG_SIZE);
+			rv = recv_data(sock, MSG_SIZE);		// recv return value from a command execution
 			if (NULL != rv)
 				printf("%s\n", rv);
-			memset(rv, 0, BUF_SIZE);
+			memset(rv, 0, MSG_SIZE);
 		}
 		else
 		{
 			write(1, "invalid command\n", 16);
 		}
-		
+
 	}
 	close(sock);
 	return (EXIT_SUCCESS);

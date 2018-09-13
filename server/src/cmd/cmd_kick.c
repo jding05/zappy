@@ -105,7 +105,7 @@ int			cmd_kick(int fd, char *msg)
 		// return (EXIT_FAILURE);
 
 		send_data(fd, RED"KICK KO"RESET, MSG_SIZE);
-
+		return (EXIT_FAILURE);
 	}
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 

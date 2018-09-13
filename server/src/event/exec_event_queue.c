@@ -67,7 +67,7 @@ int		check_valid_cmd(char *msg, char *msg_buf, int i)
 				else
 				{
 					if (i == 8)
-						strcpy(msg_buf, msg + len);
+						strcpy(msg_buf, msg + len + 1); 
 					else if (check_resource(strcpy(msg_buf, msg + len + 1)) == 7)
 						return (17);
 					return (i);
@@ -182,10 +182,10 @@ void	enqueue(int fd, char *msg)
 
 	// if (!msg || (i = check_valid_cmd(msg, msg_buf, 0)) >= 15)
 	// 	return (send_back_invalid_cmd(fd, msg));
-	
+
 
 	i = check_valid_cmd(msg, msg_buf, 0);
-	
+
 	if (i == 9 || i == 10)
 	{
 		if (i == 9 && !cmd_incantation_check(fd))
@@ -194,7 +194,7 @@ void	enqueue(int fd, char *msg)
 			// send_msg(fd, RED"KO\n"RESET, "Send [incantation]");
 
 			send_data(fd, RED"INCANTATION KO"RESET, MSG_SIZE);
-			
+
 			return ;
 		}
 		g_players[fd].block = 1;

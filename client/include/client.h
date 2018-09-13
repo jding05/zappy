@@ -14,7 +14,7 @@
 # define CLIENT_H
 
 # define BUF_SIZE 32
-# define MSG_SIZE 32
+# define MSG_SIZE 4096
 # define MAP_SIZE 906
 # define PLAYER_SIZE 35
 
