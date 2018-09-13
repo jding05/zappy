@@ -158,7 +158,7 @@ int		cmd_right(int fd, char *msg);
 */
 
 void	print_player_info(t_players players);
-void	find_cell_player(int y, int x);
+void	find_cell_player(int y, int x, int flag);
 void	print_resource(int y, int x);
 void	print_cell_value(int y, int x);
 void	see_north_area(int level, int y, int x);

@@ -29,7 +29,7 @@ void	print_player_info(t_players players)
 	printf("-----------------------------\n");
 }
 
-void	find_cell_player(int y, int x)
+void	find_cell_player(int y, int x, int flag)
 {
 	int		i;
 	char	*id;
@@ -41,7 +41,10 @@ void	find_cell_player(int y, int x)
 		{
 			if (g_players[i].alive)
 			{
-				// printf("player%d ", i);
+				if (flag)
+					flag = 0;
+				else
+					strcat(g_env.buffer, " ");
 				strcat(g_env.buffer, "player");
 				strcat(g_env.buffer, (id = ft_itoa(i)));
 			}
@@ -59,22 +62,24 @@ void	print_resource(int y, int x)
 {
 	int	i;
 	int	count;
+	int flag;
 
 	i = -1;
-	// printf(" {%d,%d} ", y, x);
+	flag = 1;
 	while (++i < 7)
 	{
 		count = g_env.map[y][x][i];
 		while (count > 0)
 		{
-			// printf(LIME"%s "RESET, g_res_name[i]);
+			if (flag)
+				flag = 0;
+			else
+				strcat(g_env.buffer, " ");
 			strcat(g_env.buffer, g_res_name[i]);
-			strcat(g_env.buffer, " ");
 			count--;
 		}
 	}
-	find_cell_player(y, x);
-	// printf(", ");
+	find_cell_player(y, x, flag);
 }
 
 /*

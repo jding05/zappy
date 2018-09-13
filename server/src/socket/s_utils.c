@@ -81,8 +81,8 @@ void	s_init_new_player(int fd)
 	g_players[fd].fd = fd;
 	g_players[fd].request_nb = 0;
 	memset(g_players[fd].inventory, 0, 7);
-	g_players[fd].y = rand() % g_env.map_y;
-	g_players[fd].x = rand() % g_env.map_x;
+	g_players[fd].y = 1;//rand() % g_env.map_y;
+	g_players[fd].x = 1;//rand() % g_env.map_x;
 	g_players[fd].request_nb = 0;
 	g_players[fd].level = 1;
 	g_players[fd].alive = 1;
