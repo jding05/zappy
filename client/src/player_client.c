@@ -61,7 +61,7 @@ int		main(int ac, char **av)
 	{
 		nbytes = read(STDIN_FILENO, buf, BUF_SIZE - 1);		// read stdin request
 		buf[nbytes - 1] = '\0';  // -1 to remove \n
-		if (validate_cmd(buf) == EXIT_SUCCESS)
+		if (validate_req(buf) == EXIT_SUCCESS)
 		{
 			send_data(sock, buf, MSG_SIZE);		// send request
 			rv = recv_data(sock, MSG_SIZE);		// recv either received or exceed limit
