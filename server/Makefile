@@ -16,12 +16,14 @@ SRCDIR_UTIL = util/
 SRCDIR_CMD = cmd/
 SRCDIR_EVENT = event/
 SRCDIR_SOCKET = socket/
+SRCDIR_GLOBAL = global/
 
 OBJSRC = $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_MAIN)), $(SRC_MAIN)))
 OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_UTIL)), $(SRC_UTIL)))
 OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_CMD)), $(SRC_CMD)))
 OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_EVENT)), $(SRC_EVENT)))
 OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_SOCKET)), $(SRC_SOCKET)))
+OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_GLOBAL)), $(SRC_GLOBAL)))
 
 ################################################################################
 # SOURCE FILES                                                                 #
@@ -32,11 +34,13 @@ SRC_MAIN =	main
 SRC_UTIL =	read_flags ft_itoa
 
 SRC_CMD =	cmd_advance cmd_broadcast cmd_connect_nbr cmd_fork cmd_hatch cmd_incantation cmd_inventory \
-			cmd_kick cmd_left cmd_put cmd_right cmd_see cmd_take global
+			cmd_kick cmd_left cmd_put cmd_right cmd_see cmd_take
 
 SRC_EVENT =	exec_event_queue
 
 SRC_SOCKET = socket send_recv s_utils
+
+SRC_GLOBAL = global
 
 ################################################################################
 # SOURCE FILES                                                                 #
