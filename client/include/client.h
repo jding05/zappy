@@ -40,7 +40,7 @@
 # include <errno.h>
 # include "parse.h"
 
-int		validate_cmd(char *cmd);
+int		validate_req(char *cmd);
 char	*recv_data(int fd, int ebytes);
 int		send_data(int fd, char *data, int ebytes);
 
