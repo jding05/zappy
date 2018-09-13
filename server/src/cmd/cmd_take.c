@@ -16,12 +16,6 @@
 
 #include "../../include/server.h"
 
-void	eat_food_for_living(int fd)
-{
-	g_players[fd].inventory[0]--;
-	update_live(fd, 1);
-}
-
 int     cmd_take(int fd, char *msg)
 {
     int res_i;
@@ -40,7 +34,7 @@ int     cmd_take(int fd, char *msg)
         g_env.map[g_players[fd].y][g_players[fd].x][res_i]--;
         g_players[fd].inventory[res_i]++;
 		if (res_i == 0)
-			eat_food_for_living(fd);
+			update_live(fd, 1);
     }
 	printf("players %d, finish take -> %s\n", fd, msg);
 	printf(CYAN"\n[TAKE SUCCESS]\n"RESET);

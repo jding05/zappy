@@ -273,7 +273,7 @@ int		cmd_see(int fd, char *msg)
 	printf("current level: %d\n", g_players[fd].level);
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 	g_players[fd].request_nb--;
-	bzero(g_env.buffer, 4096);
+	bzero(g_env.buffer, MSG_SIZE);
 	if (g_players[fd].direction == NORTH)
 	{
 		// printf("BEFORE player direction: N Y= |%i| X = |%i|\n", g_players[fd].y, g_players[fd].x);

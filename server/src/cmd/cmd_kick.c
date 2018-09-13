@@ -121,32 +121,32 @@ void		send_kick_msg(int fd, int direction)
 {
 	if (direction == NORTH)
 	{
-		printf(RED"player %d, moving <NORTH>\n"RESET, fd);
-		if (!send_data(fd, RED"moving <NORTH>\n"RESET, strlen(RED"moving <NORTH>\n"RESET)))
+		printf(RED"player %d, moving <SOUTH>\n"RESET, fd);
+		if (!send_data(fd, RED"moving <SOUTH>"RESET, MSG_SIZE)))
 			perror("Send [kick]");
 		// if (send(fd, RED"moving <NORTH>\n"RESET, 26, 0) == -1)
 		// 	perror("Send [kick]");
 	}
 	else if (direction == EAST)
 	{
-		printf(RED"player %d, moving <EAST>\n"RESET, fd);
-		if (!send_data(fd, RED"moving <EAST>\n"RESET, strlen(RED"moving <EAST>\n"RESET)))
+		printf(RED"player %d, moving <WEST>\n"RESET, fd);
+		if (!send_data(fd, RED"moving <WEST>"RESET, MSG_SIZE)))
 			perror("Send [kick]");
 		// if (send(fd, RED"moving <EAST>\n"RESET, 25, 0) == -1)
 		// 	perror("Send [kick]");
 	}
 	else if (direction == SOUTH)
 	{
-		printf(RED"player %d, moving <SOUTH>\n"RESET, fd);
-		if (!send_data(fd, RED"moving <SOUTH>\n"RESET, strlen(RED"moving <SOUTH>\n"RESET)))
+		printf(RED"player %d, moving <NORTH>\n"RESET, fd);
+		if (!send_data(fd, RED"moving <NORTH>"RESET, MSG_SIZE)))
 			perror("Send [kick]");
 		// if (send(fd, RED"moving <SOUTH>\n"RESET, 26, 0) == -1)
 		// 	perror("Send [kick]");
 	}
 	else if (direction == WEST)
 	{
-		printf(RED"player %d, moving <WEST>\n"RESET, fd);
-		if (!send_data(fd, RED"moving <WEST>\n"RESET, strlen(RED"moving <WEST>\n"RESET)))
+		printf(RED"player %d, moving <EAST>\n"RESET, fd);
+		if (!send_data(fd, RED"moving <EAST>"RESET, MSG_SIZE)))
 			perror("Send [kick]");
 		// if (send(fd, RED"moving <WEST>\n"RESET, 25, 0) == -1)
 		// 	perror("Send [kick]");

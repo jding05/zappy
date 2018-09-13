@@ -21,7 +21,6 @@
 
 int		cmd_connect_nbr(int fd, char *msg)
 {
-	char	connect_nbr[100];
 	char	*str;
 
 	(void)msg;
@@ -31,11 +30,11 @@ int		cmd_connect_nbr(int fd, char *msg)
 	printf("Player %d, team: %s, nb_client %d\n", fd, g_teams[g_players[fd].team_id].team_name, g_teams[g_players[fd].team_id].nb_client);
 
 	g_players[fd].request_nb--;
-	bzero(connect_nbr, 100);
-	strcpy(connect_nbr, RED);
-	strcat(connect_nbr, str = ft_itoa(g_teams[g_players[fd].team_id].nb_client));
+	bzero(g_env.buffer, MSG_SIZE);
+	strcpy(g_env.buffer, RED);
+	strcat(g_env.buffer, str = ft_itoa(g_teams[g_players[fd].team_id].nb_client));
 	free(str);
-	strcat(connect_nbr, RESET);
+	strcat(g_env.buffer, RESET);
 
 	printf("Player %d, team: %s, nb_client %d\n", fd, g_teams[g_players[fd].team_id].team_name, g_teams[g_players[fd].team_id].nb_client);
 	printf(CYAN"\n[CONNECT_NBR SUCCESS]\n"RESET);
@@ -44,7 +43,7 @@ int		cmd_connect_nbr(int fd, char *msg)
 	// 	return (EXIT_FAILURE);
 
 
-	send_data(fd, connect_nbr, MSG_SIZE);
+	send_data(fd, g_env.buffer, MSG_SIZE);
 
 	// if (send_msg(fd, connect_nbr, "Send [connect_nbr]") == EXIT_FAILURE)
 	// 	return (EXIT_FAILURE);

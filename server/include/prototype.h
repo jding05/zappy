@@ -173,7 +173,6 @@ int		cmd_see(int fd, char *msg);
 
 int     check_resource(char *msg);
 int     cmd_take(int fd, char *msg);
-void	eat_food_for_living(int fd);
 
 /*
 ** socket.c

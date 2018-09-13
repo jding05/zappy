@@ -20,7 +20,7 @@ int		cmd_info(int fd, char *msg)
 	printf("\n\n| [[[[[[[[cmd_info function]]]]] |\n\n");
 	printf(CYAN"\n[Exec INFO]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "info");
-	bzero(g_env.buffer, 4096);
+	bzero(g_env.buffer, MSG_SIZE);
 	strcpy(g_env.buffer, RED);
 	strcat(g_env.buffer, "[player ");
 	strcat(g_env.buffer, (str = ft_itoa(fd)));
@@ -64,8 +64,8 @@ int		cmd_info(int fd, char *msg)
 	// if (send_msg(fd, g_env.buffer, "Send [INFO]") == EXIT_FAILURE)
 	// 	return (EXIT_FAILURE);
 
-	
-	
+
+
 	g_players[fd].request_nb--;
 	printf(CYAN"\n[INFO success]\n"RESET);
 	return (EXIT_SUCCESS);

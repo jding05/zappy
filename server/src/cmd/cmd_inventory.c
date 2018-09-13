@@ -22,7 +22,7 @@ int		cmd_inventory(int fd, char *msg)
 	(void)msg;
 	printf(CYAN"\n[Exec INVENTORY]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "inventory");
-	bzero(g_env.buffer, 4096);
+	bzero(g_env.buffer, MSG_SIZE);
 	strcpy(g_env.buffer, RED);
 	strcat(g_env.buffer, "{food ");
 	strcat(g_env.buffer, str = ft_itoa(g_players[fd].inventory[0]));

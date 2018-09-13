@@ -47,12 +47,18 @@ void	level_up_and_unblock(int count, int fds[100])
 	int		i;
 
 	i = -1;
+	bzero(g_env.buffer, MSG_SIZE);
+	strcpy(g_env.buffer, RED"current level : "RESET);
+	strcat(g_env.buffer, (str = ft_itoa(g_players[fds[0]].level + 1)));
+	free(str);
+	strcat(g_env.buffer, RESET);
 	while (++i < count)
 	{
 		g_players[fds[i]].level++;
 		g_players[fds[i]].block = 0;
 		if (g_players[fds[i]].level == 8)
 			g_teams[g_players[fds[i]].team_id].reach_max_level++;
+		send_data(fds[i], g_env.buffer, MSG_SIZE);
 	}
 }
 
@@ -132,7 +138,7 @@ int		cmd_incantation_check(int fd) // need to norm
 	{
 		// send_msg(fd, RED"KO\n"RESET, "Send [incantation]");
 
-		send_data(fd, RED"INCANTATION OK"RESET, MSG_SIZE);
+		send_data(fd, RED"INCANTATION KO"RESET, MSG_SIZE);
 
 		// printf("Player level: %d > 8\n",level);
 		return (0);
@@ -161,8 +167,8 @@ void	blocking(int count, int fds[100])
 	int		i;
 
 	i = -1;
-	bzero(g_env.buffer, 4096);
-	strcpy(g_env.buffer, RED"elevation in progress\ncurrent level : k\n"RESET);
+	bzero(g_env.buffer, MSG_SIZE);
+	strcpy(g_env.buffer, RED"elevation in progress"RESET);
 	while (++i < count)
 	{
 		g_env.buffer[38] = g_players[i].level + '0';

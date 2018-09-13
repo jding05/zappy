@@ -47,13 +47,12 @@ void	calc_four_pos(int pos[4][2], int y, int x)
 
 void	send_broadcast_msg(int nb_dir, int fd, char *msg)
 {
-	bzero(g_env.buffer, 4096);
-	strcpy(g_env.buffer, "message ");
+	bzero(g_env.buffer, MSG_SIZE);
+	strcpy(g_env.buffer, RED"message ");
 	strcat(g_env.buffer, ft_itoa(nb_dir));
 	strcat(g_env.buffer, ",");
 	strcat(g_env.buffer, msg);
-	if (msg[strlen(msg) - 1] != '\n')
-		strcat(g_env.buffer, "\n");
+	strcat(g_env.buffer, RESET);
 	printf(RED"player %d, %s\n"RESET, fd, g_env.buffer);
 
 
