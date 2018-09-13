@@ -112,7 +112,7 @@ void	see_north_area(int level, int y, int x)
 	floor = 0;
 	x_end = x + 1;
 	// printf("{");
-	strcpy(g_env.buffer, "{");
+	strcpy(g_env.buffer, RED"{");
 	while (floor < level + 1)
 	{
 		x_start = x - floor;
@@ -136,7 +136,7 @@ void	see_north_area(int level, int y, int x)
 		x_end++;
 	}
 	// printf("}");
-	strcat(g_env.buffer, "}");
+	strcat(g_env.buffer, "}"RESET);
 }
 
 /*
@@ -154,7 +154,7 @@ void	see_south_area(int level, int y, int x)
 	floor = 0;
 	x_end = x - 1;
 	// printf("{");
-	strcpy(g_env.buffer, "{");
+	strcpy(g_env.buffer, RED"{");
 	while (floor <= level)
 	{
 		x_start = x + floor;
@@ -178,7 +178,7 @@ void	see_south_area(int level, int y, int x)
 		x_end--;
 	}
 	// printf("}");
-	strcat(g_env.buffer, "}");
+	strcat(g_env.buffer, "}"RESET);
 }
 
 /*
@@ -196,7 +196,7 @@ void	see_east_area(int level, int y, int x)
 	floor = 0;
 	y_end = y + 1;
 	// printf("{");
-	strcpy(g_env.buffer, "{");
+	strcpy(g_env.buffer, RED"{");
 	while (floor <= level)
 	{
 		y_start = y - floor;
@@ -220,7 +220,7 @@ void	see_east_area(int level, int y, int x)
 		y_end++;
 	}
 	// printf("}");
-	strcat(g_env.buffer, "}");
+	strcat(g_env.buffer, "}"RESET);
 }
 
 /*
@@ -238,7 +238,7 @@ void	see_west_area(int level, int y, int x)
 	floor = 0;
 	y_end = y - 1;
 	// printf("{");
-	strcpy(g_env.buffer, "{");
+	strcpy(g_env.buffer, RED"{");
 	while (floor <= level)
 	{
 		y_start = y + floor;
@@ -262,7 +262,7 @@ void	see_west_area(int level, int y, int x)
 		y_end--;
 	}
 	// printf("}");
-	strcat(g_env.buffer, "}");
+	strcat(g_env.buffer, "}"RESET);
 }
 
 int		cmd_see(int fd, char *msg)
@@ -302,5 +302,6 @@ int		cmd_see(int fd, char *msg)
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 	printf(CYAN"\n[SEE SUCCESS]\n"RESET);
 	// maybe update graphic client regarding player position
+	send_data(fd, g_env.buffer, MSG_SIZE);
 	return (EXIT_SUCCESS);
 }

@@ -76,7 +76,7 @@ void	generate_resource(void)
 	x = rand() % g_env.map_x;
 	res = resource_dropping_rate();
 	// if (!g_env.map[y][x][0] && food < 50)
-	if ((food = rand() % 100) < 50)
+	if ((food = rand() % 100) < 50 && g_env.map[y][x][0] < 6)
 		g_env.map[y][x][0]++;
 	if (!g_env.map[y][x][res])
 	{
@@ -91,7 +91,7 @@ void	generate_resource(void)
 	}
 	// else
 	// 	printf("< map: y: %d x: %d res: %s ->> has existed>\n\n", y, x, g_res_name[res]);
-	
+
 
 
 	// printf("[Finish Generate]\n");
@@ -152,7 +152,7 @@ void	check_dead_player(void)
 
 
 				send_data(i, DARKYELLOW"\n[ Your player is dead ]\n"RESET, MSG_SIZE);
-				
+
 			}
 		}
 	}
