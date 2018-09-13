@@ -45,6 +45,7 @@ int		cmd_incantation(int fd, char *msg)
 void	level_up_and_unblock(int count, int fds[100])
 {
 	int		i;
+	char	*str;
 
 	i = -1;
 	bzero(g_env.buffer, MSG_SIZE);
