@@ -58,6 +58,8 @@ int		validate_req(char *req)
 	char	*param;
 	int		i;
 
+	if (0 == *req)
+		return (EXIT_FAILURE);
 	strcpy(buf, req);
 	cmd = strtok(buf, " ");
 	param = strtok(NULL, " ");
