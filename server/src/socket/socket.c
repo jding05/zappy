@@ -175,6 +175,7 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 	int				i;
 	struct timeval	*timeout;
 
+	i = 0;
 	while (1)
 	{
 		memcpy(read_fds, master, sizeof(*master));
