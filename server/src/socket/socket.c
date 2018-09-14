@@ -127,10 +127,7 @@ void	s_select_recv(int fd, fd_set *master)
 	}
 	if (g_players[fd].request_nb < 11)
 	{
-		write(1, "above\n", 6);
 		send_data(fd, "received", MSG_SIZE);
-		write(1, "below\n", 6);
-		// printf("request_nb = %d\n", g_players[fd].request_nb);
 		enqueue(fd, req);
 		g_players[fd].request_nb++;
 	}
