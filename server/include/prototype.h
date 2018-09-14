@@ -49,9 +49,9 @@ char	*ft_itoa(int n);
 
 int		check_event_time(struct timeval *curr_time, struct timeval *exec_time);
 void	cycle_exec_event_loop(void);
-void	exec_event_list(void);
+//void	exec_event_list(void);
 // void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l);
-void	exec_event(t_event **event);
+void	exec_event(void);
 t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd);
 void	enqueue(int fd, char *msg);
 int		check_valid_cmd(char *msg, char *msg_buf, int i);

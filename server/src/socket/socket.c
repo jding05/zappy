@@ -140,6 +140,33 @@ void	s_select_recv(int fd, fd_set *master)
 	}
 }
 
+struct timeval *set_timeout_alarm(void)
+{
+	long int		time_diff;
+	struct timeval	*timeout;
+	struct timeval	now;
+
+	timeout = NULL;
+	if (!g_env.queue_head)
+		return (NULL);
+	gettimeofday(&now, NULL);
+	time_diff = (g_env.queue_head->exec_time.tv_sec - now.tv_sec) * 1000000
+		+ (g_env.queue_head->exec_time.tv_usec - now.tv_usec);
+	//printf("\ntime_diff|%ld|\n", time_diff);
+	timeout = &now;
+	if (time_diff <= 0)
+	{
+		timeout->tv_sec = 0;
+		timeout->tv_usec = 0;
+	}
+	else
+	{
+		timeout->tv_sec = time_diff / 1000000;
+		timeout->tv_usec = time_diff % 1000000;
+	}
+	return (timeout);
+}
+
 /*
 ** keep iterating through all select fds
 */
@@ -147,16 +174,20 @@ void	s_select_recv(int fd, fd_set *master)
 void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 {
 	int				i;
-	struct timeval	timeout;
+	struct timeval	*timeout;
 
-	timeout.tv_sec = 0;
-	timeout.tv_usec = 0;	
 	while (1)
 	{
 		memcpy(read_fds, master, sizeof(*master));
-		// if (select(*fdmax + 1, read_fds, NULL, NULL, NULL) == -1)
-		if (select(*fdmax + 1, read_fds, NULL, NULL, &timeout) == -1)
+		timeout = set_timeout_alarm();
+		if (timeout)
+			printf("timeout alarm usec: |%d| sec = |%ld|\n", timeout->tv_usec, timeout->tv_sec);
+		if (select(*fdmax + 1, read_fds, NULL, NULL, timeout) == -1)
+		{
+			printf("\nselect error %s\n", strerror(errno));
 			return ;
+		}
+		cycle_exec_event_loop();
 		i = 0;
 		while (i <= *fdmax)
 		{
@@ -173,7 +204,8 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			}
 			i++;
 		}
-		cycle_exec_event_loop();
+		// if (g_env.queue_head)
+		//cycle_exec_event_loop();
 		if (check_winner())
 			break ;
 		// printf("[Finish s_select_cycle]\n");

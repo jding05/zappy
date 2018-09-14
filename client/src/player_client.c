@@ -66,7 +66,8 @@ int		main(int ac, char **av)
 			send_data(sock, buf, MSG_SIZE);		// send request
 			rv = recv_data(sock, MSG_SIZE);		// recv either received or exceed limit
 			printf("%s\n", rv);
-			memset(buf, 0, MSG_SIZE);
+			memset(rv, 0, MSG_SIZE);
+			memset(buf, 0, BUF_SIZE);
 			rv = recv_data(sock, MSG_SIZE);		// recv return value from a command execution
 			if (NULL != rv)
 				printf("%s\n", rv);

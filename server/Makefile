@@ -1,6 +1,6 @@
 SRV = server
 LIB = libft.a
-CFLAGS += -Wall -Werror -Wextra -g #-fsanitize=address
+#CFLAGS += -Wall -Werror -Wextra -g #-fsanitize=address
 INCLUDES = -I./include
 CFLAGS += -Wall -Werror -Wextra -g -fsanitize=address
 INCLUDES = -I./inc
