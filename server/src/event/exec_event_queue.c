@@ -163,7 +163,7 @@ void	enqueue(int fd, char *msg)
 	i = 0;
 	bzero(msg_buf, 1024);
 	i = check_valid_cmd(msg, msg_buf, 0);
-
+	printf(YELLOW"cmd_index: [%d], msg: {%s}\n"RESET, i, msg);
 	if (i == 9 || i == 10)
 	{
 		if (i == 9 && !cmd_incantation_check(fd))
@@ -224,11 +224,11 @@ void	exec_event(void)
 	gettimeofday(&now, NULL);
 	if (check_event_time(&now, &g_env.queue_head->exec_time))
 	{
-		while (i < 15)
+		while (i < 13)
 		{
 			if (!strcmp(g_cmd[i].cmd, g_env.queue_head->cmd))
 			{
-				if (!g_players[g_env.queue_head->fd].dead)
+				if (g_players[g_env.queue_head->fd].alive)
 				{
 					g_cmd[i].func(g_env.queue_head->fd, g_env.queue_head->msg);
 					printf(LIGHTBLUE"\n[EXEC]\n"RESET);
@@ -239,8 +239,9 @@ void	exec_event(void)
 			}
 			i++;
 		}
+		g_env.queue_head = g_env.queue_head->next;
 	}
-	g_env.queue_head = g_env.queue_head->next;
+	// g_env.queue_head = g_env.queue_head->next;
 	// printf("[cmd_ind after exec %i]\n", i);
 }
 

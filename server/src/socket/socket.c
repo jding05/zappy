@@ -187,7 +187,6 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			return ;
 		}
 		cycle_exec_event_loop();
-		i = 0;
 		while (i <= *fdmax)
 		{
 			if (FD_ISSET(i, read_fds))
