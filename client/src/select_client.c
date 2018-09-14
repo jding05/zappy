@@ -53,7 +53,8 @@ int		main(int ac, char **av)
 	parse_cargs(av);
 	FD_ZERO(&master);
 	FD_ZERO(&read_fds);
-	sock = create_client(g_env.host, atoi(g_env.port));
+	if (EXIT_FAILURE == (sock = create_client(g_env.host, atoi(g_env.port))))
+		return (EXIT_FAILURE);
 	FD_SET(sock, &master);
 	FD_SET(STDIN_FILENO, &master);
 	fdmax = sock;
