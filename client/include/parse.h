@@ -17,6 +17,9 @@
 
 # include "client.h"
 
+# define MAX_TEAM_NAME 32
+
+
 typedef struct	s_env
 {
 	char	team_name[MAX_TEAM_NAME];
