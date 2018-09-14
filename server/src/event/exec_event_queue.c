@@ -235,11 +235,12 @@ void	exec_event(void)
 				}
 				// else
 				// 	printf(LIGHTBLUE"\n[Player %d Dead, so no EXEC]\n"RESET, (*event)->fd);
+				g_env.queue_head = g_env.queue_head->next;
 				break ;
 			}
 			i++;
 		}
-		g_env.queue_head = g_env.queue_head->next;
+
 	}
 	// g_env.queue_head = g_env.queue_head->next;
 	// printf("[cmd_ind after exec %i]\n", i);

@@ -29,7 +29,7 @@ int     cmd_fork(int fd, char *msg)
 	push_cmd_hatch(fd);
 
 	printf(BLUE"Player %d, block: %d\n"RESET, fd, g_players[fd].block);
-	printf(CYAN"\n[RIGHT SUCCESS]\n"RESET);
+	printf(CYAN"\n[FORK SUCCESS]\n"RESET);
 
 	// if (send_msg(fd, RED"OK\n"RESET, "Send [fork]") == EXIT_FAILURE)
 	// 	return (EXIT_FAILURE);
