@@ -152,8 +152,7 @@ struct timeval *set_timeout_alarm(void)
 	gettimeofday(&now, NULL);
 	time_diff = (g_env.queue_head->exec_time.tv_sec - now.tv_sec) * 1000000
 		+ (g_env.queue_head->exec_time.tv_usec - now.tv_usec);
-	//printf("\ntime_diff|%ld|\n", time_diff);
-	timeout = &now;
+	timeout = (struct timeval *)malloc(sizeof(struct timeval));
 	if (time_diff <= 0)
 	{
 		timeout->tv_sec = 0;

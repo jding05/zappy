@@ -215,26 +215,30 @@ void	print_queue(void)
 void	exec_event(void)
 {
 	int				i;
-	//struct timeval	now;
+	struct timeval	now;
 
 	if (!g_env.queue_head)
 		return ;
+
 	i = 0;
-	//gettimeofday(&now, NULL);
-	while (i < 15)
+	gettimeofday(&now, NULL);
+	if (check_event_time(&now, &g_env.queue_head->exec_time))
 	{
-		if (!strcmp(g_cmd[i].cmd, g_env.queue_head->cmd))
+		while (i < 15)
 		{
-			if (!g_players[g_env.queue_head->fd].dead)
+			if (!strcmp(g_cmd[i].cmd, g_env.queue_head->cmd))
 			{
-				g_cmd[i].func(g_env.queue_head->fd, g_env.queue_head->msg);
-				printf(LIGHTBLUE"\n[EXEC]\n"RESET);
+				if (!g_players[g_env.queue_head->fd].dead)
+				{
+					g_cmd[i].func(g_env.queue_head->fd, g_env.queue_head->msg);
+					printf(LIGHTBLUE"\n[EXEC]\n"RESET);
+				}
+				// else
+				// 	printf(LIGHTBLUE"\n[Player %d Dead, so no EXEC]\n"RESET, (*event)->fd);
+				break ;
 			}
-			// else
-			// 	printf(LIGHTBLUE"\n[Player %d Dead, so no EXEC]\n"RESET, (*event)->fd);
-			break ;
+			i++;
 		}
-		i++;
 	}
 	g_env.queue_head = g_env.queue_head->next;
 	// printf("[cmd_ind after exec %i]\n", i);
@@ -296,10 +300,6 @@ void	exec_event(void)
 
 void	cycle_exec_event_loop(void)
 {
-	// struct timeval	now;
-    //
-	// gettimeofday(&now, NULL);
-	// if (check_event_time(&now, &g_env.queue_head->exec_time))
 	exec_event();
 	generate_resource();
 	check_dead_player();
