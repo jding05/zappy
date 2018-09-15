@@ -68,6 +68,7 @@ void	print_resource(int y, int x)
 
 	i = -1;
 	flag = 1;
+	strcat(g_env.buffer, GREY);
 	while (++i < 7)
 	{
 		count = g_env.map[y][x][i];
@@ -77,7 +78,7 @@ void	print_resource(int y, int x)
 				flag = 0;
 			else
 				strcat(g_env.buffer, " ");
-			i == 0 ? strcat(g_env.buffer, RED) : strcat(g_env.buffer, GREEN);
+			// i == 0 ? strcat(g_env.buffer, RED) : strcat(g_env.buffer, GREEN);
 			strcat(g_env.buffer, g_res_name[i]);
 			count--;
 		}
