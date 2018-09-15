@@ -42,7 +42,6 @@ all:	$(CLI)
 $(OBJDIR)%.o: $(SRCDIR)%.c
 	@/bin/mkdir -p $(OBJDIR)
 	@$(CC) $(CFLAG) $(WFLAG) $(HEADER) $< -o $@
-	# @$(CC) $(CFLAG) $(HEADER) $< -o $@
 
 $(CLI): $(OBJS)
 	@$(CC) $(OBJS) -o $@
