@@ -84,7 +84,7 @@ static int	find_cell_players(int y, int x, int direction, int fd)
 	return (check == 1 ? 1 : 0);
 }
 
-int			cmd_kick(int fd, char *msg)
+void			cmd_kick(int fd, char *msg)
 {
 	(void)msg;
 	printf(CYAN"\n[Exec KICK]\n"RESET);
@@ -105,12 +105,12 @@ int			cmd_kick(int fd, char *msg)
 		// return (EXIT_FAILURE);
 
 		send_data(fd, RED"KICK KO"RESET, MSG_SIZE);
-		return (EXIT_FAILURE);
+		// return (EXIT_FAILURE);
+		return ;
 	}
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 
 	// maybe update graphic client regarding player position
-	return (EXIT_SUCCESS);
 }
 
 /*

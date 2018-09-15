@@ -16,7 +16,7 @@
 
 #include "../../include/server.h"
 
-int     cmd_take(int fd, char *msg)
+void     cmd_take(int fd, char *msg)
 {
     int res_i;
 
@@ -27,7 +27,8 @@ int     cmd_take(int fd, char *msg)
 			g_env.map[g_players[fd].y][g_players[fd].x][res_i] == 0) // i think this can be handle in parse
 	{
 		send_data(fd, RED"TAKE KO"RESET, MSG_SIZE);
-		return (EXIT_FAILURE);
+		// return (EXIT_FAILURE);
+		return ;
 	}
     else
     {
@@ -40,8 +41,6 @@ int     cmd_take(int fd, char *msg)
 	printf(CYAN"\n[TAKE SUCCESS]\n"RESET);
 
 	send_data(fd, RED"TAKE OK"RESET, MSG_SIZE);
-
-    return (EXIT_SUCCESS);
 }
 
 int     check_resource(char *msg)

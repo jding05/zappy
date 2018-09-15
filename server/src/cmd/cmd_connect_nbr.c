@@ -19,7 +19,7 @@
 
 #include "../../include/server.h"
 
-int		cmd_connect_nbr(int fd, char *msg)
+void	cmd_connect_nbr(int fd, char *msg)
 {
 	char	*str;
 
@@ -42,11 +42,7 @@ int		cmd_connect_nbr(int fd, char *msg)
 	// if (send_msg(fd, connect_nbr, "Send [connect_nbr]") == EXIT_FAILURE)
 	// 	return (EXIT_FAILURE);
 
-
 	send_data(fd, g_env.buffer, MSG_SIZE);
 
-	// if (send_msg(fd, connect_nbr, "Send [connect_nbr]") == EXIT_FAILURE)
-	// 	return (EXIT_FAILURE);
 	// update graphic client regarding player position
-	return (EXIT_SUCCESS);
 }

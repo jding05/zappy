@@ -74,13 +74,13 @@ void	exec_event_and_delete(t_event **event, t_event **prev);
 ** advance
 */
 
-int		cmd_advance(int fd, char *msg);
+void	cmd_advance(int fd, char *msg);
 
 /*
 ** broadcast
 */
 
-int		cmd_broadcast(int fd, char *msg);
+void	cmd_broadcast(int fd, char *msg);
 void	calc_four_pos(int pos[4][2], int y, int x);  //-----------> Gaetan: fking ugly, Kwame: wtf is this shit
 int		get_closest_pos(int pos[4][2], int pos_y, int pos_x);
 int		calc_direction(int pos[2], int y, int x, int direction);
@@ -91,13 +91,13 @@ void	broadcast(int y, int x, int fd, char *msg);
 ** connect_nbr
 */
 
-int		cmd_connect_nbr(int fd, char *msg);
+void	cmd_connect_nbr(int fd, char *msg);
 
 /*
 ** fork
 */
 
-int     cmd_fork(int fd, char *msg);
+void    cmd_fork(int fd, char *msg);
 void	update_live(int fd, int food);
 void    push_cmd_hatch(int fd);
 void    laid_egg(int fd);
@@ -106,30 +106,32 @@ void    laid_egg(int fd);
 ** hatch
 */
 
-int		cmd_hatch(int fd, char *msg);
+void	cmd_hatch(int fd, char *msg);
 
 /*
 ** incantation
 */
 
-int		cmd_incantation(int fd, char *msg);
+void	cmd_incantation(int fd, char *msg);
 void	level_up_and_unblock(int count, int fds[MAX_FD]);
 int		check_prerequest(int level, int i);
 int		level_require(int level);
 int		cmd_incantation_check(t_event *node);
 void	blocking(int count, int fds[MAX_FD], t_event *node);
+void	low_level_envolving_digest(int level, int fd);
+void	high_level_envolving_digest(int level, int fd);
 
 /*
 ** inventory
 */
 
-int		cmd_inventory(int fd, char *msg);
+void	cmd_inventory(int fd, char *msg);
 
 /*
 ** kick
 */
 
-int		cmd_kick(int fd, char *msg);
+void	cmd_kick(int fd, char *msg);
 void	send_kick_msg(int fd, int direction);
 void	update_player_pos(int fd);
 
@@ -137,13 +139,13 @@ void	update_player_pos(int fd);
 ** left
 */
 
-int		cmd_left(int fd, char *msg);
+void	cmd_left(int fd, char *msg);
 
 /*
 ** put
 */
 
-int		cmd_put(int fd, char *msg);
+void	cmd_put(int fd, char *msg);
 // int		send_msg(int fd, char *status, char *error_msg);
 
 
@@ -151,7 +153,7 @@ int		cmd_put(int fd, char *msg);
 ** right
 */
 
-int		cmd_right(int fd, char *msg);
+void	cmd_right(int fd, char *msg);
 
 /*
 ** see
@@ -165,14 +167,14 @@ void	see_north_area(int level, int y, int x);
 void	see_south_area(int level, int y, int x);
 void	see_east_area(int level, int y, int x);
 void	see_west_area(int level, int y, int x);
-int		cmd_see(int fd, char *msg);
+void	cmd_see(int fd, char *msg);
 
 /*
 ** take
 */
 
 int     check_resource(char *msg);
-int     cmd_take(int fd, char *msg);
+void    cmd_take(int fd, char *msg);
 
 /*
 ** socket.c

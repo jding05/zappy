@@ -13,17 +13,6 @@
 #include "../../include/server.h"
 
 /*
-** Usage: ./server -p <port> -x <width> -y <height>
-**            -n <team> [<team>] [<team>] ... -c <nb> -t <t>
-**  1 -p port number
-**  3 -x world width
-**  5 -y world height
-**  7 -n team\_name\_1 team\_name\_2 ...
-**  8 + nb -c number of clients authorized at the beginning of the game
-**  10 + nb -t time unit divider (the greater t is, the faster the game will go)
-*/
-
-/*
 ** generate resource by randomize the map[y][x][res];
 ** method:
 **  1. increase res 0 ~ 6
@@ -32,13 +21,15 @@
 */
 
 /*
-** for a team to win the game, there should be at least 6 players reach level 6
-** -> for 6 players to reach max level, the min requirement resource to end the game
-** -> should be linemate 60, deraumere 60, sibur 60, mendiane 30, phiras 36, thystame 6
-** -> for total min resource should be 246, and the portion of each resources are:
+** for a team to win the game, there should be at least 6 players reach level 8
+** -> for 6 players to reach max level, the min requirement resources, total:
+** 	 -> linemate 60, deraumere 60, sibur 60, mendiane 30, phiras 36, thystame 6
+**
+** -> Total min resource should be 246, and the portion of each resources are:
 ** -> linemate 22%, deraumere 24%, sibur 24% mendiane 12%, phiras 15%, thystame 2%
-** -> the chance to generate the stone resource in one random cell, it's the percentage value
-** -> and the total per stone resource should be [nb resource per stone * nb_team]
+** -> the chance to generate the stone resource in one random cell,
+**		it's the percentage value
+** -> Total per stone resource should be [nb resource per stone * nb_team]
 */
 
 static int	resource_dropping_rate(void)
@@ -60,9 +51,23 @@ static int	resource_dropping_rate(void)
 		res = 5;
 	else if (rand_nb < (22 + 24 + 24 + 12 + 15 + 2))
 		res = 6;
-	// printf("rand_nb: %d res: %d\n", rand_nb, res);
 	return (res);
 }
+
+/*
+**  [ generate resource ]
+**		In each loop cycle, we first random generate the map y, x value,
+**		to set the generate location. There are 7 resouces, 0 is food,
+** 		rest of them is incantation stones, so we seperate the generation,
+** Two things:
+** 1. we generate food with 50% dropping rate, and if the current cell has less
+** 		than 5 units of food (food max cap per cell), then we generate the food.
+** 2. we call resource_dropping_rate() to get the resource id, that we need,
+** 		for the 6 kinds of stone, we only generate one unit max (per stone )in
+** 		each cell, if the cell doesn't have any unit of that stone, and the game
+**		hasn't generated max stone units (which is the minimun stone requirement
+** 		for one team to win * nb of teams), then we generate the stone.
+*/
 
 void	generate_resource(void)
 {
@@ -75,25 +80,16 @@ void	generate_resource(void)
 	y = rand() % g_env.map_y;
 	x = rand() % g_env.map_x;
 	res = resource_dropping_rate();
-	// if (!g_env.map[y][x][0] && food < 50)
-	if ((food = rand() % 100) < 50 && g_env.map[y][x][0] < 6)
+	if ((food = rand() % 100) < 50 && g_env.map[y][x][0] < 5)
 		g_env.map[y][x][0]++;
 	if (!g_env.map[y][x][res])
 	{
 		if (g_env.res[res] < g_max_res[res] * g_env.nb_team)
 		{
 			g_env.map[y][x][res]++;
-			// printf(DARKYELLOW"< map: y: %d x: %d res: %s >\n\n"RESET, y, x, g_res_name[res]);
 			g_env.res[res]++;
 		}
-		// else
-		// 	printf("< map: y: %d x: %d res: %s ->> reach max >\n\n", y, x, g_res_name[res]);
 	}
-	// else
-	// 	printf("< map: y: %d x: %d res: %s ->> has existed>\n\n", y, x, g_res_name[res]);
-
-
-
 	// printf("[Finish Generate]\n");
 }
 
@@ -116,13 +112,7 @@ int		check_winner(void)
 			while (fd < MAX_FD && g_players[fd].alive)
 			{
 				if (g_players[fd].team_id == i)
-				// printf("\n[ TEAM < %s > HAS WON ]\n", g_teams[i].team_name);
-
-				// send_msg(fd, YELLOW"\n\n[[[[YOUR TEAM HAS WON THE GAME ]]]]\n\n"RESET, "Send [WINNER]");
-
-
-				send_data(fd, YELLOW"\n\n[[[[YOUR TEAM HAS WON THE GAME ]]]]\n\n"RESET, MSG_SIZE);
-
+				send_data(fd, g_env.buffer, MSG_SIZE);
 			}
 			check = 1;
 		}
@@ -147,12 +137,7 @@ void	check_dead_player(void)
 			{
 				g_players[i].dead = 1;
 				g_players[i].alive = 0;
-
-				// send_msg(i, DARKYELLOW"\n[ Your player is dead ]\n"RESET, "Send [DEATH]");
-
-
-				send_data(i, DARKYELLOW"\n[ Your player is dead ]\n"RESET, MSG_SIZE);
-
+				send_data(i, g_env.buffer, MSG_SIZE);
 			}
 		}
 	}
@@ -163,12 +148,12 @@ void	free_malloc(void)
 	return ;
 }
 
-void	init_res(void)
+inline void	init_res(void)
 {
-	memset(g_env.res, 0, 7);
+	memset(g_env.res, 0, sizeof(int) * 7);
 }
 
-void 	init_queue(void)
+inline void	init_queue(void)
 {
 	g_env.queue_head = NULL;
 	printf("[init_queue]\n");
@@ -198,6 +183,18 @@ static void update_nb_client(void)
 	while (++ind < g_env.nb_team)
 		g_teams[ind].nb_client = g_env.authorized_clients / g_env.nb_team;
 }
+
+/*
+** Usage: ./server -p <port> -x <width> -y <height>
+**            -n <team> [<team>] [<team>] ... -c <nb> -t <t>
+**  1 -p port number
+**  3 -x world width
+**  5 -y world height
+**  7 -n team\_name\_1 team\_name\_2 ...
+**  8 + nb -c number of clients authorized at the beginning of the game
+**  10 + nb -t time unit divider (the greater t is, the faster the game will go)
+*/
+
 void	server_usage(void)
 {
 	printf("Usage: ./server -p <port> -x <width> -y <height> ");

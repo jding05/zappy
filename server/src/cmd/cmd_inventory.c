@@ -15,7 +15,7 @@
 */
 #include "../../include/server.h"
 
-int		cmd_inventory(int fd, char *msg)
+void	cmd_inventory(int fd, char *msg)
 {
 	char	*str;
 
@@ -51,8 +51,6 @@ int		cmd_inventory(int fd, char *msg)
 	g_players[fd].request_nb--;
 
 	send_data(fd, g_env.buffer, MSG_SIZE);
-
-	return (EXIT_SUCCESS);
 }
 
 /*

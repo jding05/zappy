@@ -16,7 +16,7 @@
 */
 #include "../../include/server.h"
 
-int		cmd_left(int fd, char *msg)
+void	cmd_left(int fd, char *msg)
 {
 	(void)msg;
 	printf(CYAN"\n[Exec LEFT]\n"RESET);
@@ -37,7 +37,7 @@ int		cmd_left(int fd, char *msg)
 
 	//	maybe update graphic client regarding player position
 	printf(CYAN"\n[LEFT success]\n"RESET);
-	return (EXIT_SUCCESS);
+
 }
 
 /*

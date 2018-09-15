@@ -268,7 +268,7 @@ void	see_west_area(int level, int y, int x)
 	strcat(g_env.buffer, BRED"}"RESET);
 }
 
-int		cmd_see(int fd, char *msg)
+void	cmd_see(int fd, char *msg)
 {
 	(void)msg;
 	printf(CYAN"\n[Exec SEE]\n"RESET);
@@ -306,5 +306,5 @@ int		cmd_see(int fd, char *msg)
 	printf(CYAN"\n[SEE SUCCESS]\n"RESET);
 	// maybe update graphic client regarding player position
 	send_data(fd, g_env.buffer, MSG_SIZE);
-	return (EXIT_SUCCESS);
+
 }

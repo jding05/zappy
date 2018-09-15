@@ -12,7 +12,7 @@
 
 #include "../../include/server.h"
 
-int		cmd_hatch(int fd, char *msg)
+void	cmd_hatch(int fd, char *msg)
 {
 	int	id;
 
@@ -33,5 +33,4 @@ int		cmd_hatch(int fd, char *msg)
 	printf("team: %s, nb_client: %d, egg_hatch: %d\n", g_teams[id].team_name,
 		g_teams[id].nb_client, g_teams[id].egg_hatched);
 	printf(CYAN"\n[HATCH SUCCESS]\n"RESET);
-	return (EXIT_SUCCESS);
 }

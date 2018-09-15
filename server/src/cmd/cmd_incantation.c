@@ -12,7 +12,7 @@
 
 #include "../../include/server.h"
 
-int		cmd_incantation(int fd, char *msg)
+void	cmd_incantation(int fd, char *msg)
 {
 	int		i;
 	int		count;
@@ -39,7 +39,58 @@ int		cmd_incantation(int fd, char *msg)
 	//	maybe update graphic client regarding player position
 	printf(CYAN"\n[INCANTATION SUCCESS]\n"RESET);
 	printf("players %d, level %d\n", fd, g_players[fd].level);
-	return (EXIT_SUCCESS);
+}
+
+void	low_level_envolving_digest(int level, int fd)
+{
+	if (level == 1)
+		g_players[fd].inventory[1]--;
+	else if (level == 2)
+	{
+		g_players[fd].inventory[1] -= 1;
+		g_players[fd].inventory[2] -= 1;
+		g_players[fd].inventory[3] -= 1;
+	}
+	else if (level == 3)
+	{
+		g_players[fd].inventory[1] -= 2;
+		g_players[fd].inventory[3] -= 1;
+		g_players[fd].inventory[5] -= 2;
+	}
+	else if (level == 4)
+	{
+		g_players[fd].inventory[1] -= 1;
+		g_players[fd].inventory[2] -= 1;
+		g_players[fd].inventory[3] -= 2;
+		g_players[fd].inventory[5] -= 1;
+	}
+}
+
+void	high_level_envolving_digest(int level, int fd)
+{
+	if (level == 5)
+	{
+		g_players[fd].inventory[1] -= 1;
+		g_players[fd].inventory[2] -= 2;
+		g_players[fd].inventory[3] -= 1;
+		g_players[fd].inventory[4] -= 3;
+	}
+	else if (level == 6)
+	{
+		g_players[fd].inventory[1] -= 1;
+		g_players[fd].inventory[2] -= 2;
+		g_players[fd].inventory[3] -= 3;
+		g_players[fd].inventory[5] -= 1;
+	}
+	else if (level == 7)
+	{
+		g_players[fd].inventory[1] -= 2;
+		g_players[fd].inventory[2] -= 2;
+		g_players[fd].inventory[3] -= 2;
+		g_players[fd].inventory[4] -= 2;
+		g_players[fd].inventory[5] -= 2;
+		g_players[fd].inventory[6] -= 1;
+	}
 }
 
 void	level_up_and_unblock(int count, int fds[MAX_FD])
@@ -55,6 +106,10 @@ void	level_up_and_unblock(int count, int fds[MAX_FD])
 	strcat(g_env.buffer, RESET);
 	while (++i < count)
 	{
+		if (g_players[fds[i]].level < 5)
+			low_level_envolving_digest(g_players[fds[i]].level, i);
+		else
+			high_level_envolving_digest(g_players[fds[i]].level, i);
 		g_players[fds[i]].level++;
 		g_players[fds[i]].block = 0;
 		if (g_players[fds[i]].level == 8)

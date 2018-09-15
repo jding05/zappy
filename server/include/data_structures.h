@@ -88,7 +88,7 @@ typedef struct			s_cmd
 {
 	char				*cmd;
 	int					delay_time;
-	int					(*func)(int fd, char *msg);
+	void				(*func)(int fd, char *msg);
 }						t_cmd;
 
 t_env       			g_env;

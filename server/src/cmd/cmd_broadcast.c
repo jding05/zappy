@@ -121,7 +121,7 @@ void	broadcast(int y, int x, int fd, char *msg)
 **	the sound between the transmitter to the player for which we calculate
 */
 
-int		cmd_broadcast(int fd, char *msg)
+void	cmd_broadcast(int fd, char *msg)
 {
 	printf(CYAN"\n[Exec BROADCAST]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s <%s>]\n"RESET, fd, "broadcast", msg);
@@ -136,7 +136,6 @@ int		cmd_broadcast(int fd, char *msg)
 
 	send_data(fd, RED"BROADCAST OK"RESET, MSG_SIZE);
 
-	return (EXIT_SUCCESS);
 }
 
 /*

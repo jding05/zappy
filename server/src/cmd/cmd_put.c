@@ -16,7 +16,7 @@
 
 #include "../../include/server.h"
 
-int		cmd_put(int fd, char *msg)
+void	cmd_put(int fd, char *msg)
 {
 	int res_i;
 
@@ -27,7 +27,8 @@ int		cmd_put(int fd, char *msg)
 			g_players[fd].inventory[res_i] == 0) // i think this can be handle in parse
 	{
 		send_data(fd, RED"PUT KO"RESET, MSG_SIZE);
-		return (EXIT_FAILURE);
+		// return (EXIT_FAILURE);
+		return ;
 	}
 	else
 	{
@@ -40,7 +41,7 @@ int		cmd_put(int fd, char *msg)
 	send_data(fd, RED"PUT OK"RESET, MSG_SIZE);
 
 	// update graphic client regarding player position
-	return (EXIT_SUCCESS);
+
 }
 
 // int		send_msg(int fd, char *status, char *error_msg)

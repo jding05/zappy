@@ -17,7 +17,7 @@
 ** once the egg 42/t hit, means it call this function
 ** -> then we call cmd_hatch put into queue (that marked 600/t after)
 */
-int     cmd_fork(int fd, char *msg)
+void    cmd_fork(int fd, char *msg)
 {
     printf(CYAN"\n[Exec FORK]\n"RESET);
     printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "fork");
@@ -36,7 +36,6 @@ int     cmd_fork(int fd, char *msg)
 
 	send_data(fd, RED"FORK OK"RESET, MSG_SIZE);
 
-    return(EXIT_SUCCESS);
 }
 
 void	update_live(int fd, int nb_food)
