@@ -109,8 +109,8 @@ int		main(int ac, char **av)
 				}
 				else
 				{
-					msg = recv_data(sock, MSG_SIZE);
-					printf("server msg: %s\n", msg);
+					if (0 != (msg = recv_data(sock, MSG_SIZE)));
+						printf("server msg: %s\n", msg);
 				}
 			}
 			i++;
