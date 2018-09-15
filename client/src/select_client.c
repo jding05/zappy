@@ -48,9 +48,10 @@ int		main(int ac, char **av)
 	char	buf[MSG_SIZE];
 	char	*msg;
 	char	*rv;
-	// struct timeval	*timeout;
 
 	SELECT_VARS;
+	if (ac < 3)
+		client_usage();
 	parse_cargs(av);
 	FD_ZERO(&master);
 	FD_ZERO(&read_fds);

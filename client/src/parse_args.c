@@ -21,9 +21,9 @@ int		get_num(char **argv, int i)
 
 void	client_usage(void)
 {
-	printf("Usage: ./client -n <team> -p <port> [-h <hostname>]\n");
-	printf("-n team\\_name\n");
+	printf("Usage: ./client -p <port> -n <team> [-h <hostname>]\n");
 	printf("-p port\n");
+	printf("-n team\\_name\n");
 	printf("-h name of the host, by default it'll be localhost\n");
 }
 
