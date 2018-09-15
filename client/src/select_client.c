@@ -48,6 +48,7 @@ int		main(int ac, char **av)
 	char	buf[MSG_SIZE];
 	char	*msg;
 	char	*rv;
+	// struct timeval	*timeout;
 
 	SELECT_VARS;
 	parse_cargs(av);
@@ -73,7 +74,7 @@ int		main(int ac, char **av)
 	while (1)
 	{
 		memcpy(&read_fds, &master, sizeof(master));
-		if (select(fdmax + 1, &read_fds, NULL, NULL, NULL) == -1)
+		if (select(fdmax + 1, &read_fds, NULL, NULL, 0) == -1)
 		{
 			printf("select error: %s\n", strerror(errno));
 			return (EXIT_FAILURE);
@@ -108,11 +109,11 @@ int		main(int ac, char **av)
 				}
 				else
 				{
-					write(1, "server: ", 8);
 					msg = recv_data(sock, MSG_SIZE);
 					printf("server msg: %s\n", msg);
 				}
 			}
+			i++;
 		}
 
 	}
