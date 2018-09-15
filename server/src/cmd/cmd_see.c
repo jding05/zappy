@@ -86,6 +86,30 @@ void	print_resource(int y, int x)
 	find_cell_player(y, x, flag);
 }
 
+int		update_y(int y)
+{
+	while (y < 0 || y >= g_env.map_y)
+	{
+		if (y > g_env.map_y - 1)
+			y = y - g_env.map_y;
+		else if (y < 0)
+			y = y + g_env.map_y;
+	}
+	return (y);
+}
+
+int		update_x(int x)
+{
+	while (x < 0 || x >= g_env.map_x)
+	{
+		if (x > g_env.map_x - 1)
+			x = x - g_env.map_x;
+		else if (x < 0)
+			x = x + g_env.map_x;
+	}
+	return (x);
+}
+
 /*
 ** update the cell (y,x) coordinate
 ** -> due to the coordinate might over the board
@@ -137,7 +161,7 @@ void	see_north_area(int level, int y, int x)
 				flag = 0;
 			else
 				strcat(g_env.buffer, ", ");
-			print_cell_value(y, x_start);
+			print_cell_value(update_y(y), update_x(x_start));
 			x_start++;
 		}
 		floor++;
@@ -174,7 +198,7 @@ void	see_south_area(int level, int y, int x)
 				flag = 0;
 			else
 				strcat(g_env.buffer, ", ");
-			print_cell_value(y, x_start);
+			print_cell_value(update_y(y), update_x(x_start));
 			x_start--;
 		}
 		floor++;
@@ -216,7 +240,7 @@ void	see_east_area(int level, int y, int x)
 				flag = 0;
 			else
 				strcat(g_env.buffer, ", ");
-			print_cell_value(y_start, x);
+			print_cell_value(update_y(y_start), update_x(x));
 			y_start++;
 		}
 		floor++;
@@ -248,17 +272,11 @@ void	see_west_area(int level, int y, int x)
 		y_start = y + floor;
 		while (y_start > y_end)
 		{
-			// if (flag)
-			// 	flag = 0;
-			// else
-			// 	printf(", ");
-			// flag ? flag = 0 : printf(", ");
-			// flag ? flag = 0 : strcat(g_env.buffer, ", ");
 			if (flag)
 				flag = 0;
 			else
 				strcat(g_env.buffer, ", ");
-			print_cell_value(y_start, x);
+			print_cell_value(update_y(y_start), update_x(x));
 			y_start--;
 		}
 		floor++;

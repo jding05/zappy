@@ -30,8 +30,9 @@ void	cmd_incantation(int fd, char *msg)
 	level = g_players[fd].level;
 	while (++i < MAX_FD)
 	{
-		if (g_players[i].y == g_players[fd].y && g_players[i].x == g_players[fd].x)
-			if (g_players[i].level == level && check_prerequest(level, i))
+		if (g_players[i].y == g_players[fd].y &&
+			g_players[i].x == g_players[fd].x && g_players[i].level == level &&
+			check_prerequest(level, i) && g_players[i].block)
 				fds[count++] = i;
 	}
 	if (count >= (nb = level_require(level)) && nb > 0)
