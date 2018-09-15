@@ -172,9 +172,7 @@ void	blocking(int count, int fds[100])
 	strcpy(g_env.buffer, RED"elevation in progress"RESET);
 	while (++i < count)
 	{
-		// g_env.buffer[38] = g_players[i].level + '0';
-
-		send_data(i, g_env.buffer, MSG_SIZE);
+		send_data(fds[i], g_env.buffer, MSG_SIZE);
 
 		g_players[fds[i]].block = 1;
 	}
