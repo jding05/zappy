@@ -60,7 +60,7 @@ void	s_init_egg_player(int fd, int team_id, int egg_id)
 {
 	g_players[fd].fd = fd;
 	g_players[fd].request_nb = 0;
-	memset(g_players[fd].inventory, 0, 7);
+	memset(g_players[fd].inventory, 0, sizeof(int) * 7);
 	g_players[fd].y = g_teams[team_id].egg[egg_id].y;
 	g_players[fd].x = g_teams[team_id].egg[egg_id].x;
 	g_players[fd].request_nb = 0;
@@ -80,7 +80,26 @@ void	s_init_new_player(int fd)
 {
 	g_players[fd].fd = fd;
 	g_players[fd].request_nb = 0;
-	memset(g_players[fd].inventory, 0, 7);
+	memset(g_players[fd].inventory, 0, 3);
+	memset(g_players[fd].inventory, 10, 1);
+
+	memset(g_players[fd].inventory+1, 0, 3);
+	memset(g_players[fd].inventory+1, 10, 1);
+
+	memset(g_players[fd].inventory+2, 0, 3);
+	memset(g_players[fd].inventory+2, 10, 1);
+
+	memset(g_players[fd].inventory+3, 0, 3);
+	memset(g_players[fd].inventory+3, 10, 1);
+
+	memset(g_players[fd].inventory+4, 0, 3);
+	memset(g_players[fd].inventory+4, 10, 1);
+
+	memset(g_players[fd].inventory+5, 0, 3);
+	memset(g_players[fd].inventory+5, 10, 1);
+
+	memset(g_players[fd].inventory+6, 0, 3);
+	memset(g_players[fd].inventory+6, 1, 1);
 	g_players[fd].y = rand() % g_env.map_y;
 	g_players[fd].x = rand() % g_env.map_x;
 	g_players[fd].request_nb = 0;

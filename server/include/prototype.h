@@ -61,7 +61,7 @@ void	print_queue(void);
 void	record_time(t_event *node, int delay_time);
 int		print_time(struct timeval *now);
 // void	exec_event_queue(int short_term);
-void	set_block_time(int fd);
+void	set_block_time(t_event *node, int fd);
 // void	dequeue(void);
 void	insert(t_event *node);
 void	exec_event_and_delete(t_event **event, t_event **prev);
@@ -113,11 +113,11 @@ int		cmd_hatch(int fd, char *msg);
 */
 
 int		cmd_incantation(int fd, char *msg);
-void	level_up_and_unblock(int count, int fds[100]);
+void	level_up_and_unblock(int count, int fds[MAX_FD]);
 int		check_prerequest(int level, int i);
 int		level_require(int level);
-int		cmd_incantation_check(int fd);
-void	blocking(int count, int fds[100]);
+int		cmd_incantation_check(t_event *node);
+void	blocking(int count, int fds[MAX_FD], t_event *node);
 
 /*
 ** inventory

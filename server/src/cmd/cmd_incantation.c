@@ -16,7 +16,7 @@ int		cmd_incantation(int fd, char *msg)
 {
 	int		i;
 	int		count;
-	int		fds[100];
+	int		fds[MAX_FD];
 	int		level;
 	int		nb;
 
@@ -42,7 +42,7 @@ int		cmd_incantation(int fd, char *msg)
 	return (EXIT_SUCCESS);
 }
 
-void	level_up_and_unblock(int count, int fds[100])
+void	level_up_and_unblock(int count, int fds[MAX_FD])
 {
 	int		i;
 	char	*str;
@@ -122,32 +122,32 @@ int		level_require(int level)
 ** change -> check if players able to incantate
 */
 
-int		cmd_incantation_check(int fd) // need to norm
+int		cmd_incantation_check(t_event *node) // need to norm
 {
 	int		i;
 	int		count;
-	int		fds[100];
+	int		fds[MAX_FD];
 	int		level;
 	int		nb_players_require;
 
 	i = -1;
 	count = 0;
-	level = g_players[fd].level;
+	level = g_players[node->fd].level;
 	// printf("player: |%d|, level: |%d|\n", fd, level);
-	bzero(fds, sizeof(int) * 100);
+	bzero(fds, sizeof(int) * MAX_FD);
 	if (level >= 8)
 	{
 		// send_msg(fd, RED"KO\n"RESET, "Send [incantation]");
 
-		send_data(fd, RED"INCANTATION KO"RESET, MSG_SIZE);
+		send_data(node->fd, RED"INCANTATION KO"RESET, MSG_SIZE);
 
 		// printf("Player level: %d > 8\n",level);
 		return (0);
 	}
 	while (++i < MAX_FD)
 	{
-		if (g_players[i].y == g_players[fd].y && g_players[i].x == g_players[fd].x &&
-			g_players[i].alive && !g_players[i].block)
+		if (g_players[i].y == g_players[node->fd].y && g_players[i].x ==
+			g_players[node->fd].x && g_players[i].alive && !g_players[i].block)
 		{
 			if (g_players[i].level == level && check_prerequest(level, i))
 				fds[count++] = i;
@@ -157,23 +157,23 @@ int		cmd_incantation_check(int fd) // need to norm
 	nb_players_require = level_require(level);
 	// printf("count: |%d|, nb_players_require: |%d|\n", count, nb_players_require);
 	if (count >= nb_players_require)
-		blocking(count, fds);
+		blocking(count, fds, node);
 	else
 		return (0);
 	return (1);
 }
 
-void	blocking(int count, int fds[100])
+void	blocking(int count, int fds[MAX_FD], t_event *node)
 {
 	int		i;
 
 	i = -1;
 	bzero(g_env.buffer, MSG_SIZE);
 	strcpy(g_env.buffer, RED"elevation in progress"RESET);
-	while (++i < count)
+	while (++i < count && i != node->fd)
 	{
 		send_data(fds[i], g_env.buffer, MSG_SIZE);
-		set_block_time(fds[i]);
+		set_block_time(node, fds[i]);
 		g_players[fds[i]].block = 1;
 	}
 }

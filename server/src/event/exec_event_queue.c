@@ -89,21 +89,27 @@ void	record_time(t_event *node, int delay_time)
 {
 	struct timeval	exec_time;
 
-	gettimeofday(&exec_time, NULL);
-
-	exec_time.tv_sec += (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) / 1000000;
-	exec_time.tv_usec = (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) % 1000000;
-	node->exec_time = exec_time;
+	if (g_players[node->fd].block)
+	{
+		exec_time.tv_sec = g_players[node->fd].block_time.tv_sec;
+		exec_time.tv_usec = g_players[node->fd].block_time.tv_usec;
+		exec_time.tv_sec += (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) / 1000000;
+		exec_time.tv_usec = (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) % 1000000;
+		node->exec_time = exec_time;
+	}
+	else
+	{
+		gettimeofday(&exec_time, NULL);
+		exec_time.tv_sec += (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) / 1000000;
+		exec_time.tv_usec = (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) % 1000000;
+		node->exec_time = exec_time;
+	}
 }
 
-void	set_block_time(int fd)
+inline void	set_block_time(t_event *node, int fd)
 {
-	struct timeval	block_time;
-
-	gettimeofday(&block_time, NULL);
-
-	g_players[fd].block_time.tv_sec = block_time.tv_sec;
-	g_players[fd].block_time.tv_usec = block_time.tv_usec;
+	g_players[fd].block_time.tv_sec = node->exec_time.tv_sec;
+	g_players[fd].block_time.tv_usec = node->exec_time.tv_usec;
 	printf(LIME"\n[Finished set Block time]\n"RESET);
 }
 
@@ -121,7 +127,7 @@ t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd)
 	strcpy(node->msg, msg);
 	record_time(node, delay_time);
 	if (!strcmp(msg, "fork") || !strcmp(msg, "incantation"))
-		set_block_time(fd);
+		set_block_time(node, node->fd);
 	node->next = NULL;
     printf("\n|node->fd %d|\n", node->fd);
 	return (node);
@@ -159,29 +165,30 @@ void	enqueue(int fd, char *msg)
 {
 	char	msg_buf[1024];
 	int		i;
+	t_event *node;
 
 	i = 0;
 	bzero(msg_buf, 1024);
 	i = check_valid_cmd(msg, msg_buf, 0);
 	printf(YELLOW"cmd_index: [%d], msg: {%s}\n"RESET, i, msg);
-	if (i == 9 || i == 10)
-	{
-		if (i == 9 && !cmd_incantation_check(fd))
-		{
-			send_data(fd, RED"INCANTATION KO"RESET, MSG_SIZE);
-			return ;
-		}
-		else if (i == 10)
-		{
-			g_players[fd].block = 1;
-			set_block_time(fd);
-		}
-
-	}
 	if (i == 11)
 		cmd_connect_nbr(fd, msg);
 	else
-		insert(init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd));
+	{
+		node = init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd);
+		if (i == 9 || i == 10)
+		{
+			if (i == 9 && !cmd_incantation_check(node))
+			{
+				send_data(fd, RED"INCANTATION KO"RESET, MSG_SIZE);
+				free(node);
+				return ;
+			}
+			else if (i == 10)
+				g_players[fd].block = 1;
+		}
+		insert(node);
+	}
 	printf("request nb: %d\n", g_players[fd].request_nb);
 	print_queue();
 }
@@ -216,7 +223,12 @@ void	print_queue(void)
 		printf(RED"\n----- [ queue is empty ] -- \n"RESET);
 }
 
-// void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l)
+/*
+** when we execute the ndoe, we dequeue, but with the blocking, we cannot exec the node,
+** -> so it will cause timeout alarm keep -> 0, and still won't be execute,
+** need to change < the blocking or just dequeue one >
+** xxx ** but fixed one player blocking issue
+*/
 void	exec_event(void)
 {
 	int				i;
@@ -227,10 +239,10 @@ void	exec_event(void)
 
 	i = 0;
 	gettimeofday(&now, NULL);
-	if (check_event_time(&now, &(g_env.queue_head->exec_time)) &&
-		((!g_players[g_env.queue_head->fd].block) ||
-		!check_event_time(&(g_env.queue_head->exec_time),
-		&(g_players[g_env.queue_head->fd].block_time))))
+	if (check_event_time(&now, &(g_env.queue_head->exec_time)))
+	 	// && ((!g_players[g_env.queue_head->fd].block) ||
+		// !check_event_time(&(g_env.queue_head->exec_time),
+		// &(g_players[g_env.queue_head->fd].block_time))))
 	{
 		while (i < 13)
 		{
