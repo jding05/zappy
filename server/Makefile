@@ -1,6 +1,4 @@
 SRV = server
-LIB = libft.a
-#CFLAGS += -Wall -Werror -Wextra -g #-fsanitize=address
 INCLUDES = -I./include
 CFLAGS += -Wall -Werror -Wextra -g -fsanitize=address
 INCLUDES = -I./inc
@@ -52,19 +50,16 @@ debug: $(LIBDEBUG)
 debug: $(SRV)
 
 $(SRV): $(OBJSRC)
-	$(CC) $(CFLAGS) $(INCLUDES) $(OBJSRC) -o $(SRV)
-
-$(LIB):
-	make -C lib/
+	@$(CC) $(CFLAGS) $(INCLUDES) $(OBJSRC) -o $(SRV)
 
 %.o: %.c
 	@ echo "$(YELLOW)Compiling $<...$(RES)"
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	rm -f $(OBJSRC)
+	@rm -f $(OBJSRC)
 
 fclean: clean
-	rm -f $(SRV)
+	@rm -f $(SRV)
 
 re: fclean all
