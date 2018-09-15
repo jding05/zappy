@@ -47,12 +47,13 @@ int		main(int ac, char **av)
 	int		nbytes;
 	char	buf[MSG_SIZE];
 	char	*msg;
-	char	*rv;
 
 	SELECT_VARS;
-	if (ac < 3)
+	if (ac < 5 || EXIT_FAILURE == parse_args(av))
+	{
 		client_usage();
-	parse_cargs(av);
+		return (EXIT_FAILURE);
+	}
 	FD_ZERO(&master);
 	FD_ZERO(&read_fds);
 	if (EXIT_FAILURE == (sock = create_client(g_env.host, atoi(g_env.port))))
@@ -60,10 +61,9 @@ int		main(int ac, char **av)
 	FD_SET(sock, &master);
 	FD_SET(STDIN_FILENO, &master);
 	fdmax = sock;
-
-	msg = recv_data(sock, MSG_SIZE);	// recv WELCOME msg
+	if (NULL == (msg = recv_data(sock, MSG_SIZE)))	// recv WELCOME msg
+		return (EXIT_FAILURE);
 	printf("%s\n", msg);
-	memset(msg, 0, MSG_SIZE);
 	send_data(sock, g_env.team_name, MAX_TEAM_NAME);	// send team name
 	msg = recv_data(sock, MSG_SIZE);	// recv joined team OR team is full
 	printf("%s\n", msg);
@@ -88,20 +88,11 @@ int		main(int ac, char **av)
 			{
 				if (i == STDIN_FILENO)
 				{
-					write(1, "stdin: ", 7);
-					nbytes = read(STDIN_FILENO, buf, BUF_SIZE - 1);		// read stdin request
-					buf[nbytes - 1] = '\0';  // -1 to remove \n
+					nbytes = read(STDIN_FILENO, buf, MSG_SIZE - 1);		// read stdin request
+					buf[nbytes - 1] = '\0';		// -1 to remove \n
 					if (validate_req(buf) == EXIT_SUCCESS)
 					{
 						send_data(sock, buf, MSG_SIZE);		// send request
-						rv = recv_data(sock, MSG_SIZE);		// recv either received or exceed limit
-						printf("%s\n", rv);
-						memset(rv, 0, MSG_SIZE);
-						memset(buf, 0, BUF_SIZE);
-						rv = recv_data(sock, MSG_SIZE);		// recv return value from a command execution
-						if (NULL != rv)
-							printf("%s\n", rv);
-						memset(rv, 0, MSG_SIZE);
 					}
 					else
 					{
@@ -111,7 +102,7 @@ int		main(int ac, char **av)
 				else
 				{
 					if (0 != (msg = recv_data(sock, MSG_SIZE)))
-						printf("server msg: %s\n", msg);
+						printf("%s\n", msg);
 				}
 			}
 			i++;

@@ -21,13 +21,13 @@ int		get_num(char **argv, int i)
 
 void	client_usage(void)
 {
-	printf("Usage: ./client -p <port> -n <team> [-h <hostname>]\n");
-	printf("-p port\n");
+	printf("Usage: ./client -n <team> -p <port> [-h <hostname>]\n");
 	printf("-n team\\_name\n");
+	printf("-p port\n");
 	printf("-h name of the host, by default it'll be localhost\n");
 }
 
-void	parse_cargs(char **argv)
+int		parse_args(char **argv)
 {
 	int		i;
 	int		f;
@@ -50,6 +50,8 @@ void	parse_cargs(char **argv)
 	if (!*g_env.host)
 		strcpy(g_env.host, "127.0.0.1");
 	if (!*g_env.team_name || !*g_env.port)
-		client_usage();
+		// client_usage();
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
 

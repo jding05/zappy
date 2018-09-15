@@ -36,14 +36,14 @@ int		send_data(int fd, char *data, int ebytes)
 		{
 			perror("send error\n");
 			free(buf);
-			return (0);
+			return (EXIT_FAILURE);
 		}
 		tbytes += nbytes;
 		if (tbytes >= ebytes)
 		{
 			// printf("server send msg = |%s|\n", buf);
 			free(buf);
-			return (tbytes);
+			return (EXIT_SUCCESS);
 		}
 	}
 }

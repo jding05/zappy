@@ -26,14 +26,12 @@
 # include <errno.h>
 # include "parse.h"
 
-# define BUF_SIZE 32
 # define MSG_SIZE 4096
 # define MAP_SIZE 906
 # define PLAYER_SIZE 35
 
 # define MAX_FD 16
 # define MAX_TEAM 4
-// # define FAILURE_CHAR '$'
 # define PAD_CHAR '#'
 
 # define WELCOME "WELCOME 🙂"

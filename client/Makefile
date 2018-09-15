@@ -6,7 +6,7 @@
 #    By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/09/14 21:47:05 by zfeng             #+#    #+#              #
-#    Updated: 2018/09/14 21:47:08 by zfeng            ###   ########.fr        #
+#    Updated: 2018/09/15 14:47:36 by zfeng            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CLI := client
 # compiler and flags
 CC = gcc
 CFLAG = -c
-WFLAG = -Wall -Wextra -Werror
+WFLAG = -Wall -Wextra -Werror -g
 
 # headers
 HEADER = -I include
