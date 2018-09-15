@@ -165,12 +165,7 @@ void	see_south_area(int level, int y, int x)
 		x_start = x + floor;
 		while (x_start > x_end)
 		{
-			// if (flag)
-			// 	flag = 0;
-			// else
-			// 	printf(", ");
-			// flag ? flag = 0 : printf(", ");
-			// flag ? flag = 0 : strcat(g_env.buffer, ", ");
+
 			if (flag)
 				flag = 0;
 			else
