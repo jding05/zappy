@@ -229,7 +229,7 @@ void	exec_event(void)
 	gettimeofday(&now, NULL);
 	if (check_event_time(&now, &(g_env.queue_head->exec_time)) &&
 		((!g_players[g_env.queue_head->fd].block) ||
-		check_event_time(&(g_env.queue_head->exec_time),
+		!check_event_time(&(g_env.queue_head->exec_time),
 		&(g_players[g_env.queue_head->fd].block_time))))
 	{
 		while (i < 13)
