@@ -45,8 +45,10 @@ void	find_cell_player(int y, int x, int flag)
 					flag = 0;
 				else
 					strcat(g_env.buffer, " ");
+				strcat(g_env.buffer, CYAN);
 				strcat(g_env.buffer, "player");
 				strcat(g_env.buffer, (id = ft_itoa(i)));
+				strcat(g_env.buffer, RESET);
 			}
 
 		}
@@ -75,6 +77,7 @@ void	print_resource(int y, int x)
 				flag = 0;
 			else
 				strcat(g_env.buffer, " ");
+			i == 0 ? strcat(g_env.buffer, RED) : strcat(g_env.buffer, GREEN);
 			strcat(g_env.buffer, g_res_name[i]);
 			count--;
 		}
@@ -117,7 +120,7 @@ void	see_north_area(int level, int y, int x)
 	floor = 0;
 	x_end = x + 1;
 	// printf("{");
-	strcpy(g_env.buffer, RED"{");
+	strcpy(g_env.buffer, BRED"{");
 	while (floor < level + 1)
 	{
 		x_start = x - floor;
@@ -141,7 +144,7 @@ void	see_north_area(int level, int y, int x)
 		x_end++;
 	}
 	// printf("}");
-	strcat(g_env.buffer, "}"RESET);
+	strcat(g_env.buffer, BRED"}"RESET);
 }
 
 /*
@@ -159,7 +162,7 @@ void	see_south_area(int level, int y, int x)
 	floor = 0;
 	x_end = x - 1;
 	// printf("{");
-	strcpy(g_env.buffer, RED"{");
+	strcpy(g_env.buffer, BRED"{");
 	while (floor <= level)
 	{
 		x_start = x + floor;
@@ -178,7 +181,7 @@ void	see_south_area(int level, int y, int x)
 		x_end--;
 	}
 	// printf("}");
-	strcat(g_env.buffer, "}"RESET);
+	strcat(g_env.buffer, BRED"}"RESET);
 }
 
 /*
@@ -196,7 +199,7 @@ void	see_east_area(int level, int y, int x)
 	floor = 0;
 	y_end = y + 1;
 	// printf("{");
-	strcpy(g_env.buffer, RED"{");
+	strcpy(g_env.buffer, BRED"{");
 	while (floor <= level)
 	{
 		y_start = y - floor;
@@ -220,7 +223,7 @@ void	see_east_area(int level, int y, int x)
 		y_end++;
 	}
 	// printf("}");
-	strcat(g_env.buffer, "}"RESET);
+	strcat(g_env.buffer, BRED"}"RESET);
 }
 
 /*
@@ -238,7 +241,7 @@ void	see_west_area(int level, int y, int x)
 	floor = 0;
 	y_end = y - 1;
 	// printf("{");
-	strcpy(g_env.buffer, RED"{");
+	strcpy(g_env.buffer, BRED"{");
 	while (floor <= level)
 	{
 		y_start = y + floor;
@@ -262,7 +265,7 @@ void	see_west_area(int level, int y, int x)
 		y_end--;
 	}
 	// printf("}");
-	strcat(g_env.buffer, "}"RESET);
+	strcat(g_env.buffer, BRED"}"RESET);
 }
 
 int		cmd_see(int fd, char *msg)

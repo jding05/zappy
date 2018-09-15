@@ -171,7 +171,12 @@ void	enqueue(int fd, char *msg)
 			send_data(fd, RED"INCANTATION KO"RESET, MSG_SIZE);
 			return ;
 		}
-		g_players[fd].block = 1;
+		else if (i == 10)
+		{
+			g_players[fd].block = 1;
+			set_block_time(fd);
+		}
+
 	}
 	if (i == 11)
 		cmd_connect_nbr(fd, msg);
@@ -222,7 +227,10 @@ void	exec_event(void)
 
 	i = 0;
 	gettimeofday(&now, NULL);
-	if (check_event_time(&now, &g_env.queue_head->exec_time))
+	if (check_event_time(&now, &(g_env.queue_head->exec_time)) &&
+		((!g_players[g_env.queue_head->fd].block) ||
+		check_event_time(&(g_env.queue_head->exec_time),
+		&(g_players[g_env.queue_head->fd].block_time))))
 	{
 		while (i < 13)
 		{
@@ -245,6 +253,8 @@ void	exec_event(void)
 	// g_env.queue_head = g_env.queue_head->next;
 	// printf("[cmd_ind after exec %i]\n", i);
 }
+
+
 
 // void	exec_event_and_delete(t_event **event, t_event **prev)
 // {

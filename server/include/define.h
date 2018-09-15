@@ -38,6 +38,7 @@
 # define PINK		"\033[1;31m"
 # define PURPLE		"\033[1;34m"
 # define RED		"\033[0;31m"
+# define BRED		"\033[1;31m"
 # define UNDERLINE	"\033[4m"
 # define WHITE		"\033[1;37m"
 # define YELLOW		"\033[1;33m"

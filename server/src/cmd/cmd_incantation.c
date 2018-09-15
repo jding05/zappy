@@ -173,7 +173,7 @@ void	blocking(int count, int fds[100])
 	while (++i < count)
 	{
 		send_data(fds[i], g_env.buffer, MSG_SIZE);
-
+		set_block_time(fds[i]);
 		g_players[fds[i]].block = 1;
 	}
 }
