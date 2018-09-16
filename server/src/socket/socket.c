@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-//# define BUF_SIZE32 32
 # include "../../include/server.h"
 
 /*
@@ -78,6 +77,22 @@ int		s_create_socket(char* port, int reuse)
 	return (listener);
 }
 
+char	*get_n_x_y(int fd)
+{
+	char	*msg;
+
+	if (NULL == (msg = (char*)malloc(sizeof(char) * 10)))
+		return (NULL);
+	memset(msg, 0, 10);
+	strcpy(msg, ft_itoa(g_teams[g_players[fd].team_id].nb_client));
+	strcat(msg, "\n");
+	strcat(msg, ft_itoa(g_env.map_x));
+	strcat(msg, " ");
+	strcat(msg, ft_itoa(g_env.map_y));
+	return (msg);
+}
+
+
 /*
 ** if a fd == listener, i.e. there is a new connection request, accept and
 ** connect
@@ -90,6 +105,7 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	socklen_t				addrlen;
 	char					remote_ip[INET6_ADDRSTRLEN];
 	char					*team_name;
+	char					*msg;
 
 	addrlen = sizeof(remoteaddr);
 	if ((newfd = accept(fd, (struct sockaddr *)&remoteaddr, &addrlen)) == -1)
@@ -100,6 +116,8 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 		close(newfd);
 	else
 	{
+		msg = get_n_x_y(newfd);
+		send_data(newfd, msg, MSG_SIZE);
 		FD_SET(newfd, master);
 		if (newfd > *fdmax)
 			*fdmax = newfd;
@@ -172,7 +190,6 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 	int				i;
 	struct timeval	*timeout;
 
-
 	while (1)
 	{
 		memcpy(read_fds, master, sizeof(*master));
@@ -202,7 +219,7 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			i++;
 		}
 		// if (g_env.queue_head)
-		//cycle_exec_event_loop();
+		// cycle_exec_event_loop();
 		if (check_winner())
 			break ;
 		// printf("[Finish s_select_cycle]\n");

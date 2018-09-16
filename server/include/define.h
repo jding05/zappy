@@ -57,7 +57,6 @@
 # define MSG_SIZE 4096
 # define MAX_TIME_UNIT 100
 # define MAX_TEAM_NAME 32
-# define FAILURE_CHAR '$'
 # define PAD_CHAR '#'
 
 # define SOCKET_VARS struct addrinfo hints, *ai; struct protoent *proto;

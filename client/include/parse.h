@@ -29,7 +29,6 @@ typedef struct	s_env
 }				t_env;
 
 void	client_usage(void);
-// void	parse_args(char **argv);
 int		parse_args(char **av);
 
 extern t_env	g_env;

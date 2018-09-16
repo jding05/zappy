@@ -4,7 +4,6 @@
 
 # include "server.h"
 # include "queue.h"
-// # include "cmd.h"
 # include <sys/time.h>
 
 # define MAX_TEAM_NAME 32

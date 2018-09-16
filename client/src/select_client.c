@@ -24,21 +24,17 @@ int		create_client(char *addr, int port)
 		return (EXIT_FAILURE);
 	if ((sock = socket(PF_INET, SOCK_STREAM, proto->p_proto)) == -1)
 	{
-		printf("ERROR: Socket error\n");
-		return (EXIT_FAILURE);
+		ERROR("socket error");
 	}
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(port);
 	sin.sin_addr.s_addr = inet_addr(addr);
 	if (connect(sock, (const struct sockaddr *)&sin, sizeof(sin)) == -1)
 	{
-		perror(strerror(errno));
-		return (EXIT_FAILURE);
+		ERROR("connect error");
 	}
 	return (sock);
 }
-
-
 
 int		main(int ac, char **av)
 {
@@ -57,7 +53,9 @@ int		main(int ac, char **av)
 	FD_ZERO(&master);
 	FD_ZERO(&read_fds);
 	if (EXIT_FAILURE == (sock = create_client(g_env.host, atoi(g_env.port))))
+	{
 		return (EXIT_FAILURE);
+	}
 	FD_SET(sock, &master);
 	FD_SET(STDIN_FILENO, &master);
 	fdmax = sock;
@@ -65,22 +63,18 @@ int		main(int ac, char **av)
 		return (EXIT_FAILURE);
 	printf("%s\n", msg);
 	send_data(sock, g_env.team_name, MAX_TEAM_NAME);	// send team name
-	msg = recv_data(sock, MSG_SIZE);	// recv joined team OR team is full
+	if (NULL == (msg = recv_data(sock, MSG_SIZE)))	// recv joined team OR team is full
+		return (EXIT_FAILURE);
 	printf("%s\n", msg);
 	if (strcmp(msg, TEAM_FULL) == 0 || strcmp(msg, NAME_NOT_FOUND) == 0)
 		return (EXIT_FAILURE);
-	memset(msg, 0, MSG_SIZE);
-	
-
 	while (1)
 	{
 		memcpy(&read_fds, &master, sizeof(master));
 		if (select(fdmax + 1, &read_fds, NULL, NULL, 0) == -1)
 		{
-			printf("select error: %s\n", strerror(errno));
-			return (EXIT_FAILURE);
+			ERROR("select error");
 		}
-		// printf("fdmax = %d\n", fdmax);
 		i = 0;
 		while (i <= fdmax)
 		{
@@ -88,7 +82,8 @@ int		main(int ac, char **av)
 			{
 				if (i == STDIN_FILENO)
 				{
-					nbytes = read(STDIN_FILENO, buf, MSG_SIZE - 1);		// read stdin request
+					if (0 == (nbytes = read(STDIN_FILENO, buf, MSG_SIZE - 1)))		// read stdin request
+						ERROR("read from stdin error");
 					buf[nbytes - 1] = '\0';		// -1 to remove \n
 					if (validate_req(buf) == EXIT_SUCCESS)
 					{
@@ -101,8 +96,9 @@ int		main(int ac, char **av)
 				}
 				else
 				{
-					if (0 != (msg = recv_data(sock, MSG_SIZE)))
-						printf("%s\n", msg);
+					if (NULL == (msg = recv_data(sock, MSG_SIZE)))
+						ERROR("recv error");
+					printf("%s\n", msg);
 				}
 			}
 			i++;
