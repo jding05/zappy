@@ -138,7 +138,7 @@ int		s_add_to_team(char *team_name, int fd)
 				s_init_egg_player(fd, i, egg_id);
 			g_players[fd].team_id = i;
 			g_teams[i].nb_client--;
-			g_teams[i].connected_players++;
+			// g_teams[i].connected_players++;
 			msg = ft_strjoin("joined team ", team_name);
 			send_data(fd, msg, MSG_SIZE);
 			free(msg);

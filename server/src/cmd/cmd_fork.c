@@ -35,21 +35,12 @@ void    cmd_fork(int fd, char *msg)
 	(void)msg;
     laid_egg(fd);
     g_players[fd].block = 0;
-	push_cmd_hatch(fd);
+	enqueue(fd, "hatch");
 
 	printf(BLUE"Player %d, block: %d\n"RESET, fd, g_players[fd].block);
 	printf(CYAN"\n[FORK SUCCESS]\n"RESET);
 
-	// if (send_msg(fd, RED"OK\n"RESET, "Send [fork]") == EXIT_FAILURE)
-	// 	return (EXIT_FAILURE);
-
 	send_data(fd, RED"FORK OK"RESET, MSG_SIZE);
-
-}
-
-void    push_cmd_hatch(int fd)
-{
-	enqueue(fd, "hatch");
 }
 
 void    laid_egg(int fd)
