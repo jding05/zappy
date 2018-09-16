@@ -215,6 +215,7 @@ void	server_usage(void)
 
 int		main(int argc, char **argv)
 {
+	srand(time(NULL));
 	bzero(&g_env, sizeof(t_env));
 	if (argc < 13 || !read_flags(argc, argv, &g_env))
 	{
