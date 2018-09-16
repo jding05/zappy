@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <sys/time.h>
 #include "../../include/server.h"
 
 /*
@@ -68,40 +67,11 @@ int		check_valid_cmd(char *msg, char *msg_buf, int i)
 	return (18);
 }
 
-void	record_time(t_event *node, int delay_time)
-{
-	struct timeval	exec_time;
-
-	if (g_players[node->fd].block)
-	{
-		exec_time.tv_sec = g_players[node->fd].block_time.tv_sec;
-		exec_time.tv_usec = g_players[node->fd].block_time.tv_usec;
-		exec_time.tv_sec += (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) / 1000000;
-		exec_time.tv_usec = (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) % 1000000;
-		node->exec_time = exec_time;
-	}
-	else
-	{
-		gettimeofday(&exec_time, NULL);
-		exec_time.tv_sec += (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) / 1000000;
-		exec_time.tv_usec = (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) % 1000000;
-		node->exec_time = exec_time;
-	}
-}
-
-inline void	set_block_time(t_event *node, int fd)
-{
-	g_players[fd].block_time.tv_sec = node->exec_time.tv_sec;
-	g_players[fd].block_time.tv_usec = node->exec_time.tv_usec;
-	printf(LIME"\n[Finished set Block time]\n"RESET);
-}
-
 t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd)
 {
-	t_event			*node;
+	t_event	*node;
 
 	node = (t_event *)malloc(sizeof(t_event));
-
 	bzero(node, sizeof(t_event));
 	node->fd = fd;
     bzero(node->cmd, CMD_LEN);
@@ -184,17 +154,14 @@ void	enqueue(int fd, char *msg)
 	else
 	{
 		node = init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd);
-		if (i == 9 || i == 10)
+		if (i == 9 && !cmd_incantation_check(node))
 		{
-			if (i == 9 && !cmd_incantation_check(node))
-			{
-				send_data(fd, RED"INCANTATION KO"RESET, MSG_SIZE);
-				free(node);
-				return ;
-			}
-			else if (i == 10)
-				g_players[fd].block = 1;
+			send_data(fd, RED"INCANTATION KO"RESET, MSG_SIZE);
+			free(node);
+			return ;
 		}
+		else if (i == 10)
+			g_players[fd].block = 1;
 		insert(node);
 	}
 	printf("request nb: %d\n", g_players[fd].request_nb);
@@ -203,7 +170,7 @@ void	enqueue(int fd, char *msg)
 
 void	print_queue(void)
 {
-	t_event			*event;
+	t_event			*e;
 	int				i;
 	struct timeval	now;
 
@@ -211,18 +178,17 @@ void	print_queue(void)
 	printf("event curr.tv_usec < %d >\n", now.tv_usec);
 	printf("event curr.tv_sec < %ld >\n", now.tv_sec);
 	i = 0;
-	event = g_env.queue_head;
-	if (event)
+	e = g_env.queue_head;
+	if (e)
 	{
-		while (event)
+		while (e)
 		{
 			printf("--------EVENT-----------\n");
-			printf("event fd < %d >\n", event->fd);
-			printf("event cmd < %s >\n", event->cmd);
-			printf("event msg < %s >\n", event->msg);
-			printf("event exec_time.tv_usec < %d >\n", event->exec_time.tv_usec);
-			printf("event exec_time.tv_sec < %ld >\n", event->exec_time.tv_sec);
-			event = event->next;
+			printf("event fd < %d >\n", e->fd);
+			printf("event cmd < %s >\nevent msg < %s >\n", e->cmd, e->msg);
+			printf("event exec_time.tv_usec < %d >\n", e->exec_time.tv_usec);
+			printf("event exec_time.tv_sec < %ld >\n", e->exec_time.tv_sec);
+			e = e->next;
 			printf("|event index: %d|\n", i++);
 			printf("--------EVENT-----------\n");
 		}
@@ -242,10 +208,10 @@ void	exec_event(void)
 {
 	int				i;
 	struct timeval	now;
+	t_event			*tmp;
 
 	if (!g_env.queue_head)
 		return ;
-
 	i = 0;
 	gettimeofday(&now, NULL);
 	if (check_event_time(&now, &(g_env.queue_head->exec_time)))
@@ -259,94 +225,19 @@ void	exec_event(void)
 					g_cmd[i].func(g_env.queue_head->fd, g_env.queue_head->msg);
 					printf(LIGHTBLUE"\n[EXEC]\n"RESET);
 				}
-				// else
-				// 	printf(LIGHTBLUE"\n[Player %d Dead, so no EXEC]\n"RESET, (*event)->fd);
+				tmp = g_env.queue_head;
 				g_env.queue_head = g_env.queue_head->next;
+				free(tmp);
 				break ;
 			}
 			i++;
 		}
-
 	}
 }
-
-
-
-// void	exec_event_and_delete(t_event **event, t_event **prev)
-// {
-// 	t_event			*tmp;
-//
-// 	exec_event(event);
-// 	tmp = *event;
-// 	if (!(*prev))
-// 	{
-// 		g_env.queue_head = g_env.queue_head->next;
-// 		*event = (*event)->next;
-// 	}
-// 	else if (!(*event)->next)
-// 	{
-// 		(*prev)->next = NULL;
-// 		*event = NULL;
-// 	}
-// 	else
-// 	{
-// 		*event = (*event)->next;
-// 		(*prev)->next = *event;
-// 	}
-// 	free(tmp);
-// }
-//
-// void	exec_event_list(void)
-// {
-// 	struct timeval	curr_time;
-// 	t_event			*event;
-// 	t_event			*prev;
-//
-// 	event = g_env.queue_head;
-// 	prev = NULL;
-// 	while (event)
-// 	{
-// 		gettimeofday(&curr_time, NULL);
-//
-// 		if (check_event_time(&curr_time, &(event->exec_time)) &&
-// 			((!g_players[event->fd].block) ||
-// 			check_event_time(&(event->exec_time),
-// 			&(g_players[event->fd].block_time))))
-// 		{
-// 			//printf(RED"\n---------------------Here should be exec and pop from queue-----------------------\n");
-// 			exec_event_and_delete(&event, &prev);
-// 		}
-// 		else
-// 		{
-// 			prev = event;
-// 			event = event->next;
-// 		}
-// 	}
-// }
-
-
 
 void	cycle_exec_event_loop(void)
 {
 	exec_event();
 	generate_resource();
 	check_dead_player();
-}
-
-/*
-** check_event_time()
-**   return -> 1 if current time is bigger than exec_time  ->(we can exec event)
-**   return -> 0 if current time is smaller than exec_time ->(we stop)
-*/
-
-int		check_event_time(struct timeval *curr_time, struct timeval *exec_time)
-{
-	long int x;
-
-	x = (curr_time->tv_sec - exec_time->tv_sec) * 1000000
-		+ (curr_time->tv_usec - exec_time->tv_usec);
-	if (x >= 0)
-		return (1);
-	else
-		return (0);
 }

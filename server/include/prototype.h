@@ -39,7 +39,7 @@ int		read_flags(int argc, char **argv, t_env *env);
 int		team_init(char **argv, int i, int nb_team);
 int		set_value(char **flag, int i, int m, t_env *env);
 int		isnbr_str(char *str);
-void	calc_time_spead(void);
+
 /*
 ** ft_itoa.c
 */
@@ -48,7 +48,6 @@ char	*ft_itoa(int n);
 ** exec_event_queue.c
 */
 
-int		check_event_time(struct timeval *curr_time, struct timeval *exec_time);
 void	cycle_exec_event_loop(void);
 //void	exec_event_list(void);
 // void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l);
@@ -59,13 +58,20 @@ int		check_valid_cmd(char *msg, char *msg_buf, int i);
 // void    long_short_term(t_event *node, int short_term);
 void    init_queue(void);
 void	print_queue(void);
-void	record_time(t_event *node, int delay_time);
 int		print_time(struct timeval *now);
 // void	exec_event_queue(int short_term);
-void	set_block_time(t_event *node, int fd);
+// void	set_block_time(t_event *node, int fd);
 // void	dequeue(void);
 void	insert(t_event *node);
 void	exec_event_and_delete(t_event **event, t_event **prev);
+
+/*
+** time.c
+*/
+void	record_time(t_event *node, int delay_time);
+void	set_block_time(t_event *node, int fd);
+int		check_event_time(struct timeval *curr_time, struct timeval *exec_time);
+void	calc_time_spead(void);
 
 /*
 ** cmd [folder]
@@ -113,12 +119,18 @@ void	cmd_hatch(int fd, char *msg);
 
 void	cmd_incantation(int fd, char *msg);
 void	level_up_and_unblock(int count, int fds[MAX_FD]);
-int		check_prerequest(int level, int i);
-int		level_require(int level);
+
 int		cmd_incantation_check(t_event *node);
 void	blocking(int count, int fds[MAX_FD], t_event *node);
+
+
+/*
+** incantation_util
+*/
 void	low_level_envolving_digest(int level, int fd);
 void	high_level_envolving_digest(int level, int fd);
+int		check_prerequest(int level, int i);
+int		level_require(int level);
 
 /*
 ** inventory
@@ -158,15 +170,22 @@ void	cmd_right(int fd, char *msg);
 ** see
 */
 
-void	print_player_info(t_players players);
-void	find_cell_player(int y, int x, int flag);
-void	print_resource(int y, int x);
-void	print_cell_value(int y, int x);
+void	print_player_info(int fd);
 void	see_north_area(int level, int y, int x);
 void	see_south_area(int level, int y, int x);
 void	see_east_area(int level, int y, int x);
 void	see_west_area(int level, int y, int x);
 void	cmd_see(int fd, char *msg);
+
+/*
+** see_util
+*/
+
+void	find_cell_player(int y, int x, int flag);
+void	print_resource(int y, int x);
+int		update_y(int y);
+int		update_x(int x);
+void	print_cell_value(int y, int x);
 
 /*
 ** take

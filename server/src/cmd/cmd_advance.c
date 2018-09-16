@@ -46,10 +46,6 @@ void		cmd_advance(int fd, char *msg)
 	g_players[fd].request_nb--;
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 	printf(CYAN"\n[ADVANCE SUCCESS]\n"RESET);
-
-	// if (send_msg(fd, RED"OK\n"RESET, "Send [advance]") == EXIT_FAILURE)
-	// 	return (EXIT_FAILURE);
-
 	send_data(fd, RED"ADVANCE OK"RESET, MSG_SIZE);
 	// update grahpic client regarding player position
 }

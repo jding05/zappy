@@ -55,14 +55,7 @@ void	send_broadcast_msg(int nb_dir, int fd, char *msg)
 	strcat(g_env.buffer, RESET);
 	printf(RED"player %d, %s\n"RESET, fd, g_env.buffer);
 
-
-	// if (send(fd, g_env.buffer, strlen(g_env.buffer), 0) == -1)
-	// 	perror("send [broadcast mssage]");
-
-
 	send_data(fd, g_env.buffer, MSG_SIZE);
-
-
 }
 
 /*

@@ -1,5 +1,15 @@
-// #include "util.h"
-// #include "data_structures.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   read_flags.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sding <sding@student.42.us.org>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/15 22:01:23 by sding             #+#    #+#             */
+/*   Updated: 2018/09/15 22:01:25 by sding            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 # include "../../include/server.h"
 
@@ -21,6 +31,7 @@ int		isnbr_str(char *str)
 ** -> so if number = 0, it's not valid game env
 ** -> m == 1 or m == 2 -> means maps y, x value, -> we set the max map size is 20 * 20
 */
+
 int		check_flag_limit(int m, int number)
 {
 	if (m == 0 && (number < 1024 || number > 49151 || number <= 0))
@@ -92,21 +103,18 @@ int		team_init(char **argv, int i, int nb_team)
 	return (1);
 }
 
-void	calc_time_spead(void)
+void	update_max_player_per_team(void)
 {
-	// struct timeval	ret;
-    //
-	// ret.tv_usec = 1 * 1000000 / g_env.time_unit ;
-	// ret.tv_usec %= 1000000;
-	// ret.tv_sec = ((double)1 / g_env.time_unit);
-	// g_env.time_speed = ret;
-	g_env.ms_pre_tick = 1000000 / g_env.time_unit;
-	printf("\n|g_env.ms_pre_tick:%ld\n", g_env.ms_pre_tick);
+	int i;
+
+	i = -1;
+	while (++i < g_env.nb_team)
+		g_teams[i].max_players = g_env.authorized_clients / g_env.nb_team;
 }
 
-//                         0    1   2    3    4    5
-// char    *options[] = {"-p","-x","-y","-n","-c","-t"};
-/*
+/*                         0    1   2    3    4    5
+** char    *g_options[] = {"-p","-x","-y","-n","-c","-t"};
+**
 **  asssume every flag follow by 1 arg, there will be 13,
 **  so index 7 (-n) + i = index 9 (-c) -> i = argc (13) - 11
 */
@@ -134,7 +142,8 @@ int		read_flags(int argc, char **argv, t_env *env)
 		else
 			return (0);
 	}
-	// print_flags(env);
+	if (env->nb_team > env->authorized_clients)
+		return (0);
 	update_max_player_per_team();
 	calc_time_spead();
 	return (1);
@@ -156,15 +165,6 @@ void	print_team(void)
 		printf("egg_used [%d]\n", g_teams[i].egg_laid);
 		printf("--------------------------------------\n");
 	}
-}
-
-void	update_max_player_per_team(void)
-{
-	int i;
-
-	i = -1;
-	while (++i < g_env.nb_team)
-		g_teams[i].max_players = g_env.authorized_clients / g_env.nb_team;
 }
 
 void	print_flags(void)
