@@ -50,7 +50,6 @@ int		parse_args(char **argv)
 	if (!*g_env.host)
 		strcpy(g_env.host, "127.0.0.1");
 	if (!*g_env.team_name || !*g_env.port)
-		// client_usage();
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }

@@ -21,7 +21,6 @@ int		send_data(int fd, char *data, int ebytes)
 
 	buf = (char*)malloc(sizeof(char) * (ebytes + 1));
 	memset(buf, 0, ebytes + 1);
-	// printf("server inital data = |%s|\n", data);
 	i = -1;
 	while (data && data[++i])
 		buf[i] = data[i];
@@ -41,7 +40,6 @@ int		send_data(int fd, char *data, int ebytes)
 		tbytes += nbytes;
 		if (tbytes >= ebytes)
 		{
-			// printf("server send msg = |%s|\n", buf);
 			free(buf);
 			return (EXIT_SUCCESS);
 		}
@@ -90,5 +88,4 @@ char	*recv_data(int fd, int ebytes)
 			return (data);
 		}
 	}
-
 }

@@ -62,12 +62,14 @@ int		main(int ac, char **av)
 	if (NULL == (msg = recv_data(sock, MSG_SIZE)))	// recv WELCOME msg
 		return (EXIT_FAILURE);
 	printf("%s\n", msg);
+	free(msg);
 	send_data(sock, g_env.team_name, MAX_TEAM_NAME);	// send team name
 	if (NULL == (msg = recv_data(sock, MSG_SIZE)))	// recv joined team OR team is full
 		return (EXIT_FAILURE);
 	printf("%s\n", msg);
 	if (strcmp(msg, TEAM_FULL) == 0 || strcmp(msg, NAME_NOT_FOUND) == 0)
 		return (EXIT_FAILURE);
+	free(msg);
 	while (1)
 	{
 		memcpy(&read_fds, &master, sizeof(master));
@@ -99,6 +101,7 @@ int		main(int ac, char **av)
 					if (NULL == (msg = recv_data(sock, MSG_SIZE)))
 						ERROR("recv error");
 					printf("%s\n", msg);
+					free(msg);
 				}
 			}
 			i++;

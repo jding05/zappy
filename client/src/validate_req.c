@@ -18,39 +18,6 @@ char	*g_cmd_table[] = {"advance", "right", "left", "see", "inventory", \
 char	*g_objects[] = {"linemate", "deraumere", "sibur", "mendiane", \
 	"phiras", "thystame", "food", 0};
 
-// int		validate_req(char *req)
-// {
-// 	char	*cmd;
-// 	char	*param;
-// 	int		i;
-
-// 	cmd = strtok(req, " ");
-// 	param = strtok(NULL, " ");
-// 	i = -1;
-// 	if (0 == strcmp(cmd, "take") || 0 == strcmp(cmd, "put"))
-// 	{
-// 		while (g_objects[++i])
-// 		{
-// 			if (NULL != param && (0 == strcmp(g_objects[i], param)))
-// 				return (EXIT_SUCCESS);
-// 		}
-// 		return (EXIT_FAILURE);
-// 	}
-// 	if (0 == strcmp(cmd, "broadcast"))
-// 	{
-// 		if (NULL != param)
-// 			return (EXIT_SUCCESS);
-// 		return (EXIT_FAILURE);
-// 	}
-// 	while (g_cmd_table[++i])
-// 	{
-// 		if (0 == strcmp(req, g_cmd_table[i]) && NULL == param)
-// 			return (EXIT_SUCCESS);
-// 	}
-// 	return (EXIT_FAILURE);
-// }
-
-
 int		validate_req(char *req)
 {
 	char	buf[MSG_SIZE];
