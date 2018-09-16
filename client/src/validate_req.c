@@ -26,6 +26,13 @@ int		validate_req(char *req)
 	strcpy(buf, req);
 	cmd = strtok(buf, " ");
 	param = strtok(NULL, " ");
+	memset(req, 0, strlen(req));
+	strcpy(req, cmd);
+	if (NULL != param)
+	{
+		 strcat(req, " ");
+		 strcat(req, param);
+	}
 	i = -1;
 	if (0 == strcmp(cmd, "take") || 0 == strcmp(cmd, "put"))
 	{
