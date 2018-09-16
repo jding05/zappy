@@ -79,7 +79,7 @@ t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd)
 	bzero(node->msg, MAX_MSG);
 	strcpy(node->msg, msg);
 	record_time(node, delay_time);
-	if (!strcmp(msg, "fork") || !strcmp(msg, "incantation"))
+	if (!strcmp(cmd, "fork") || !strcmp(cmd, "incantation"))
 		set_block_time(node, node->fd);
 	node->next = NULL;
     printf("\n|node->fd %d|\n", node->fd);
@@ -141,12 +141,12 @@ void	insert(t_event *node)
 
 void	enqueue(int fd, char *msg)
 {
-	char	msg_buf[1024];
+	char	msg_buf[MSG_SIZE];
 	int		i;
 	t_event *node;
 
 	i = 0;
-	bzero(msg_buf, 1024);
+	bzero(msg_buf, MSG_SIZE);
 	i = check_valid_cmd(msg, msg_buf, 0);
 	printf(YELLOW"cmd_index: [%d], msg: {%s}\n"RESET, i, msg);
 	if (i == 11)
@@ -160,7 +160,7 @@ void	enqueue(int fd, char *msg)
 			free(node);
 			return ;
 		}
-		else if (i == 10)
+		if (i == 9 || i == 10)
 			g_players[fd].block = 1;
 		insert(node);
 	}
