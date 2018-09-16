@@ -143,6 +143,11 @@ void	s_select_recv(int fd, fd_set *master)
 		FD_CLR(fd, master);
 		return ;
 	}
+	if (g_players[fd].dead == 1)
+	{
+		send_data(fd, RED"Dead player cannot make request"RESET, MSG_SIZE);
+		return ;
+	}
 	if (g_players[fd].request_nb < 11)
 	{
 		send_data(fd, "received", MSG_SIZE);
