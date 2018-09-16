@@ -55,7 +55,7 @@
 # define TEAM_JOINED "JOINED TEAM"
 
 # define MAX_TEAM 6
-# define MAX_FD 16
+# define MAX_FD 1024
 # define MSG_SIZE 8192
 # define MAX_TIME_UNIT 100
 # define MAX_TEAM_NAME 32

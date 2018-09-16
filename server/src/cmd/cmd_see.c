@@ -26,7 +26,6 @@ void	see_north_area(int level, int y, int x)
 	flag = 1;
 	floor = 0;
 	x_end = x + 1;
-	strcpy(g_env.buffer, BRED"{");
 	while (floor < level + 1)
 	{
 		x_start = x - floor;
@@ -43,7 +42,6 @@ void	see_north_area(int level, int y, int x)
 		y--;
 		x_end++;
 	}
-	strcat(g_env.buffer, BRED"}"RESET);
 }
 
 /*
@@ -60,7 +58,6 @@ void	see_south_area(int level, int y, int x)
 	flag = 1;
 	floor = 0;
 	x_end = x - 1;
-	strcpy(g_env.buffer, BRED"{");
 	while (floor <= level)
 	{
 		x_start = x + floor;
@@ -78,7 +75,6 @@ void	see_south_area(int level, int y, int x)
 		y++;
 		x_end--;
 	}
-	strcat(g_env.buffer, BRED"}"RESET);
 }
 
 /*
@@ -95,7 +91,6 @@ void	see_east_area(int level, int y, int x)
 	flag = 1;
 	floor = 0;
 	y_end = y + 1;
-	strcpy(g_env.buffer, BRED"{");
 	while (floor <= level)
 	{
 		y_start = y - floor;
@@ -112,7 +107,6 @@ void	see_east_area(int level, int y, int x)
 		x++;
 		y_end++;
 	}
-	strcat(g_env.buffer, BRED"}"RESET);
 }
 
 /*
@@ -129,7 +123,6 @@ void	see_west_area(int level, int y, int x)
 	flag = 1;
 	floor = 0;
 	y_end = y - 1;
-	strcpy(g_env.buffer, BRED"{");
 	while (floor <= level)
 	{
 		y_start = y + floor;
@@ -146,7 +139,6 @@ void	see_west_area(int level, int y, int x)
 		x--;
 		y_end--;
 	}
-	strcat(g_env.buffer, BRED"}"RESET);
 }
 
 void	cmd_see(int fd, char *msg)
@@ -158,6 +150,7 @@ void	cmd_see(int fd, char *msg)
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 	g_players[fd].request_nb--;
 	bzero(g_env.buffer, MSG_SIZE);
+	strcpy(g_env.buffer, BRED"{");
 	if (g_players[fd].direction == NORTH)
 		see_north_area(g_players[fd].level, g_players[fd].y, g_players[fd].x);
 	else if (g_players[fd].direction == SOUTH)
@@ -166,6 +159,7 @@ void	cmd_see(int fd, char *msg)
 		see_west_area(g_players[fd].level, g_players[fd].y, g_players[fd].x);
 	else if (g_players[fd].direction == EAST)
 		see_east_area(g_players[fd].level, g_players[fd].y, g_players[fd].x);
+	strcat(g_env.buffer, BRED"}"RESET);
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 	printf(CYAN"\n[SEE SUCCESS]\n"RESET);
 	// maybe update graphic client regarding player position

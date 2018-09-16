@@ -33,15 +33,9 @@ void	find_cell_player(int y, int x, int flag)
 				strcat(g_env.buffer, (id = ft_itoa(i)));
 				strcat(g_env.buffer, RESET);
 			}
-
 		}
 	}
 }
-
-/*
-** print_resource() needs to change print to send,
-**	 maybe save all the things to buffer
-*/
 
 void	print_resource(int y, int x)
 {

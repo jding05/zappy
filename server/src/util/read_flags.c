@@ -72,12 +72,11 @@ int		set_value(char **flag, int i, int m, t_env *env)
 	if (m == 2)
 		env->map_y = number;
 	if (m == 3)
-	{
 		if (!team_init(flag, i + 1, g_env.nb_team))
 			return (0);
-	}
 	if (m == 4)
-		env->authorized_clients = number;
+		if ((env->authorized_clients = number) > MAX_FD - 4)
+			return (0);
 	if (m == 5)
 		env->time_unit = number;
 	return (1);
@@ -126,8 +125,7 @@ int		read_flags(int argc, char **argv, t_env *env)
 	i = 1;
 	m = 0;
 	bzero(env, sizeof(t_env));
-	env->nb_team = argc - 12;
-	if (env->nb_team > MAX_TEAM || env->nb_team == 0)
+	if ((env->nb_team = argc - 12) > MAX_TEAM || env->nb_team == 0)
 		return (0);
 	while (i < argc)
 	{
