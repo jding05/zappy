@@ -19,17 +19,16 @@
 
 # define MAX_TEAM_NAME 32
 
-
 typedef struct	s_env
 {
-	char	team_name[MAX_TEAM_NAME];
-	char	port[8];
-	char	host[16];
+	char		team_name[MAX_TEAM_NAME];
+	char		port[8];
+	char		host[16];
 
 }				t_env;
 
-void	client_usage(void);
-int		parse_args(char **av);
+void			client_usage(void);
+int				parse_args(char **av);
 
 extern t_env	g_env;
 
