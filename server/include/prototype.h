@@ -14,18 +14,13 @@
 # define PROTOTYPE_H
 
 # include "server.h"
+
 /*
 ** main.c
 */
 
-void	server_usage(void);
 void	game_loop(void);
 void	free_malloc(void);
-void	check_dead_player(void);
-void	server_client_connection(void);
-int		check_winner(void);
-void	generate_resource(void);
-void	init_res(void);
 void	update_live(int fd, int food);
 
 /*
@@ -43,7 +38,37 @@ int		isnbr_str(char *str);
 /*
 ** ft_itoa.c
 */
+
 char	*ft_itoa(int n);
+
+/*
+** print_info
+*/
+void	print_player_info(int fd);
+void	print_team(void);
+void	print_flags(void);
+
+/*
+** [ resource ] folder
+** generate_resource.c
+*/
+
+void	generate_resource(void);
+
+/*
+** [ check ] folder
+** check_dead_player
+*/
+
+void	check_dead_player(void);
+
+/*
+** [ check ] folder
+** check_winner
+*/
+
+int		check_winner(void);
+
 /*
 ** exec_event_queue.c
 */

@@ -1,19 +1,14 @@
 #ifndef DATA_STRUCTURES_H
 # define DATA_STRUCTURES_H
 
-
 # include "server.h"
 # include "queue.h"
-# include <sys/time.h>
-
-# define MAX_TEAM_NAME 32
 
 typedef struct      s_egg
 {
     int				team_id;
     int             egg_id;
     int             hatched;
-    // int             direction;
     int             father_fd;
     int             y;
     int             x;
@@ -42,9 +37,8 @@ typedef struct      s_players
 	int				request_nb;
 	int				level;
 	int				dead;
-
 	int				block;
-	int				direction;	// sding added it --> 0: N, 1: E, 2: S, 3: W
+	int				direction;
 	int				alive;
 	struct timeval	live;
 	struct timeval	block_time;

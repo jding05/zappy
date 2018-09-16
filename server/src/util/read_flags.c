@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 # include "../../include/server.h"
 
 int		isnbr_str(char *str)
@@ -147,37 +146,4 @@ int		read_flags(int argc, char **argv, t_env *env)
 	update_max_player_per_team();
 	calc_time_spead();
 	return (1);
-}
-
-void	print_team(void)
-{
-	int i;
-
-	i = -1;
-	while (++i < g_env.nb_team)
-	{
-		printf("team_id [%d]\n", g_teams[i].team_id);
-		printf("team_name [%s]\n", g_teams[i].team_name);
-		printf("connected_players [%d]\n", g_teams[i].connected_players);
-		printf("max_players [%d]\n", g_teams[i].max_players);
-		printf("reach_max_level [%d]\n", g_teams[i].reach_max_level);
-		printf("egg_used [%d]\n", g_teams[i].egg_hatched);
-		printf("egg_used [%d]\n", g_teams[i].egg_laid);
-		printf("--------------------------------------\n");
-	}
-}
-
-void	print_flags(void)
-{
-	int i;
-
-	i = -1;
-	printf(LIGHTBLUE"[print flag]\n\n"RESET);
-	printf("-p Port:%s\n", g_env.port_name);
-	printf("-x width:%d\n-y height:%d\n", g_env.map_x, g_env.map_y);
-	while (++i < g_env.nb_team)
-		printf("-n Teams:%s\n", g_teams[i].team_name);
-	printf("-c Max Clients:%d\n", g_env.authorized_clients);
-	printf("-t Time:%d\n", g_env.time_unit);
-	printf("-------------------------------\n");
 }

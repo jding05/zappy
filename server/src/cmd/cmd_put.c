@@ -27,7 +27,6 @@ void	cmd_put(int fd, char *msg)
 			g_players[fd].inventory[res_i] == 0) // i think this can be handle in parse
 	{
 		send_data(fd, RED"PUT KO"RESET, MSG_SIZE);
-		// return (EXIT_FAILURE);
 		return ;
 	}
 	else

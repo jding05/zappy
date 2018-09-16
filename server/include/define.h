@@ -24,6 +24,7 @@
 /*
 ** for colorize ANSI color in printf
 */
+
 # define BLACK		"\033[0;30m"
 # define BLUE		"\033[0;34m"
 # define CYAN		"\033[1;36m"
@@ -47,6 +48,7 @@
 /*
 ** socket.c
 */
+
 # define WELCOME "WELCOME 🙂"
 # define TEAM_FULL "TEAM IS FULL\nBYE 😕"
 # define TEAM_NOT_FOUND "TEAM NAME NOT FOUND\nBYE 😕"

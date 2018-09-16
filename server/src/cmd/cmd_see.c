@@ -13,23 +13,6 @@
 #include "../../include/server.h"
 
 /*
-** haven't finished due to printf -> send buffer to player
-*/
-
-void	print_player_info(int fd)
-{
-	printf(" [player %d] ", fd);
-	printf("team: %d\n", g_players[fd].team_id);
-	printf("level: %d\n", g_players[fd].level);
-	printf("dead: %d\n", g_players[fd].dead);
-	printf("direction: %d\n", g_players[fd].direction);
-	printf("pos y: %d\n", g_players[fd].y);
-	printf("pos x: %d\n", g_players[fd].x);
-	printf("request_nb: %d\n", g_players[fd].request_nb);
-	printf("-----------------------------\n");
-}
-
-/*
 ** see north area from the (y,x) coordinate, expand with the level
 */
 
