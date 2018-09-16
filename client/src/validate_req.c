@@ -20,11 +20,7 @@ char	*g_objects[] = {"linemate", "deraumere", "sibur", "mendiane", \
 
 int		validate_req(char *req)
 {
-	char	buf[MSG_SIZE];
-	char	*cmd;
-	char	*param;
-	int		i;
-
+	VALIDATE_VARS;
 	if (0 == *req)
 		return (EXIT_FAILURE);
 	strcpy(buf, req);
@@ -34,10 +30,8 @@ int		validate_req(char *req)
 	if (0 == strcmp(cmd, "take") || 0 == strcmp(cmd, "put"))
 	{
 		while (g_objects[++i])
-		{
 			if (NULL != param && (0 == strcmp(g_objects[i], param)))
 				return (EXIT_SUCCESS);
-		}
 		return (EXIT_FAILURE);
 	}
 	if (0 == strcmp(cmd, "broadcast"))
@@ -47,9 +41,7 @@ int		validate_req(char *req)
 		return (EXIT_FAILURE);
 	}
 	while (g_cmd_table[++i])
-	{
 		if (0 == strcmp(req, g_cmd_table[i]) && NULL == param)
 			return (EXIT_SUCCESS);
-	}
 	return (EXIT_FAILURE);
 }

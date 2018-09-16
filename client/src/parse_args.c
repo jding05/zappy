@@ -33,7 +33,7 @@ int		parse_args(char **argv)
 	int		f;
 
 	i = 1;
-	while(argv[i])
+	while (argv[i])
 	{
 		if (*argv[i] == '-')
 		{
@@ -53,4 +53,3 @@ int		parse_args(char **argv)
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
-

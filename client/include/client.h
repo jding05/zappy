@@ -26,7 +26,6 @@
 # include <errno.h>
 # include "parse.h"
 
-
 # define ERROR(s) {perror(s); exit(EXIT_FAILURE);}
 # define MSG_SIZE 8192
 # define MAP_SIZE 906
@@ -40,6 +39,7 @@
 # define TEAM_FULL "TEAM IS FULL\nBYE 😕"
 # define NAME_NOT_FOUND "TEAM NAME NOT FOUND\nBYE 😕"
 
+# define VALIDATE_VARS char buf[MSG_SIZE]; char *cmd; char *param; int i;
 # define SELECT_VARS fd_set master, read_fds; int fdmax;
 
 int		validate_req(char *cmd);
