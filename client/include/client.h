@@ -26,8 +26,9 @@
 # include <errno.h>
 # include "parse.h"
 
+
 # define ERROR(s) {perror(s); exit(EXIT_FAILURE);}
-# define MSG_SIZE 4096
+# define MSG_SIZE 8192
 # define MAP_SIZE 906
 # define PLAYER_SIZE 35
 

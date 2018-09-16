@@ -76,7 +76,7 @@ typedef struct          s_env
     int                 map_x;
     int                 map_y;
     t_event             *queue_head;
-  	char                buffer[4096];
+  	char                buffer[MSG_SIZE];
     int                 server_fd;
 	long int			ms_pre_tick;
 	int					res[7];

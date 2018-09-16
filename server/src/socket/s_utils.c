@@ -80,26 +80,27 @@ void	s_init_new_player(int fd)
 {
 	g_players[fd].fd = fd;
 	g_players[fd].request_nb = 0;
-	memset(g_players[fd].inventory, 0, 3);
-	memset(g_players[fd].inventory, 10, 1);
-
-	memset(g_players[fd].inventory+1, 0, 3);
-	memset(g_players[fd].inventory+1, 10, 1);
-
-	memset(g_players[fd].inventory+2, 0, 3);
-	memset(g_players[fd].inventory+2, 10, 1);
-
-	memset(g_players[fd].inventory+3, 0, 3);
-	memset(g_players[fd].inventory+3, 10, 1);
-
-	memset(g_players[fd].inventory+4, 0, 3);
-	memset(g_players[fd].inventory+4, 10, 1);
-
-	memset(g_players[fd].inventory+5, 0, 3);
-	memset(g_players[fd].inventory+5, 10, 1);
-
-	memset(g_players[fd].inventory+6, 0, 3);
-	memset(g_players[fd].inventory+6, 1, 1);
+	// memset(g_players[fd].inventory, 0, 3);
+	// memset(g_players[fd].inventory, 10, 1);
+    //
+	// memset(g_players[fd].inventory+1, 0, 3);
+	// memset(g_players[fd].inventory+1, 10, 1);
+    //
+	// memset(g_players[fd].inventory+2, 0, 3);
+	// memset(g_players[fd].inventory+2, 10, 1);
+    //
+	// memset(g_players[fd].inventory+3, 0, 3);
+	// memset(g_players[fd].inventory+3, 10, 1);
+    //
+	// memset(g_players[fd].inventory+4, 0, 3);
+	// memset(g_players[fd].inventory+4, 10, 1);
+    //
+	// memset(g_players[fd].inventory+5, 0, 3);
+	// memset(g_players[fd].inventory+5, 10, 1);
+    //
+	// memset(g_players[fd].inventory+6, 0, 3);
+	// memset(g_players[fd].inventory+6, 1, 1);
+	memset(g_players[fd].inventory, 0, sizeof(int) * 7);
 	g_players[fd].y = rand() % g_env.map_y;
 	g_players[fd].x = rand() % g_env.map_x;
 	g_players[fd].request_nb = 0;
@@ -138,7 +139,7 @@ int		s_add_to_team(char *team_name, int fd)
 				s_init_egg_player(fd, i, egg_id);
 			g_players[fd].team_id = i;
 			g_teams[i].nb_client--;
-			g_teams[i].connected_players++;
+			// g_teams[i].connected_players++;
 			msg = ft_strjoin("joined team ", team_name);
 			send_data(fd, msg, MSG_SIZE);
 			free(msg);

@@ -54,7 +54,7 @@
 
 # define MAX_TEAM 6
 # define MAX_FD 16
-# define MSG_SIZE 4096
+# define MSG_SIZE 8192
 # define MAX_TIME_UNIT 100
 # define MAX_TEAM_NAME 32
 # define PAD_CHAR '#'

@@ -99,7 +99,6 @@ void	cmd_connect_nbr(int fd, char *msg);
 */
 
 void    cmd_fork(int fd, char *msg);
-void    push_cmd_hatch(int fd);
 void    laid_egg(int fd);
 
 /*
