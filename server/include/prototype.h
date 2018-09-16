@@ -15,7 +15,7 @@
 
 # include "server.h"
 /*
-** server.c
+** main.c
 */
 
 void	server_usage(void);
@@ -26,6 +26,7 @@ void	server_client_connection(void);
 int		check_winner(void);
 void	generate_resource(void);
 void	init_res(void);
+void	update_live(int fd, int food);
 
 /*
 ** read_flags.c
@@ -98,7 +99,6 @@ void	cmd_connect_nbr(int fd, char *msg);
 */
 
 void    cmd_fork(int fd, char *msg);
-void	update_live(int fd, int food);
 void    push_cmd_hatch(int fd);
 void    laid_egg(int fd);
 

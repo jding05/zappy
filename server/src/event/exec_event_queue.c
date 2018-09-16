@@ -42,45 +42,28 @@
 
 int		check_valid_cmd(char *msg, char *msg_buf, int i)
 {
-	// int				i;
 	char			*tmp;
 	unsigned long	len;
 
-	// i = 0;
 	printf("msg: |%s|%lu|\n", msg, strlen(msg));
-
 	while (g_cmd[i].cmd)
 	{
 		if (!(tmp = strstr(msg, g_cmd[i].cmd)))
-		{
 			i++;
-		}
-
-		// else if (tmp != msg)
-		// 	return (15);
 		else
 		{
 			if ((strlen(msg) != (len = strlen(g_cmd[i].cmd))))
 			{
 				if (i != 5 && i != 6 && i != 8)
 					return (16);
-				else
-				{
-					if (i == 8)
-						strcpy(msg_buf, msg + len + 1);
-					else if (check_resource(strcpy(msg_buf, msg + len + 1)) == 7)
-						return (17);
-					return (i);
-				}
+				if (i == 8)
+					strcpy(msg_buf, msg + len + 1);
+				else if (check_resource(strcpy(msg_buf, msg + len + 1)) == 7)
+					return (17);
+				return (i);
 			}
-			// printf(LIGHTBLUE"\n\nstrlen(msg): |%lu|,msg: |%s|\n\n"RESET,strlen(msg),msg);
-			// if (i != 5 && i != 6 && i != 8)
-			// 	return (i);
-			// else
-			// 	return (18); // no text or object behind, only broadcast
 			return ((i != 5 && i != 6 && i != 8) ? i : 19);
 		}
-	//	printf("\n\n{{{ I am checking the valid cmd }}}\n\n");
 	}
 	return (18);
 }
@@ -133,6 +116,17 @@ t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd)
 	return (node);
 }
 
+/*
+** [ insert ] for priority queue,
+** 	  3 cases:
+**		1. there is nothing in the queue -> insert the node into queue
+**		2. if the node has bigger priority than the head_node
+**			-> insert before head_node, set itself as the head_node
+**		3. if the node has less priority than the head_node, iterate through the
+**			queue till find the lower priority ndoe than the current node,
+**			-> insert right before
+*/
+
 void	insert(t_event *node)
 {
 	t_event	*tmp;
@@ -150,7 +144,7 @@ void	insert(t_event *node)
 	{
 		tmp = g_env.queue_head;
 		while (tmp->next &&
-			   node->exec_time.tv_sec * 1000000 + node->exec_time.tv_usec >
+			   node->exec_time.tv_sec * 1000000 + node->exec_time.tv_usec >=
 			   tmp->next->exec_time.tv_sec * 1000000 +
 			   tmp->next->exec_time.tv_usec)
 		{
@@ -160,6 +154,20 @@ void	insert(t_event *node)
 		tmp->next = node;
 	}
 }
+
+/*
+** [ enqueue ] the priority queue
+** 		first. check which cmd index it is from check_valid_cmd()
+**			-> in order to parse the right cmd
+** 		second. if cmd is <connect_nbr>, since it is 0/t delay
+**			-> send back the value immediately
+** 		third. else, create the node first, to get the executing_time/block_time
+**				then check if cmd <incantation> meet the requirement,
+**				if the cmd is <fork> or <incantation>
+**				-> block the players that are involved, those players cannot
+**				execute the other cmd which send after the incantation start
+**		last. insert the node in priority queue to build an event engine
+*/
 
 void	enqueue(int fd, char *msg)
 {
@@ -229,6 +237,7 @@ void	print_queue(void)
 ** need to change < the blocking or just dequeue one >
 ** xxx ** but fixed one player blocking issue
 */
+
 void	exec_event(void)
 {
 	int				i;
@@ -240,9 +249,6 @@ void	exec_event(void)
 	i = 0;
 	gettimeofday(&now, NULL);
 	if (check_event_time(&now, &(g_env.queue_head->exec_time)))
-	 	// && ((!g_players[g_env.queue_head->fd].block) ||
-		// !check_event_time(&(g_env.queue_head->exec_time),
-		// &(g_players[g_env.queue_head->fd].block_time))))
 	{
 		while (i < 13)
 		{
@@ -262,8 +268,6 @@ void	exec_event(void)
 		}
 
 	}
-	// g_env.queue_head = g_env.queue_head->next;
-	// printf("[cmd_ind after exec %i]\n", i);
 }
 
 

@@ -27,7 +27,6 @@ void     cmd_take(int fd, char *msg)
 			g_env.map[g_players[fd].y][g_players[fd].x][res_i] == 0) // i think this can be handle in parse
 	{
 		send_data(fd, RED"TAKE KO"RESET, MSG_SIZE);
-		// return (EXIT_FAILURE);
 		return ;
 	}
     else

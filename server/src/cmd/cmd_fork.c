@@ -15,8 +15,17 @@
 /*
 ** the unauthorized connection means the dead players
 ** once the egg 42/t hit, means it call this function
+**
+** 1. at the time we enqueue to the priority queue, we block this player,
+**		after 42/t, when it executed, we unblock this player, so the player can
+** 		execute other cmd it sent
+** 2. we open one extra space for extra player that this team can accept
+**		after the cmd_hatch() begin execute, but the we need to record the
+**		position that the egg is laid, for the additonal player to start at
+**		this place,
 ** -> then we call cmd_hatch put into queue (that marked 600/t after)
 */
+
 void    cmd_fork(int fd, char *msg)
 {
     printf(CYAN"\n[Exec FORK]\n"RESET);
@@ -36,13 +45,6 @@ void    cmd_fork(int fd, char *msg)
 
 	send_data(fd, RED"FORK OK"RESET, MSG_SIZE);
 
-}
-
-void	update_live(int fd, int nb_food)
-{
-	printf(BLUE"Player [%d] -> [Update %d live]\n"RESET, fd, nb_food);
-	g_players[fd].live.tv_sec += (g_players[fd].live.tv_usec + nb_food * 126 * g_env.ms_pre_tick) / 1000000;
-	g_players[fd].live.tv_usec = (g_players[fd].live.tv_usec + nb_food * 126 * g_env.ms_pre_tick) % 1000000;
 }
 
 void    push_cmd_hatch(int fd)

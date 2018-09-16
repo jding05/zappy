@@ -14,7 +14,11 @@
 ** know the number of unused connections by the team
 **
 ** since -c nb_clients_allowed, we calc nb_clients_allowed / nb_teams
-**  -> to get the max_players in the team
+**  -> to get the max_players (nb_client) in each team in the beginning.
+** 	1. when we connected one player from that team
+**		-> nb_client will decrease one
+**	2. when we fork succeed, and hatch the egg succeed
+**		-> nb_client will increase one
 */
 
 #include "../../include/server.h"
@@ -32,7 +36,8 @@ void	cmd_connect_nbr(int fd, char *msg)
 	g_players[fd].request_nb--;
 	bzero(g_env.buffer, MSG_SIZE);
 	strcpy(g_env.buffer, RED);
-	strcat(g_env.buffer, str = ft_itoa(g_teams[g_players[fd].team_id].nb_client));
+	str = ft_itoa(g_teams[g_players[fd].team_id].nb_client);
+	strcat(g_env.buffer, str);
 	free(str);
 	strcat(g_env.buffer, RESET);
 

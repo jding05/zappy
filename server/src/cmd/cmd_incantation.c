@@ -192,14 +192,7 @@ int		cmd_incantation_check(t_event *node) // need to norm
 	// printf("player: |%d|, level: |%d|\n", fd, level);
 	bzero(fds, sizeof(int) * MAX_FD);
 	if (level >= 8)
-	{
-		// send_msg(fd, RED"KO\n"RESET, "Send [incantation]");
-
-		send_data(node->fd, RED"INCANTATION KO"RESET, MSG_SIZE);
-
-		// printf("Player level: %d > 8\n",level);
 		return (0);
-	}
 	while (++i < MAX_FD)
 	{
 		if (g_players[i].y == g_players[node->fd].y && g_players[i].x ==

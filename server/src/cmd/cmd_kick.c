@@ -91,21 +91,10 @@ void			cmd_kick(int fd, char *msg)
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "kick");
 	g_players[fd].request_nb--;
 	if (find_cell_players(g_players[fd].y, g_players[fd].x, g_players[fd].direction, fd))
-	{
-
-		// if (send_msg(fd, RED"OK\n"RESET, "Send [kick]") == EXIT_FAILURE)
-		// 	return (EXIT_FAILURE);
-
 		send_data(fd, RED"KICK OK"RESET, MSG_SIZE);
-
-	}
 	else
 	{
-		// if (send_msg(fd, RED"KO\n"RESET, "Send [kick]") == EXIT_FAILURE)
-		// return (EXIT_FAILURE);
-
 		send_data(fd, RED"KICK KO"RESET, MSG_SIZE);
-		// return (EXIT_FAILURE);
 		return ;
 	}
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
@@ -124,31 +113,23 @@ void		send_kick_msg(int fd, int direction)
 		printf(RED"player %d, moving <SOUTH>\n"RESET, fd);
 		if (!send_data(fd, RED"moving <SOUTH>"RESET, MSG_SIZE))
 			perror("Send [kick]");
-		// if (send(fd, RED"moving <NORTH>\n"RESET, 26, 0) == -1)
-		// 	perror("Send [kick]");
 	}
 	else if (direction == EAST)
 	{
 		printf(RED"player %d, moving <WEST>\n"RESET, fd);
 		if (!send_data(fd, RED"moving <WEST>"RESET, MSG_SIZE))
 			perror("Send [kick]");
-		// if (send(fd, RED"moving <EAST>\n"RESET, 25, 0) == -1)
-		// 	perror("Send [kick]");
 	}
 	else if (direction == SOUTH)
 	{
 		printf(RED"player %d, moving <NORTH>\n"RESET, fd);
 		if (!send_data(fd, RED"moving <NORTH>"RESET, MSG_SIZE))
 			perror("Send [kick]");
-		// if (send(fd, RED"moving <SOUTH>\n"RESET, 26, 0) == -1)
-		// 	perror("Send [kick]");
 	}
 	else if (direction == WEST)
 	{
 		printf(RED"player %d, moving <EAST>\n"RESET, fd);
 		if (!send_data(fd, RED"moving <EAST>"RESET, MSG_SIZE))
 			perror("Send [kick]");
-		// if (send(fd, RED"moving <WEST>\n"RESET, 25, 0) == -1)
-		// 	perror("Send [kick]");
 	}
 }

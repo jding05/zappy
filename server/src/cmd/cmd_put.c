@@ -41,15 +41,4 @@ void	cmd_put(int fd, char *msg)
 	send_data(fd, RED"PUT OK"RESET, MSG_SIZE);
 
 	// update graphic client regarding player position
-
 }
-
-// int		send_msg(int fd, char *status, char *error_msg)
-// {
-// 	if (send(fd, status, strlen(status), 0) == -1)
-// 	{
-// 		perror(error_msg);
-// 		return (EXIT_FAILURE);
-// 	}
-// 	return (EXIT_SUCCESS);
-// }
