@@ -108,15 +108,20 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	struct sockaddr_storage remoteaddr;
 	socklen_t				addrlen;
 	char					remote_ip[INET6_ADDRSTRLEN];
-	char					*team_name;
+	// char					*team_name;
 	char					*msg;
 
 	addrlen = sizeof(remoteaddr);
 	if ((newfd = accept(fd, (struct sockaddr *)&remoteaddr, &addrlen)) == -1)
 		perror("accept");
+	msg = recv_data(newfd, MSG_SIZE);
+	if (0 == strcmp(msg, "gfx"))
+	{
+		g_env.gfx_fd = fd;
+		return ;
+	}
 	send_data(newfd, WELCOME, MSG_SIZE);
-	team_name = recv_data(newfd, MAX_TEAM_NAME);
-	if (s_add_to_team(team_name, newfd) == EXIT_FAILURE)
+	if (s_add_to_team(msg, newfd) == EXIT_FAILURE)
 		close(newfd);
 	else
 	{
@@ -145,11 +150,6 @@ void	s_select_recv(int fd, fd_set *master)
 	{
 		close(fd);
 		FD_CLR(fd, master);
-		return ;
-	}
-	if (0 == strcmp(req, "gfx"))
-	{
-		g_env.gfx_fd = fd;
 		return ;
 	}
 	if (g_players[fd].dead == 1)
