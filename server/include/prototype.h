@@ -228,4 +228,10 @@ void	s_init_new_player(int fd);
 void	s_init_egg_player(int fd, int team_id, int egg_id);
 int	    s_add_to_team(char *team_name, int fd);
 void	init_live(int fd);
+
+
+char	*get_map_data(void);
+char	*get_player_data(void);
+char	*get_gfx_data(void);
+char	*ft_strjoin(char const *s1, char const *s2);
 #endif

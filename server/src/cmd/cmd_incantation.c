@@ -34,6 +34,7 @@ void	cmd_incantation(int fd, char *msg)
 			g_players[i].x == g_players[fd].x && g_players[i].level == level &&
 			check_prerequest(level, i) && g_players[i].block)
 				fds[count++] = i;
+
 	}
 	if (count >= (nb = level_require(level)) && nb > 0)
 		level_up_and_unblock(count, fds);
@@ -55,6 +56,7 @@ void	level_up_and_unblock(int count, int fds[MAX_FD])
 	strcat(g_env.buffer, RESET);
 	while (++i < count)
 	{
+		g_players[fds[i]].status = 0;
 		if (g_players[fds[i]].level < 5)
 			low_level_envolving_digest(g_players[fds[i]].level, i);
 		else

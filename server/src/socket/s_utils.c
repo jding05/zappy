@@ -59,7 +59,7 @@ void	init_live(int fd)
 void	s_init_egg_player(int fd, int team_id, int egg_id)
 {
 	g_players[fd].fd = fd;
-	g_players[fd].player_id = player_id++;
+	g_players[fd].player_id = g_player_id++;
 	g_players[fd].request_nb = 0;
 	memset(g_players[fd].inventory, 0, sizeof(int) * 7);
 	g_players[fd].y = g_teams[team_id].egg[egg_id].y;
@@ -79,10 +79,8 @@ void	s_init_egg_player(int fd, int team_id, int egg_id)
 
 void	s_init_new_player(int fd)
 {
-	static int	player_id = 0;
-
 	g_players[fd].fd = fd;
-	g_players[fd].player_id = player_id++;
+	g_players[fd].player_id = g_player_id++;
 	g_players[fd].request_nb = 0;
 	memset(g_players[fd].inventory, 0, sizeof(int) * 7);
 	g_players[fd].y = rand() % g_env.map_y;
@@ -93,6 +91,7 @@ void	s_init_new_player(int fd)
 	g_players[fd].dead = 0;
 	g_players[fd].block = 0;
 	g_players[fd].direction = rand() % 4;
+	g_players[fd].inventory[1] = 1;
 	init_live(fd);
 }
 
@@ -135,42 +134,131 @@ int		s_add_to_team(char *team_name, int fd)
 	return (EXIT_FAILURE);
 }
 
-// char	*gen_map(void)
-// {
-// 	char	*map;
-// 	char	*rv;
-// 	int		i;
-// 	int		j;
-// 	int		bv;
+char	*get_map_data(void)
+{
+	char	*map;
+	char	*rv;
+	int		i;
+	int		j;
+	int		bv;
 
-// 	if (NULL == (map = (char*)malloc(sizeof(char) * (g_env.map_x * g_env.map_y * 4 + 7))))
-// 		return (NULL);
-// 	memset(map, 0, g_env.map_x * g_env.map_y * 4 + 7);
-// 	rv = ft_itoa(g_env.map_x);
-// 	strcpy(map, rv);
-// 	strcat(map, ",");
-// 	rv = ft_itoa(g_env.map_y);
-// 	strcat(map, rv);
-// 	strcat(map, "\n");
-// 	i = 0;
-// 	j = 0;
-// 	while (i < g_env.map_x)
-// 	{
-// 		j = 0;
-// 		while(j < g_env.map_y)
-// 		{
-// 			bv = g_env.map[i][j][0]*pow(2, 6) + 
-// 			g_env.map[i][j][1]*pow(2, 5) + g_env.map[i][j][2]*pow(2, 4) + 
-// 			g_env.map[i][j][3]*pow(2, 3) + g_env.map[i][j][4]*pow(2, 2) + 
-// 			g_env.map[i][j][5]*pow(2, 1) + g_env.map[i][j][6];
-// 			rv = ft_itoa(bv);
-// 			strcat(map, rv);
-// 			strcat(map, ",");
-// 			j++;
-// 		}
-// 		i++;
-// 	}
-// 	map[strlen(map) - 1] = '\0';
-// 	printf("%s\n", map);
-// 	return (map);
-// }
+	if (NULL == (map = (char*)malloc(sizeof(char) * (g_env.map_x * g_env.map_y * 4 + 7))))
+		return (NULL);
+	memset(map, 0, g_env.map_x * g_env.map_y * 4 + 7);
+	rv = ft_itoa(g_env.map_x);
+	strcpy(map, rv);
+	strcat(map, ",");
+	rv = ft_itoa(g_env.map_y);
+	strcat(map, rv);
+	strcat(map, "\n");
+	i = 0;
+	j = 0;
+	while (i < g_env.map_x)
+	{
+		j = 0;
+		while(j < g_env.map_y)
+		{
+			bv = g_env.map[i][j][0]*pow(2, 6) + 
+			g_env.map[i][j][1]*pow(2, 5) + g_env.map[i][j][2]*pow(2, 4) + 
+			g_env.map[i][j][3]*pow(2, 3) + g_env.map[i][j][4]*pow(2, 2) + 
+			g_env.map[i][j][5]*pow(2, 1) + g_env.map[i][j][6];
+			rv = ft_itoa(bv);
+			strcat(map, rv);
+			strcat(map, ",");
+			free(rv);
+			j++;
+		}
+		i++;
+	}
+	map[strlen(map) - 1] = '\0';
+	strcat(map, "\n");
+	printf("%s", map);
+	return (map);
+}
+
+
+char	*get_player_data(void)
+{
+	int		i;
+	char	*rv;
+	char	*players;
+
+	i = 0;
+	players = (char*)malloc(sizeof(char) * (PLAYER_SIZE * MAX_FD + 1));
+	memset(players, 0, (PLAYER_SIZE * MAX_FD + 1));
+	while (i < 10)
+	{
+		if (g_players[i].player_id == 0)
+		{
+			i++;
+			continue ;
+		}
+		rv = ft_itoa(g_players[i].player_id);
+		strcat(players, rv);
+		strcat(players, ",");
+		rv = ft_itoa(g_players[i].dead);
+		strcat(players, rv);
+		strcat(players, ",");
+		rv = ft_itoa(g_players[i].level);
+		strcat(players, rv);
+		strcat(players, ",");
+		rv = ft_itoa(g_players[i].status);
+		strcat(players, rv);
+		strcat(players, ",");
+		if (g_players[i].status == 2)
+			g_players[i].status = 0;
+		rv = ft_itoa(g_players[i].team_id);
+		strcat(players, rv);
+		strcat(players, ",");
+		rv = ft_itoa(g_players[i].x);
+		strcat(players, rv);
+		strcat(players, ",");		
+		rv = ft_itoa(g_players[i].y);
+		strcat(players, rv);
+		strcat(players, ",");
+		rv = ft_itoa(g_players[i].direction);
+		strcat(players, rv);
+		strcat(players, ",");
+		rv = ft_itoa(g_players[i].inventory[0]);
+		strcat(players, rv);
+		strcat(players, ",");
+		rv = ft_itoa(g_players[i].inventory[1]);
+		strcat(players, rv);
+		strcat(players, ",");
+		rv = ft_itoa(g_players[i].inventory[2]);
+		strcat(players, rv);
+		strcat(players, ",");
+		rv = ft_itoa(g_players[i].inventory[3]);
+		strcat(players, rv);
+		strcat(players, ",");
+		rv = ft_itoa(g_players[i].inventory[4]);
+		strcat(players, rv);
+		strcat(players, ",");
+		rv = ft_itoa(g_players[i].inventory[5]);
+		strcat(players, rv);
+		strcat(players, ",");
+		rv = ft_itoa(g_players[i].inventory[6]);
+		strcat(players, rv);
+		strcat(players, "\n");
+		free(rv);
+		i++;
+	}
+	strcat(players, "@");
+	printf("%s\n", players);
+	return (players);
+}
+
+
+char	*get_gfx_data(void)
+{
+	char	*map;
+	char	*players;
+	char	*gfx_data;
+
+	map = get_map_data();
+	players = get_player_data();
+	gfx_data = ft_strjoin(map, players);
+	free(map);
+	free(players);
+	return (gfx_data);
+}

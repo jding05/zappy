@@ -56,6 +56,8 @@
 
 # define MAX_TEAM 6
 # define MAX_FD 1024
+# define MAP_SIZE 906
+# define PLAYER_SIZE 41
 # define MSG_SIZE 8192
 # define MAX_TIME_UNIT 100
 # define MAX_TEAM_NAME 32
@@ -63,5 +65,6 @@
 
 # define SOCKET_VARS struct addrinfo hints, *ai; struct protoent *proto;
 # define SELECT_VARS fd_set master, read_fds; int fdmax;
+# define ERROR(s) {perror(s); exit(EXIT_FAILURE);}
 
 #endif

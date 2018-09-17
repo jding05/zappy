@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   send_recv.c                                      :+:      :+:    :+:   */
+/*   send_recv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sding <sding@student.42.us.org>            +#+  +:+       +#+        */
+/*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/09/08 17:28:01 by sding             #+#    #+#             */
-/*   Updated: 2018/09/08 17:28:20 by sding            ###   ########.fr       */
+/*   Created: 2018/09/07 18:25:18 by zfeng             #+#    #+#             */
+/*   Updated: 2018/09/16 09:58:07 by zfeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../../include/server.h"
+#include "../../include/server.h"
 
 int		send_data(int fd, char *data, int ebytes)
 {
@@ -21,7 +21,6 @@ int		send_data(int fd, char *data, int ebytes)
 
 	buf = (char*)malloc(sizeof(char) * (ebytes + 1));
 	memset(buf, 0, ebytes + 1);
-	// printf("server inital data = |%s|\n", data);
 	i = -1;
 	while (data && data[++i])
 		buf[i] = data[i];
@@ -34,14 +33,12 @@ int		send_data(int fd, char *data, int ebytes)
 		nbytes = send(fd, buf, ebytes - tbytes, 0);
 		if (nbytes <= 0)
 		{
-			perror("send error\n");
 			free(buf);
-			return (EXIT_FAILURE);
+			ERROR("send error");
 		}
 		tbytes += nbytes;
 		if (tbytes >= ebytes)
 		{
-			// printf("server send msg = |%s|\n", buf);
 			free(buf);
 			return (EXIT_SUCCESS);
 		}
@@ -58,7 +55,7 @@ char	*recv_data(int fd, int ebytes)
 
 	buf = (char*)malloc(sizeof(char) * (ebytes + 1));
 	data = (char*)malloc(sizeof(char) * (ebytes + 1));
-	memset(buf , 0, ebytes + 1);
+	memset(buf, 0, ebytes + 1);
 	memset(data, 0, ebytes + 1);
 	tbytes = 0;
 	while (1)
@@ -83,7 +80,6 @@ char	*recv_data(int fd, int ebytes)
 		while (++i < ebytes && buf[i] != PAD_CHAR)
 			;
 		buf[i] = '\0';
-		// printf("buf = |%s|\n", buf);
 		strncat(data, buf, i);
 		if (tbytes >= ebytes)
 		{

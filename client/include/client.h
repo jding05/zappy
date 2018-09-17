@@ -28,7 +28,6 @@
 
 # define ERROR(s) {perror(s); exit(EXIT_FAILURE);}
 # define MSG_SIZE 8192
-# define MAP_SIZE 906
 # define PLAYER_SIZE 35
 
 # define MAX_FD 16
@@ -42,7 +41,7 @@
 # define VALIDATE_VARS char buf[MSG_SIZE]; char *cmd; char *param; int i;
 # define SELECT_VARS fd_set master, read_fds; int fdmax;
 
-int		validate_req(char *cmd);
+int		validate_req(char *req);
 char	*recv_data(int fd, int ebytes);
 int		send_data(int fd, char *data, int ebytes);
 

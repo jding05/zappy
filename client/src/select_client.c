@@ -10,9 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "client.h"
+#include "client.h"
 
- 
 int		create_client(char *addr, int port)
 {
 	int					sock;
@@ -106,7 +105,6 @@ int		main(int ac, char **av)
 			}
 			i++;
 		}
-
 	}
 	close(sock);
 	return (0);

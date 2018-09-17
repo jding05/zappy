@@ -144,6 +144,7 @@ void	enqueue(int fd, char *msg)
 	char	msg_buf[MSG_SIZE];
 	int		i;
 	t_event *node;
+	char	*gfx_data;
 
 	i = 0;
 	bzero(msg_buf, MSG_SIZE);
@@ -162,6 +163,11 @@ void	enqueue(int fd, char *msg)
 		}
 		if (i == 9 || i == 10)
 			g_players[fd].block = 1;
+		if (i == 9)
+			g_players[fd].status = 1;
+		gfx_data = get_gfx_data();
+		send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD * 4 + 1);
+		free(gfx_data);
 		insert(node);
 	}
 	printf("request nb: %d\n", g_players[fd].request_nb);
@@ -209,6 +215,7 @@ void	exec_event(void)
 	int				i;
 	struct timeval	now;
 	t_event			*tmp;
+	char			*gfx_data;	
 
 	if (!g_env.queue_head)
 		return ;
@@ -224,6 +231,9 @@ void	exec_event(void)
 				{
 					g_cmd[i].func(g_env.queue_head->fd, g_env.queue_head->msg);
 					printf(LIGHTBLUE"\n[EXEC]\n"RESET);
+					gfx_data = get_gfx_data();
+					send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD * 4 + 1);
+					free(gfx_data);
 				}
 				tmp = g_env.queue_head;
 				g_env.queue_head = g_env.queue_head->next;
@@ -238,6 +248,8 @@ void	exec_event(void)
 void	cycle_exec_event_loop(void)
 {
 	exec_event();
+	// if (0 != g_env.gfx_fd)
+	// 	send_data(g_env.gfx_fd, g_env.map, MAP_SIZE);
 	generate_resource();
 	check_dead_player();
 }

@@ -27,9 +27,10 @@ typedef struct      s_team
     int             egg_laid;
 }                   t_team;
 
-typedef struct      s_players
+typedef struct      s_player
 {
 	int				fd;
+    int             player_id;
 	int				team_id;
 	int				inventory[7];
 	int				y;
@@ -37,12 +38,13 @@ typedef struct      s_players
 	int				request_nb;
 	int				level;
 	int				dead;
+    int             status;
 	int				block;
 	int				direction;
 	int				alive;
 	struct timeval	live;
 	struct timeval	block_time;
-}                   t_players;
+}                   t_player;
 
 /*
 ** might not use this struct, but leave it here for resource reference
@@ -66,7 +68,7 @@ typedef struct          s_env
     int                 authorized_clients;
     int                 time_unit;
     int                 nb_team;
-    int                 map[20][20][7];
+    int                 map[15][15][7];
     int                 map_x;
     int                 map_y;
     t_event             *queue_head;
@@ -74,6 +76,7 @@ typedef struct          s_env
     int                 server_fd;
 	long int			ms_pre_tick;
 	int					res[7];
+    int                 gfx_fd;
 }                       t_env;
 
 
@@ -86,7 +89,7 @@ typedef struct			s_cmd
 
 t_env       			g_env;
 t_team      			g_teams[MAX_TEAM];
-t_players   			g_players[MAX_FD];
+t_player                g_players[MAX_FD];
 
 /*
 ** declaring the (global) array variable
@@ -98,6 +101,8 @@ extern const t_cmd 		g_cmd[];
 extern const int		g_max_res[];
 extern const char		*g_res_name[];
 extern const char		*g_options[];
+
+int     g_player_id;
 
 /*
 ** ^ suppose the C compiler processed the following array declaration

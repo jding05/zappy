@@ -33,9 +33,8 @@ int		send_data(int fd, char *data, int ebytes)
 		nbytes = send(fd, buf, ebytes - tbytes, 0);
 		if (nbytes <= 0)
 		{
-			perror("send error\n");
 			free(buf);
-			return (EXIT_FAILURE);
+			ERROR("send error");
 		}
 		tbytes += nbytes;
 		if (tbytes >= ebytes)
@@ -56,7 +55,7 @@ char	*recv_data(int fd, int ebytes)
 
 	buf = (char*)malloc(sizeof(char) * (ebytes + 1));
 	data = (char*)malloc(sizeof(char) * (ebytes + 1));
-	memset(buf , 0, ebytes + 1);
+	memset(buf, 0, ebytes + 1);
 	memset(data, 0, ebytes + 1);
 	tbytes = 0;
 	while (1)

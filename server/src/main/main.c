@@ -12,6 +12,8 @@
 
 #include "../../include/server.h"
 
+
+
 void	update_live(int fd, int nb_food)
 {
 	printf(BLUE"Player [%d] -> [Update %d live]\n"RESET, fd, nb_food);
@@ -27,6 +29,7 @@ void	free_malloc(void)
 void	zappy_game(void)
 {
 	printf(RED"[GAME START ...]\n"RESET);
+	g_player_id = 1;
 	memset(g_env.res, 0, sizeof(int) * 7);
 	generate_resource();
 	g_env.queue_head = NULL;
@@ -65,6 +68,7 @@ static void	server_usage(void)
 	printf("-t time unit divider \
 			(the greater t is, the faster the game will go)\n");
 }
+
 
 int		main(int argc, char **argv)
 {
