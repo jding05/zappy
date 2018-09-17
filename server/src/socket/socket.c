@@ -152,18 +152,20 @@ void	s_select_recv(int fd, fd_set *master)
 		g_env.gfx_fd = fd;
 		return ;
 	}
+	if (g_players[fd].dead == 1)
+	{
+		send_data(fd, RED"Dead player cannot make request"RESET, MSG_SIZE);
+		return ;
+	}
+	if (g_players[fd].request_nb < 11)
+	{
+		send_data(fd, "received", MSG_SIZE);
+		enqueue(fd, req);
+		g_players[fd].request_nb++;
+	}
 	else
 	{
-		if (g_players[fd].request_nb < 11)
-		{
-			send_data(fd, "received", MSG_SIZE);
-			enqueue(fd, req);
-			g_players[fd].request_nb++;
-		}
-		else
-		{
-			send_data(fd, "request_nb limit", MSG_SIZE);
-		}	
+		send_data(fd, "request_nb limit", MSG_SIZE);
 	}
 }
 

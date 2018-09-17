@@ -83,21 +83,14 @@ void	broadcast(int y, int x, int fd, char *msg)
 		pos[i][1] = x;
 	}
 	i = -1;
-	// printf("player %d, origin y %d, x %d\n", fd, y, x);
 	calc_four_pos(pos, y, x);
 	while (++i < MAX_FD)
 	{
 		if (i != fd && g_players[i].alive)
 		{
-			// printf("4 position: 1:{%d,%d}, 2:{%d,%d}, 3:{%d,%d}, 4:{%d,%d}\n",
-			// pos[0][0],pos[0][1], pos[1][0],pos[1][1], pos[2][0],pos[2][1], pos[3][0],pos[3][1]);
-
 			j = get_closest_pos(pos, g_players[i].y, g_players[i].x);
 			nb_dir = calc_direction(pos[j], g_players[i].y, g_players[i].x,
 									g_players[i].direction);
-			// printf("pos %d -> , {%d,%d}are the closest\n, nb_dir %d\n", j + 1, pos[j][0], pos[j][1], nb_dir);
-			// printf(RED"broadcast player %d, y: %d, x: %d, d: %d\n"RESET, fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
-			// printf(RED"got msg player %d, y: %d, x: %d, d: %d\n"RESET, i, g_players[i].y, g_players[i].x, g_players[i].direction);
 			send_broadcast_msg(nb_dir, i, msg);
 		}
 	}

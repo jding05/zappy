@@ -26,6 +26,38 @@
 #include "../../include/server.h"
 
 /*
+** if no colorize printing then, 15 or 16 bytes
+*/
+
+static void		send_kick_msg(int fd, int direction)
+{
+	if (direction == NORTH)
+	{
+		printf(RED"player %d, moving <SOUTH>\n"RESET, fd);
+		if (!send_data(fd, RED"moving <SOUTH>"RESET, MSG_SIZE))
+			perror("Send [kick]");
+	}
+	else if (direction == EAST)
+	{
+		printf(RED"player %d, moving <WEST>\n"RESET, fd);
+		if (!send_data(fd, RED"moving <WEST>"RESET, MSG_SIZE))
+			perror("Send [kick]");
+	}
+	else if (direction == SOUTH)
+	{
+		printf(RED"player %d, moving <NORTH>\n"RESET, fd);
+		if (!send_data(fd, RED"moving <NORTH>"RESET, MSG_SIZE))
+			perror("Send [kick]");
+	}
+	else if (direction == WEST)
+	{
+		printf(RED"player %d, moving <EAST>\n"RESET, fd);
+		if (!send_data(fd, RED"moving <EAST>"RESET, MSG_SIZE))
+			perror("Send [kick]");
+	}
+}
+
+/*
 ** # define NORTH 0
 ** # define EAST 1
 ** # define SOUTH 2
@@ -35,7 +67,7 @@
 ** use cmd_see find_cell_player()
 */
 
-void		update_player_pos(int fd)
+static void		update_player_pos(int fd)
 {
 	int	y;
 	int	x;
@@ -100,36 +132,4 @@ void			cmd_kick(int fd, char *msg)
 	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 
 	// maybe update graphic client regarding player position
-}
-
-/*
-** if no colorize printing then, 15 or 16 bytes
-*/
-
-void		send_kick_msg(int fd, int direction)
-{
-	if (direction == NORTH)
-	{
-		printf(RED"player %d, moving <SOUTH>\n"RESET, fd);
-		if (!send_data(fd, RED"moving <SOUTH>"RESET, MSG_SIZE))
-			perror("Send [kick]");
-	}
-	else if (direction == EAST)
-	{
-		printf(RED"player %d, moving <WEST>\n"RESET, fd);
-		if (!send_data(fd, RED"moving <WEST>"RESET, MSG_SIZE))
-			perror("Send [kick]");
-	}
-	else if (direction == SOUTH)
-	{
-		printf(RED"player %d, moving <NORTH>\n"RESET, fd);
-		if (!send_data(fd, RED"moving <NORTH>"RESET, MSG_SIZE))
-			perror("Send [kick]");
-	}
-	else if (direction == WEST)
-	{
-		printf(RED"player %d, moving <EAST>\n"RESET, fd);
-		if (!send_data(fd, RED"moving <EAST>"RESET, MSG_SIZE))
-			perror("Send [kick]");
-	}
 }
