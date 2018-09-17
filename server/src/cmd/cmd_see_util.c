@@ -12,7 +12,7 @@
 
 #include "../../include/server.h"
 
-void	find_cell_player(int y, int x, int flag)
+static void	find_cell_player(int y, int x, int flag, int fd)
 {
 	int		i;
 	char	*id;
@@ -20,7 +20,7 @@ void	find_cell_player(int y, int x, int flag)
 	i = -1;
 	while (++i < MAX_FD)
 	{
-		if (g_players[i].y == y && g_players[i].x == x)
+		if (g_players[i].y == y && g_players[i].x == x && i != fd)
 		{
 			if (g_players[i].alive)
 			{
@@ -37,7 +37,7 @@ void	find_cell_player(int y, int x, int flag)
 	}
 }
 
-void	print_resource(int y, int x)
+static void	print_resource(int y, int x, int fd)
 {
 	int	i;
 	int	count;
@@ -59,7 +59,7 @@ void	print_resource(int y, int x)
 			count--;
 		}
 	}
-	find_cell_player(y, x, flag);
+	find_cell_player(y, x, flag, fd);
 }
 
 int		update_y(int y)
@@ -93,8 +93,7 @@ int		update_x(int x)
 **      -> to print the resource if exist, and player according to assign cell
 */
 
-void	print_cell_value(int y, int x)
-{
+void	print_cell_value(int y, int x, int fd)
 	if (y > g_env.map_y - 1)
 		y = y - g_env.map_y;
 	else if (y < 0)
@@ -103,5 +102,5 @@ void	print_cell_value(int y, int x)
 		x = x - g_env.map_x;
 	else if (x < 0)
 		x = x + g_env.map_x;
-	print_resource(y, x);
+	print_resource(y, x, fd);
 }

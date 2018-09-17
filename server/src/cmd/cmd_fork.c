@@ -26,6 +26,20 @@
 ** -> then we call cmd_hatch put into queue (that marked 600/t after)
 */
 
+static void    laid_egg(int fd)
+{
+	int	id;
+
+	id = g_players[fd].team_id;
+	g_teams[id].egg[g_teams[id].egg_laid].team_id = id;
+	g_teams[id].egg[g_teams[id].egg_laid].egg_id = g_teams[id].egg_laid;
+	g_teams[id].egg[g_teams[id].egg_laid].hatched = 0;
+	g_teams[id].egg[g_teams[id].egg_laid].father_fd = fd;
+	g_teams[id].egg[g_teams[id].egg_laid].y = g_players[fd].y;
+	g_teams[id].egg[g_teams[id].egg_laid].x = g_players[fd].x;
+	g_teams[id].egg_laid++;
+}
+
 void    cmd_fork(int fd, char *msg)
 {
     printf(CYAN"\n[Exec FORK]\n"RESET);
@@ -41,18 +55,4 @@ void    cmd_fork(int fd, char *msg)
 	printf(CYAN"\n[FORK SUCCESS]\n"RESET);
 
 	send_data(fd, RED"FORK OK"RESET, MSG_SIZE);
-}
-
-void    laid_egg(int fd)
-{
-	int	id;
-
-	id = g_players[fd].team_id;
-	g_teams[id].egg[g_teams[id].egg_laid].team_id = id;
-	g_teams[id].egg[g_teams[id].egg_laid].egg_id = g_teams[id].egg_laid;
-	g_teams[id].egg[g_teams[id].egg_laid].hatched = 0;
-	g_teams[id].egg[g_teams[id].egg_laid].father_fd = fd;
-	g_teams[id].egg[g_teams[id].egg_laid].y = g_players[fd].y;
-	g_teams[id].egg[g_teams[id].egg_laid].x = g_players[fd].x;
-	g_teams[id].egg_laid++;
 }

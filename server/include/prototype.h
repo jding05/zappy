@@ -74,19 +74,13 @@ int		check_winner(void);
 */
 
 void	cycle_exec_event_loop(void);
-//void	exec_event_list(void);
-// void	exec_event(t_event **event, t_event **prev, t_event **h, t_event **l);
 void	exec_event(void);
 t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd);
 void	enqueue(int fd, char *msg);
 int		check_valid_cmd(char *msg, char *msg_buf, int i);
-// void    long_short_term(t_event *node, int short_term);
 void    init_queue(void);
 void	print_queue(void);
 int		print_time(struct timeval *now);
-// void	exec_event_queue(int short_term);
-// void	set_block_time(t_event *node, int fd);
-// void	dequeue(void);
 void	insert(t_event *node);
 void	exec_event_and_delete(t_event **event, t_event **prev);
 
@@ -130,7 +124,6 @@ void	cmd_connect_nbr(int fd, char *msg);
 */
 
 void    cmd_fork(int fd, char *msg);
-void    laid_egg(int fd);
 
 /*
 ** hatch
@@ -168,8 +161,6 @@ void	cmd_inventory(int fd, char *msg);
 */
 
 void	cmd_kick(int fd, char *msg);
-void	send_kick_msg(int fd, int direction);
-void	update_player_pos(int fd);
 
 /*
 ** left
@@ -182,8 +173,6 @@ void	cmd_left(int fd, char *msg);
 */
 
 void	cmd_put(int fd, char *msg);
-// int		send_msg(int fd, char *status, char *error_msg);
-
 
 /*
 ** right
@@ -195,19 +184,12 @@ void	cmd_right(int fd, char *msg);
 ** see
 */
 
-void	print_player_info(int fd);
-void	see_north_area(int level, int y, int x);
-void	see_south_area(int level, int y, int x);
-void	see_east_area(int level, int y, int x);
-void	see_west_area(int level, int y, int x);
 void	cmd_see(int fd, char *msg);
 
 /*
 ** see_util
 */
 
-void	find_cell_player(int y, int x, int flag);
-void	print_resource(int y, int x);
 int		update_y(int y);
 int		update_x(int x);
 void	print_cell_value(int y, int x);
