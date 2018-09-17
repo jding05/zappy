@@ -120,7 +120,7 @@ int		s_add_to_team(char *team_name, int fd)
 			if ((egg_id = g_teams[i].max_players - g_teams[i].connected_players++) > 0)
 				s_init_new_player(fd);
 			else
-				s_init_egg_player(fd, i, egg_id);
+				s_init_egg_player(fd, i, abs(egg_id));
 			g_players[fd].team_id = i;
 			g_teams[i].nb_client--;
 			// g_teams[i].connected_players++;

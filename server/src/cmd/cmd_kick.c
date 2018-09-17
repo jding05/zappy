@@ -67,7 +67,7 @@ static void		send_kick_msg(int fd, int direction)
 ** use cmd_see find_cell_player()
 */
 
-static void		update_player_pos(int fd)
+void		update_player_pos(int fd)
 {
 	int	y;
 	int	x;

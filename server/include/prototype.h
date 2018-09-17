@@ -161,6 +161,7 @@ void	cmd_inventory(int fd, char *msg);
 */
 
 void	cmd_kick(int fd, char *msg);
+void		update_player_pos(int fd);
 
 /*
 ** left
@@ -192,7 +193,7 @@ void	cmd_see(int fd, char *msg);
 
 int		update_y(int y);
 int		update_x(int x);
-void	print_cell_value(int y, int x);
+void	print_cell_value(int y, int x, int fd);
 
 /*
 ** take
