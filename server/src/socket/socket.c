@@ -117,7 +117,7 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	msg = recv_data(newfd, MSG_SIZE);
 	if (0 == strcmp(msg, "gfx"))
 	{
-		g_env.gfx_fd = fd;
+		g_env.gfx_fd = newfd;
 		return ;
 	}
 	send_data(newfd, WELCOME, MSG_SIZE);

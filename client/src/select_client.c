@@ -58,11 +58,11 @@ int		main(int ac, char **av)
 	FD_SET(sock, &master);
 	FD_SET(STDIN_FILENO, &master);
 	fdmax = sock;
+	send_data(sock, g_env.team_name, MSG_SIZE);	// send team name
 	if (NULL == (msg = recv_data(sock, MSG_SIZE)))	// recv WELCOME msg
 		return (EXIT_FAILURE);
 	printf("%s\n", msg);
 	free(msg);
-	send_data(sock, g_env.team_name, MAX_TEAM_NAME);	// send team name
 	if (NULL == (msg = recv_data(sock, MSG_SIZE)))	// recv joined team OR team is full
 		return (EXIT_FAILURE);
 	printf("%s\n", msg);
