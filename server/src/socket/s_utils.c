@@ -142,15 +142,9 @@ char	*get_map_data(void)
 	int		j;
 	int		bv;
 
-	if (NULL == (map = (char*)malloc(sizeof(char) * (g_env.map_x * g_env.map_y * 4 + 7))))
+	if (NULL == (map = (char*)malloc(sizeof(char) * (g_env.map_x * g_env.map_y * 4 + 1))))
 		return (NULL);
-	memset(map, 0, g_env.map_x * g_env.map_y * 4 + 7);
-	rv = ft_itoa(g_env.map_x);
-	strcpy(map, rv);
-	strcat(map, ",");
-	rv = ft_itoa(g_env.map_y);
-	strcat(map, rv);
-	strcat(map, "\n");
+	memset(map, 0, g_env.map_x * g_env.map_y * 4 + 1);
 	i = 0;
 	j = 0;
 	while (i < g_env.map_x)

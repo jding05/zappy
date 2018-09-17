@@ -108,8 +108,9 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	struct sockaddr_storage remoteaddr;
 	socklen_t				addrlen;
 	char					remote_ip[INET6_ADDRSTRLEN];
-	// char					*team_name;
 	char					*msg;
+	char					map_size[7];
+	char					*rv;
 
 	addrlen = sizeof(remoteaddr);
 	if ((newfd = accept(fd, (struct sockaddr *)&remoteaddr, &addrlen)) == -1)
@@ -118,6 +119,14 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	if (0 == strcmp(msg, "gfx"))
 	{
 		g_env.gfx_fd = newfd;
+		rv = ft_itoa(g_env.map_x);
+		strcpy(map_size, rv);
+		strcat(map_size, ",");
+		rv = ft_itoa(g_env.map_y);
+		strcat(map_size, rv);
+		strcat(map_size, "@");
+		free(rv);
+		send_data(newfd, map_size, 7);
 		return ;
 	}
 	send_data(newfd, WELCOME, MSG_SIZE);
