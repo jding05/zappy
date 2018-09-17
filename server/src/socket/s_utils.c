@@ -59,6 +59,7 @@ void	init_live(int fd)
 void	s_init_egg_player(int fd, int team_id, int egg_id)
 {
 	g_players[fd].fd = fd;
+	g_players[fd].player_id = player_id++;
 	g_players[fd].request_nb = 0;
 	memset(g_players[fd].inventory, 0, sizeof(int) * 7);
 	g_players[fd].y = g_teams[team_id].egg[egg_id].y;
@@ -78,28 +79,11 @@ void	s_init_egg_player(int fd, int team_id, int egg_id)
 
 void	s_init_new_player(int fd)
 {
+	static int	player_id = 0;
+
 	g_players[fd].fd = fd;
+	g_players[fd].player_id = player_id++;
 	g_players[fd].request_nb = 0;
-	// memset(g_players[fd].inventory, 0, 3);
-	// memset(g_players[fd].inventory, 10, 1);
-    //
-	// memset(g_players[fd].inventory+1, 0, 3);
-	// memset(g_players[fd].inventory+1, 10, 1);
-    //
-	// memset(g_players[fd].inventory+2, 0, 3);
-	// memset(g_players[fd].inventory+2, 10, 1);
-    //
-	// memset(g_players[fd].inventory+3, 0, 3);
-	// memset(g_players[fd].inventory+3, 10, 1);
-    //
-	// memset(g_players[fd].inventory+4, 0, 3);
-	// memset(g_players[fd].inventory+4, 10, 1);
-    //
-	// memset(g_players[fd].inventory+5, 0, 3);
-	// memset(g_players[fd].inventory+5, 10, 1);
-    //
-	// memset(g_players[fd].inventory+6, 0, 3);
-	// memset(g_players[fd].inventory+6, 1, 1);
 	memset(g_players[fd].inventory, 0, sizeof(int) * 7);
 	g_players[fd].y = rand() % g_env.map_y;
 	g_players[fd].x = rand() % g_env.map_x;
@@ -150,3 +134,43 @@ int		s_add_to_team(char *team_name, int fd)
 	send_data(fd, TEAM_NOT_FOUND, MSG_SIZE);
 	return (EXIT_FAILURE);
 }
+
+// char	*gen_map(void)
+// {
+// 	char	*map;
+// 	char	*rv;
+// 	int		i;
+// 	int		j;
+// 	int		bv;
+
+// 	if (NULL == (map = (char*)malloc(sizeof(char) * (g_env.map_x * g_env.map_y * 4 + 7))))
+// 		return (NULL);
+// 	memset(map, 0, g_env.map_x * g_env.map_y * 4 + 7);
+// 	rv = ft_itoa(g_env.map_x);
+// 	strcpy(map, rv);
+// 	strcat(map, ",");
+// 	rv = ft_itoa(g_env.map_y);
+// 	strcat(map, rv);
+// 	strcat(map, "\n");
+// 	i = 0;
+// 	j = 0;
+// 	while (i < g_env.map_x)
+// 	{
+// 		j = 0;
+// 		while(j < g_env.map_y)
+// 		{
+// 			bv = g_env.map[i][j][0]*pow(2, 6) + 
+// 			g_env.map[i][j][1]*pow(2, 5) + g_env.map[i][j][2]*pow(2, 4) + 
+// 			g_env.map[i][j][3]*pow(2, 3) + g_env.map[i][j][4]*pow(2, 2) + 
+// 			g_env.map[i][j][5]*pow(2, 1) + g_env.map[i][j][6];
+// 			rv = ft_itoa(bv);
+// 			strcat(map, rv);
+// 			strcat(map, ",");
+// 			j++;
+// 		}
+// 		i++;
+// 	}
+// 	map[strlen(map) - 1] = '\0';
+// 	printf("%s\n", map);
+// 	return (map);
+// }
