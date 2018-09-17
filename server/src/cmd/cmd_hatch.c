@@ -14,7 +14,7 @@
 
 /*
 ** [ hatch ] is not any command sent from client (player)
-** 		after 600/t waiting for the egg to hatch,  
+** 		after 600/t waiting for the egg to hatch,
 */
 
 void	cmd_hatch(int fd, char *msg)

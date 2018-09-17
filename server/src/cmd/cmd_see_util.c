@@ -94,6 +94,7 @@ int		update_x(int x)
 */
 
 void	print_cell_value(int y, int x, int fd)
+{
 	if (y > g_env.map_y - 1)
 		y = y - g_env.map_y;
 	else if (y < 0)
