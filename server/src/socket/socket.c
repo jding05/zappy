@@ -35,7 +35,6 @@ int		s_iter_sock(struct addrinfo *ai, struct protoent *proto, int reuse)
 	p = ai;
 	while (p)
 	{
-		//listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
 		listener = socket(p->ai_family, p->ai_socktype, proto->p_proto);
 		if (listener < 0)
 		{
@@ -79,16 +78,21 @@ int		s_create_socket(char* port, int reuse)
 
 char	*get_n_x_y(int fd)
 {
+	char	*rv;
 	char	*msg;
 
 	if (NULL == (msg = (char*)malloc(sizeof(char) * 10)))
 		return (NULL);
 	memset(msg, 0, 10);
-	strcpy(msg, ft_itoa(g_teams[g_players[fd].team_id].nb_client));
+	rv = ft_itoa(g_teams[g_players[fd].team_id].nb_client);
+	strcpy(msg, rv);
 	strcat(msg, "\n");
-	strcat(msg, ft_itoa(g_env.map_x));
+	rv = ft_itoa(g_env.map_x);
+	strcat(msg, rv);
 	strcat(msg, " ");
-	strcat(msg, ft_itoa(g_env.map_y));
+	rv = ft_itoa(g_env.map_y);
+	strcat(msg, rv);
+	free(rv);
 	return (msg);
 }
 
@@ -141,6 +145,11 @@ void	s_select_recv(int fd, fd_set *master)
 	{
 		close(fd);
 		FD_CLR(fd, master);
+		return ;
+	}
+	if (0 == strcmp(req, "gfx"))
+	{
+		g_env.gfx_fd = fd;
 		return ;
 	}
 	if (g_players[fd].dead == 1)
