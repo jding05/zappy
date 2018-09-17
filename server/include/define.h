@@ -55,7 +55,7 @@
 # define TEAM_JOINED "JOINED TEAM"
 
 # define MAX_TEAM 6
-# define MAX_FD 1024
+# define MAX_FD 77
 # define MAP_SIZE 906
 # define PLAYER_SIZE 41
 # define MSG_SIZE 8192

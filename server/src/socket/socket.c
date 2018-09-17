@@ -227,7 +227,8 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 				}
 				else
 				{
-					s_select_recv(i, master);
+					if (i != g_env.gfx_fd)
+						s_select_recv(i, master);
 				}
 			}
 			i++;
