@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: sding <sding@student.42.us.org>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2018/09/17 21:25:30 by sding             #+#    #+#              #
-#    Updated: 2018/09/17 21:25:33 by sding            ###   ########.fr        #
+#    Created: 2018/09/17 22:37:33 by sding             #+#    #+#              #
+#    Updated: 2018/09/17 22:37:34 by sding            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,21 +16,56 @@ import select
 import sys
 from os import system, name
 
-# import curses #
+def usage ():
+	print ("Usage: ./client -n <team> -p <port> [-h <hostname>]")
+	print ("\t-n team\_name")
+	print ("\t-p port")
+	print ("\t-h name of the host, by default it'll be localhost")
+	sys.exit(1)
 
 TCP_IP = '127.0.0.1'
 TCP_PORT = 4242
+TEAM_NAME = ""
+
+
+ARGC = len(sys.argv)
+if ARGC < 5:
+	usage()
+elif ARGC > 7:
+	usage()
+elif ARGC == 5 or ARGC == 7:
+	# parse(ARGC)
+	if ARGC == 7:
+		if sys.argv[5] != "-h":
+			usage()
+		else:
+			TCP_IP = sys.argv[6]
+	if sys.argv[1] != "-n" or sys.argv[3] != "-p":
+		usage()
+	else:
+		TEAM_NAME = sys.argv[2]
+		print ("[" + TEAM_NAME + "]")
+		if TEAM_NAME == "":
+			usage()
+		if sys.argv[4].isdigit() == True:
+			TCP_PORT = int(sys.argv[4])
+		else:
+			usage()
+else:
+	usage()
+
+
 BUFFER_SIZE = 8192
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((TCP_IP, TCP_PORT))
 
 # get the full screen
-system('clear')
-
-data = "one"
-for x in range(BUFFER_SIZE - len("one")):
-    data += '#'
-s.send(data)
+# system('clear')
+print (TEAM_NAME)
+# TEAM_NAME = "one"   ##############
+for x in range(BUFFER_SIZE - len(TEAM_NAME)):
+    TEAM_NAME += '#'
+s.send(TEAM_NAME)
 
 data = s.recv(BUFFER_SIZE)
 welcome_msg = data.replace("#", "")
