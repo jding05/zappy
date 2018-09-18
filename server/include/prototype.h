@@ -230,8 +230,7 @@ int	    s_add_to_team(char *team_name, int fd);
 void	init_live(int fd);
 
 
-char	*get_map_data(void);
-char	*get_player_data(void);
 char	*get_gfx_data(void);
+char	*ft_strnew(size_t size);
 char	*ft_strjoin(char const *s1, char const *s2);
 #endif

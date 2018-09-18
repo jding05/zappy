@@ -216,7 +216,7 @@ void	exec_event(void)
 	int				i;
 	struct timeval	now;
 	t_event			*tmp;
-	char			*players_data;	
+	char			*gfx_data;	
 
 	if (!g_env.queue_head)
 		return ;
@@ -232,10 +232,10 @@ void	exec_event(void)
 				{
 					g_cmd[i].func(g_env.queue_head->fd, g_env.queue_head->msg);
 					printf(LIGHTBLUE"\n[EXEC]\n"RESET);
-					players_data = get_player_data();
+					gfx_data = get_gfx_data();
 					if (g_env.gfx_fd > 0)
-						send_data(g_env.gfx_fd, players_data, PLAYER_SIZE * MAX_FD * 4 + 1);
-					free(players_data);
+						send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD * 4 + 1);
+					free(gfx_data);
 				}
 				tmp = g_env.queue_head;
 				g_env.queue_head = g_env.queue_head->next;

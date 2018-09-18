@@ -71,7 +71,7 @@ int		s_create_socket(char* port, int reuse)
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 	if ((rv = getaddrinfo(NULL, port, &hints, &ai)) != 0)
-		perror_rv((char*)gai_strerror(rv));
+		ERROR((char*)gai_strerror(rv));
 	listener = s_iter_sock(ai, proto, reuse);
 	return (listener);
 }

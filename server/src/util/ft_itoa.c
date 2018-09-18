@@ -12,14 +12,14 @@
 
 #include "../../include/server.h"
 
-static char	*ft_strnew(size_t size)
+char	*ft_strnew(size_t size)
 {
-	char *str;
+	char	*new;
 
-	if (!(str = (char *)malloc(sizeof(char) * (size + 1))))
+	if (NULL == (new = (char*)malloc(sizeof(char) * (size + 1))))
 		return (NULL);
-	bzero(str, size + 1);
-	return (str);
+	memset(new, 0, size + 1);
+	return (new);
 }
 
 static int	str_size(int n)

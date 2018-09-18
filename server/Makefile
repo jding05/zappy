@@ -43,7 +43,7 @@ SRC_CMD =	cmd_advance cmd_broadcast cmd_connect_nbr cmd_fork cmd_hatch \
 
 SRC_EVENT =	exec_event_queue
 
-SRC_SOCKET = socket send_recv s_utils
+SRC_SOCKET = socket send_recv s_utils get_gfx_data
 
 SRC_GLOBAL = global
 
