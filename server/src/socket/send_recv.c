@@ -16,7 +16,7 @@ int		send_data_norm(int nbytes, char **buf)
 {
 	if (nbytes <= 0)
 	{
-		free(buf);
+		free(*buf);
 		ERROR("send error");
 	}
 	return (EXIT_SUCCESS);
