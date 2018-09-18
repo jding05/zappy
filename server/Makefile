@@ -35,7 +35,7 @@ OBJSRC += $(patsubst %, %.o, $(addprefix $(addprefix $(SRCDIR), $(SRCDIR_CHECK))
 
 SRC_MAIN =	main
 
-SRC_UTIL =	read_flags ft_itoa print_info
+SRC_UTIL =	read_flags ft_itoa print_info init_player ft_strjoin
 
 SRC_CMD =	cmd_advance cmd_broadcast cmd_connect_nbr cmd_fork cmd_hatch \
 			cmd_incantation cmd_incantation_util cmd_inventory cmd_kick \

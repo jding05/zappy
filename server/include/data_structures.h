@@ -18,7 +18,7 @@ typedef struct      s_team
 {
     int             team_id;
     char            team_name[MAX_TEAM_NAME];
-    int             connected_players;
+    int             cplayers;
     int             max_players;
     int             reach_max_level;
 	int				nb_client;

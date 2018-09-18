@@ -1,0 +1,52 @@
+# include "../../include/server.h"
+
+void	init_live(int fd)
+{
+	struct timeval	curr_time;
+
+	gettimeofday(&curr_time, NULL);
+    gettimeofday(&(g_players[fd].live), NULL);
+	g_players[fd].live.tv_sec = curr_time.tv_sec;
+	g_players[fd].live.tv_usec = curr_time.tv_usec;
+	g_players[fd].block_time.tv_sec = curr_time.tv_sec;
+	g_players[fd].block_time.tv_usec = curr_time.tv_usec;
+	update_live(fd, 1000);
+}
+
+void	s_init_egg_player(int fd, int team_id, int egg_id)
+{
+	g_players[fd].fd = fd;
+	g_players[fd].player_id = g_player_id++;
+	g_players[fd].request_nb = 0;
+	memset(g_players[fd].inventory, 0, sizeof(int) * 7);
+	g_players[fd].y = g_teams[team_id].egg[egg_id].y;
+	g_players[fd].x = g_teams[team_id].egg[egg_id].x;
+	g_players[fd].request_nb = 0;
+	g_players[fd].level = 1;
+	g_players[fd].alive = 1;
+	g_players[fd].dead = 0;
+	g_players[fd].block = 0;
+	g_players[fd].direction = rand() % 4;
+	init_live(fd);
+}
+
+/*
+** reset a player's data when the player_client is terminated
+*/
+
+void	s_init_new_player(int fd)
+{
+	g_players[fd].fd = fd;
+	g_players[fd].player_id = g_player_id++;
+	g_players[fd].request_nb = 0;
+	memset(g_players[fd].inventory, 0, sizeof(int) * 7);
+	g_players[fd].y = rand() % g_env.map_y;
+	g_players[fd].x = rand() % g_env.map_x;
+	g_players[fd].request_nb = 0;
+	g_players[fd].level = 1;
+	g_players[fd].alive = 1;
+	g_players[fd].dead = 0;
+	g_players[fd].block = 0;
+	g_players[fd].direction = rand() % 4;
+	init_live(fd);
+}

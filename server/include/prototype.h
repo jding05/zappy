@@ -223,11 +223,12 @@ char	*recv_data(int fd, int ebytes);
 /*
 ** s_utils
 */
-int		perror_rv(char *errmsg);
-void	s_init_new_player(int fd);
-void	s_init_egg_player(int fd, int team_id, int egg_id);
-int	    s_add_to_team(char *team_name, int fd);
-void	init_live(int fd);
+char			*get_n_x_y(int fd);
+struct timeval	*set_timeout_alarm(void);
+void			s_init_new_player(int fd);
+void			s_init_egg_player(int fd, int team_id, int egg_id);
+int	    		s_add_to_team(char *team_name, int fd);
+void			init_live(int fd);
 
 
 char	*get_gfx_data(void);

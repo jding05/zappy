@@ -63,8 +63,11 @@
 # define MAX_TEAM_NAME 32
 # define PAD_CHAR '#'
 
+# define ERROR(s) {perror(s); return(EXIT_FAILURE);}
 # define SOCKET_VARS struct addrinfo hints, *ai; struct protoent *proto;
 # define SELECT_VARS fd_set master, read_fds; int fdmax;
-# define ERROR(s) {perror(s); exit(EXIT_FAILURE);}
+# define ADD_TEAM_VARS 	int i; int egg_id; char *msg;
+
+
 
 #endif
