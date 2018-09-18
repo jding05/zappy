@@ -76,6 +76,12 @@ void	s_init_new_player(int fd)
 	g_players[fd].dead = 0;
 	g_players[fd].block = 0;
 	g_players[fd].direction = rand() % 4;
+	// g_players[fd].inventory[1] = 9;
+	// g_players[fd].inventory[2] = 10;
+	// g_players[fd].inventory[3] = 10;
+	// g_players[fd].inventory[4] = 5;
+	// g_players[fd].inventory[5] = 6;
+	// g_players[fd].inventory[6] = 1;
 	init_live(fd);
 }
 

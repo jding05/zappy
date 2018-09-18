@@ -29,6 +29,8 @@ void	check_dead_player(void)
 			{
 				g_players[i].dead = 1;
 				g_players[i].alive = 0;
+				if (g_players[i].level == 8)
+					g_teams[g_players[i].team_id].reach_max_level--;
 				send_data(i, g_env.buffer, MSG_SIZE);
 			}
 		}
