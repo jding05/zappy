@@ -12,6 +12,16 @@
 
 #include "../../include/server.h"
 
+int		send_data_norm(int nbytes, char **buf)
+{
+	if (nbytes <= 0)
+	{
+		free(buf);
+		ERROR("send error");
+	}
+	return (EXIT_SUCCESS);
+}
+
 int		send_data(int fd, char *data, int ebytes)
 {
 	int		nbytes;
@@ -19,8 +29,7 @@ int		send_data(int fd, char *data, int ebytes)
 	char	*buf;
 	int		i;
 
-	buf = (char*)malloc(sizeof(char) * (ebytes + 1));
-	memset(buf, 0, ebytes + 1);
+	buf = ft_strnew(ebytes + 1);
 	i = -1;
 	while (data && data[++i])
 		buf[i] = data[i];
@@ -31,11 +40,8 @@ int		send_data(int fd, char *data, int ebytes)
 	while (1)
 	{
 		nbytes = send(fd, buf, ebytes - tbytes, 0);
-		if (nbytes <= 0)
-		{
-			free(buf);
-			ERROR("send error");
-		}
+		if (EXIT_FAILURE == send_data_norm(nbytes, &buf))
+			return (EXIT_FAILURE);
 		tbytes += nbytes;
 		if (tbytes >= ebytes)
 		{
@@ -45,42 +51,54 @@ int		send_data(int fd, char *data, int ebytes)
 	}
 }
 
+int		recv_data_norm(int fd, int nbytes, char **buf, char **data)
+{
+	if (nbytes < 0)
+	{
+		free(*buf);
+		free(*data);
+		perror("recv error\n");
+		return (0);
+	}
+	if (nbytes == 0)
+	{
+		free(*buf);
+		free(*data);
+		printf("socket %d left\n", fd);
+		return (0);
+	}
+	return (1);
+}
+
+void	recv_data_skip_pad(int ebytes, char **buf, char **data)
+{
+	int		i;
+
+	i = -1;
+	while (++i < ebytes && (*buf)[i] != PAD_CHAR)
+		;
+	(*buf)[i] = '\0';
+	strncat(*data, *buf, i);
+}
+
 char	*recv_data(int fd, int ebytes)
 {
 	int		nbytes;
 	int		tbytes;
 	char	*buf;
 	char	*data;
-	int		i;
 
-	buf = (char*)malloc(sizeof(char) * (ebytes + 1));
-	data = (char*)malloc(sizeof(char) * (ebytes + 1));
-	memset(buf, 0, ebytes + 1);
-	memset(data, 0, ebytes + 1);
+	buf = ft_strnew(ebytes + 1);
+	data = ft_strnew(ebytes + 1);
 	tbytes = 0;
 	while (1)
 	{
 		nbytes = recv(fd, buf, ebytes - tbytes, 0);
-		if (nbytes < 0)
-		{
-			free(buf);
-			free(data);
-			perror("recv error\n");
+		if (0 == recv_data_norm(fd, nbytes, &buf, &data))
 			return (NULL);
-		}
-		if (nbytes == 0)
-		{
-			free(buf);
-			free(data);
-			return (NULL);
-		}
 		buf[nbytes] = '\0';
 		tbytes += nbytes;
-		i = -1;
-		while (++i < ebytes && buf[i] != PAD_CHAR)
-			;
-		buf[i] = '\0';
-		strncat(data, buf, i);
+		recv_data_skip_pad(ebytes, &buf, &data);
 		if (tbytes >= ebytes)
 		{
 			free(buf);
