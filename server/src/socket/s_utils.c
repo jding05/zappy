@@ -10,87 +10,81 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../../include/server.h"
+#include "../../include/server.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+/*
+** get sockaddr, IPv4 or IPv6
+*/
+
+void			*get_in_addr(struct sockaddr *sa)
 {
-	char	*new;
-
-	if (s1 && s2)
-	{
-		new = ft_strnew(strlen(s1) + strlen(s2));
-		if (!new)
-			return (NULL);
-		strcpy(new, s1);
-		strcat(new, s2);
-		return (new);
-	}
-	return (NULL);
-}
-
-void	init_live(int fd)
-{
-	struct timeval	curr_time;
-
-	gettimeofday(&curr_time, NULL);
-    gettimeofday(&(g_players[fd].live), NULL);
-	g_players[fd].live.tv_sec = curr_time.tv_sec;
-	g_players[fd].live.tv_usec = curr_time.tv_usec;
-	g_players[fd].block_time.tv_sec = curr_time.tv_sec;
-	g_players[fd].block_time.tv_usec = curr_time.tv_usec;
-	update_live(fd, 1000);
-}
-
-void	s_init_egg_player(int fd, int team_id, int egg_id)
-{
-	g_players[fd].fd = fd;
-	g_players[fd].player_id = g_player_id++;
-	g_players[fd].request_nb = 0;
-	memset(g_players[fd].inventory, 0, sizeof(int) * 7);
-	g_players[fd].y = g_teams[team_id].egg[egg_id].y;
-	g_players[fd].x = g_teams[team_id].egg[egg_id].x;
-	g_players[fd].request_nb = 0;
-	g_players[fd].level = 1;
-	g_players[fd].alive = 1;
-	g_players[fd].dead = 0;
-	g_players[fd].block = 0;
-	g_players[fd].direction = rand() % 4;
-	init_live(fd);
+	if (sa->sa_family == AF_INET)
+		return (&(((struct sockaddr_in*)sa)->sin_addr));
+	return (&(((struct sockaddr_in6*)sa)->sin6_addr));
 }
 
 /*
-** reset a player's data when the player_client is terminated
+** iterate through the return link list of sockets from getaddrinfo()
 */
 
-void	s_init_new_player(int fd)
+int				s_iter_sock(struct addrinfo *ai,
+							struct protoent *proto, int reuse)
 {
-	g_players[fd].fd = fd;
-	g_players[fd].player_id = g_player_id++;
-	g_players[fd].request_nb = 0;
-	memset(g_players[fd].inventory, 0, sizeof(int) * 7);
-	g_players[fd].y = rand() % g_env.map_y;
-	g_players[fd].x = rand() % g_env.map_x;
-	g_players[fd].request_nb = 0;
-	g_players[fd].level = 1;
-	g_players[fd].alive = 1;
-	g_players[fd].dead = 0;
-	g_players[fd].block = 0;
-	g_players[fd].direction = rand() % 4;
-	init_live(fd);
+	struct addrinfo *p;
+	int				listener;
+
+	p = ai;
+	while (p)
+	{
+		listener = socket(p->ai_family, p->ai_socktype, proto->p_proto);
+		if (listener < 0)
+		{
+			p = p->ai_next;
+			continue;
+		}
+		setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
+		if (bind(listener, p->ai_addr, p->ai_addrlen) < 0)
+		{
+			close(listener);
+			continue;
+		}
+		break ;
+	}
+	if (p == NULL)
+		return (-1);
+	freeaddrinfo(ai);
+	return (listener);
+}
+
+char			*get_n_x_y(int fd)
+{
+	char	*rv;
+	char	*msg;
+
+	if (NULL == (msg = (char*)malloc(sizeof(char) * 10)))
+		return (NULL);
+	memset(msg, 0, 10);
+	rv = ft_itoa(g_teams[g_players[fd].team_id].nb_client);
+	strcpy(msg, rv);
+	strcat(msg, "\n");
+	rv = ft_itoa(g_env.map_x);
+	strcat(msg, rv);
+	strcat(msg, " ");
+	rv = ft_itoa(g_env.map_y);
+	strcat(msg, rv);
+	free(rv);
+	return (msg);
 }
 
 /*
 ** when a new player is connected, add it to a team
 */
 
-int		s_add_to_team(char *team_name, int fd)
+int				s_add_to_team(char *team_name, int fd)
 {
-	int		i;
-	int		egg_id;
-	char	*msg;
-
- 	i = 0;
-	while (*g_teams[i].team_name)
+	ADD_TEAM_VARS;
+	i = -1;
+	while (*g_teams[++i].team_name)
 	{
 		if (strcmp(g_teams[i].team_name, team_name) == 0)
 		{
@@ -99,7 +93,7 @@ int		s_add_to_team(char *team_name, int fd)
 				send_data(fd, TEAM_FULL, MSG_SIZE);
 				return (EXIT_FAILURE);
 			}
-			if ((egg_id = g_teams[i].max_players - g_teams[i].connected_players++) > 0)
+			if ((egg_id = g_teams[i].max_players - g_teams[i].cplayers++) > 0)
 				s_init_new_player(fd);
 			else
 				s_init_egg_player(fd, i, abs(egg_id));
@@ -110,8 +104,33 @@ int		s_add_to_team(char *team_name, int fd)
 			free(msg);
 			return (EXIT_SUCCESS);
 		}
-		i++;
 	}
 	send_data(fd, TEAM_NOT_FOUND, MSG_SIZE);
 	return (EXIT_FAILURE);
+}
+
+struct timeval	*set_timeout_alarm(void)
+{
+	long int		time_diff;
+	struct timeval	*timeout;
+	struct timeval	now;
+
+	timeout = NULL;
+	if (!g_env.queue_head)
+		return (NULL);
+	gettimeofday(&now, NULL);
+	time_diff = (g_env.queue_head->exec_time.tv_sec - now.tv_sec) * 1000000
+		+ (g_env.queue_head->exec_time.tv_usec - now.tv_usec);
+	timeout = (struct timeval *)malloc(sizeof(struct timeval));
+	if (time_diff <= 0)
+	{
+		timeout->tv_sec = 0;
+		timeout->tv_usec = 0;
+	}
+	else
+	{
+		timeout->tv_sec = time_diff / 1000000;
+		timeout->tv_usec = time_diff % 1000000;
+	}
+	return (timeout);
 }
