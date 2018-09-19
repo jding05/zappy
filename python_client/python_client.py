@@ -22,6 +22,7 @@ TCP_PORT = 4242
 TEAM_NAME = ""
 BUFFER_SIZE = 8192
 s = 0
+# start = 0
 
 def usage ():
 
@@ -42,13 +43,7 @@ def connect_game_server ():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((TCP_IP, TCP_PORT))
 
-    # get the full screen
-
-
     # time.sleep(1)
-
-    # print (TEAM_NAME)
-    # TEAM_NAME = "one"   ##############
     for x in range(BUFFER_SIZE - len(TEAM_NAME)):
         TEAM_NAME += '#'
     s.send(TEAM_NAME)
@@ -65,6 +60,25 @@ def connect_game_server ():
     map_size = data.replace("#", "")
     print ("received data:\n" + map_size)
 
+# def start_game_page ():
+#
+# 	global start
+#
+# 	for event in pygame.event.get():
+#         keys = pygame.key.get_pressed()
+#         if event.type == pygame.QUIT:
+#             # OVER = True
+#             sys.exit(0)
+#         elif event.type == pygame.KEYDOWN:
+#             if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
+#                 start += 1
+#                 connect_game_server()
+#                 picture = pygame.transform.scale(pygame.image.load('./usage_white_word_color.png'), (600, 400))
+#                 screen.blit(picture, (0, 0))  # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
+#             elif event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
+#                 sys.exit(0)
+# 	pygame.display.update()
+
 def main ():
 
     # TCP_IP = '127.0.0.1'
@@ -76,6 +90,7 @@ def main ():
     global TEAM_NAME
     global BUFFER_SIZE
     global s
+	# global start
 
     ARGC = len(sys.argv)
     if ARGC < 5:
@@ -83,7 +98,6 @@ def main ():
     elif ARGC > 7:
         usage()
     elif ARGC == 5 or ARGC == 7:
-        # parse(ARGC)
         if ARGC == 7:
             if sys.argv[5] != "-h":
                 usage()
@@ -93,7 +107,7 @@ def main ():
             usage()
         else:
             TEAM_NAME = sys.argv[2]
-            print ("[" + TEAM_NAME + "]")
+            # print ("[" + TEAM_NAME + "]")
             if TEAM_NAME == "":
                 usage()
             if sys.argv[4].isdigit() == True:
@@ -103,25 +117,23 @@ def main ():
     else:
         usage()
 
-
-    BUFFER_SIZE = 8192
-
+	# pygame pop window init and title
     pygame.init()
     pygame.display.set_caption('[Zappy]    player controller')
 
-    screen = pygame.display.set_mode((500, 300))
-
-    OVER = False
-
-
-    picture = pygame.transform.scale(pygame.image.load('./game_start.png'), (300, 200))
-    screen.blit(picture, (100,50)) # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
+	# set the size of the window, and show the starting page
+    screen = pygame.display.set_mode((600, 400))
+    picture = pygame.transform.scale(pygame.image.load('./playtest.png'), (600, 400))
+    screen.blit(picture, (0,0)) # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
     pygame.display.update()
+
 
     system('clear')
 
 
-    start = 0
+    OVER = False
+	BUFFER_SIZE = 8192
+	start = 0
 
     while not OVER:
 
@@ -130,7 +142,6 @@ def main ():
     #     writable -> using pygame.event.get() by pressing the keybroad
     # '''
         if start == 1:
-            # print("here")
             readable, writable, exceptional = select.select([0, s], [1], [], 0.1)
             for i in readable:
                 if i == s:
@@ -310,17 +321,13 @@ def main ():
                             data = "connect_nbr"
                             for x in range(BUFFER_SIZE - len("connect_nbr")):
                                 data += '#'
-                        # elif event.key == pygame.K_KP_ENTER:
-                        #     data = "connect_nbr"
-                        #     for x in range(BUFFER_SIZE - len("connect_nbr")):
-                        #         data += '#'
-
                         else:
                             data = "broadcast hi"
                             for x in range(BUFFER_SIZE - len("broadcast hi")):
                                 data += '#'
                         s.send(data)
         else:
+			# start_game_page()
             for event in pygame.event.get():
                 keys = pygame.key.get_pressed()
                 if event.type == pygame.QUIT:
@@ -330,9 +337,9 @@ def main ():
                     if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
                         start += 1
                         connect_game_server()
-                        picture = pygame.transform.scale(pygame.image.load('./play.png'), (300, 200))
-                        screen.blit(picture, (100, 50))  # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
-                    elif event.key == pygame.K_ESCAPE:
+                        picture = pygame.transform.scale(pygame.image.load('./usage_white_word_color.png'), (600, 400))
+                        screen.blit(picture, (0, 0))  # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
+                    elif event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                         sys.exit(0)
         pygame.display.update()
 
