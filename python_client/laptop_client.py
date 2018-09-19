@@ -317,6 +317,18 @@ def main ():
                             data = "connect_nbr"
                             for x in range(BUFFER_SIZE - len("connect_nbr")):
                                 data += '#'
+                        elif event.key == pygame.K_RSHIFT:
+                            picture = pygame.transform.scale(pygame.image.load('./image/level_requirement.png'), (600, 400))
+                            screen.blit(picture, (0, 0))
+                            data = "connect_nbr"
+                            for x in range(BUFFER_SIZE - len("connect_nbr")):
+                                data += '#'
+                        elif event.key == pygame.K_LSHIFT:
+                            picture = pygame.transform.scale(pygame.image.load('./image/usage/usage_white_word_color.png'), (600, 400))
+                            screen.blit(picture, (0, 0))
+                            data = "connect_nbr"
+                            for x in range(BUFFER_SIZE - len("connect_nbr")):
+                                data += '#'
                         else:
                             data = "broadcast hi"
                             for x in range(BUFFER_SIZE - len("broadcast hi")):
