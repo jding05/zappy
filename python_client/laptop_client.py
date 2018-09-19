@@ -190,37 +190,37 @@ def main ():
                             data = "see"
                             for x in range(BUFFER_SIZE - len("see")):
                                 data += '#'
-                        elif event.key == pygame.K_KP_PERIOD or event.key == pygame.K_i:
+                        elif event.key == pygame.K_PERIOD or event.key == pygame.K_i:
                             data = "inventory"
                             for x in range(BUFFER_SIZE - len("inventory")):
                                 data += '#'
                         ##########################################################
                                     # take #
-                        elif event.key == pygame.K_KP0:
+                        elif event.key == pygame.K_COMMA:
                             data = "take food"
                             for x in range(BUFFER_SIZE - len("take food")):
                                 data += '#'
-                        elif event.key == pygame.K_KP1:
+                        elif event.key == pygame.K_l:
                             data = "take linemate"
                             for x in range(BUFFER_SIZE - len("take linemate")):
                                 data += '#'
-                        elif event.key == pygame.K_KP2:
+                        elif event.key == pygame.K_SEMICOLON:
                             data = "take deraumere"
                             for x in range(BUFFER_SIZE - len("take deraumere")):
                                 data += '#'
-                        elif event.key == pygame.K_KP3:
+                        elif event.key == pygame.K_QUOTE:
                             data = "take sibur"
                             for x in range(BUFFER_SIZE - len("take sibur")):
                                 data += '#'
-                        elif event.key == pygame.K_KP4:
+                        elif event.key == pygame.K_o:
                             data = "take mendiane"
                             for x in range(BUFFER_SIZE - len("take mendiane")):
                                 data += '#'
-                        elif event.key == pygame.K_KP5:
+                        elif event.key == pygame.K_p:
                             data = "take phiras"
                             for x in range(BUFFER_SIZE - len("take phiras")):
                                 data += '#'
-                        elif event.key == pygame.K_KP6:
+                        elif event.key == pygame.K_LEFTBRACKET:
                             data = "take thystame"
                             for x in range(BUFFER_SIZE - len("take thystame")):
                                 data += '#'
