@@ -148,7 +148,7 @@ void	enqueue(int fd, char *msg)
 
 	i = 0;
 	bzero(msg_buf, MSG_SIZE);
-	if ((i = check_valid_cmd(msg, msg_buf, 0) > 15)
+	if ((i = check_valid_cmd(msg, msg_buf, 0) > 15))
 		return ;
 	printf(YELLOW"cmd_index: [%d], msg: {%s}\n"RESET, i, msg);
 	if (i == 11)
