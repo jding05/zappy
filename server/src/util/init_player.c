@@ -44,6 +44,8 @@ void	s_init_new_player(int fd)
 	g_players[fd].x = rand() % g_env.map_x;
 	g_players[fd].request_nb = 0;
 	g_players[fd].level = 1;
+	g_players[fd].left = 0;
+	g_players[fd].status = 0;
 	g_players[fd].alive = 1;
 	g_players[fd].dead = 0;
 	g_players[fd].block = 0;
