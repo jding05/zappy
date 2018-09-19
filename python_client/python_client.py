@@ -132,7 +132,7 @@ def main ():
 
 
     OVER = False
-    BUFFER_SIZE = 8192
+    # BUFFER_SIZE = 8192
     start = 0
 
     while not OVER:
