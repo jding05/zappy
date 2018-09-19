@@ -58,6 +58,7 @@ void	format_player_data(int i, char **players)
 
 	num_to_str(g_players[i].player_id, players, ",");
 	num_to_str(g_players[i].dead, players, ",");
+	num_to_str(g_players[i].left, players, ",");
 	num_to_str(g_players[i].level, players, ",");
 	num_to_str(g_players[i].status, players, ",");
 	if (g_players[i].status == 2)

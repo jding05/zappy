@@ -250,8 +250,6 @@ void	exec_event(void)
 void	cycle_exec_event_loop(void)
 {
 	exec_event();
-	// if (0 != g_env.gfx_fd)
-	// 	send_data(g_env.gfx_fd, g_env.map, MAP_SIZE);
 	generate_resource();
 	check_dead_player();
 }
