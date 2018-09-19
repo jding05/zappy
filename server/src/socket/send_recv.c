@@ -65,6 +65,7 @@ int		recv_data_norm(int fd, int nbytes, char **buf, char **data)
 		free(*buf);
 		free(*data);
 		printf("socket %d left\n", fd);
+		g_players[fd].left = 1;
 		return (0);
 	}
 	return (1);

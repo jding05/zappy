@@ -18,7 +18,7 @@ from os import system, name
 
 def usage ():
 	print ("Usage: ./client -n <team> -p <port> [-h <hostname>]")
-	print ("\t-n team\_name")
+	print ("\t-n team\\_name")
 	print ("\t-p port")
 	print ("\t-h name of the host, by default it'll be localhost")
 	sys.exit(1)

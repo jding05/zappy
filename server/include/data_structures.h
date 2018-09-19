@@ -6,31 +6,31 @@
 
 typedef struct      s_egg
 {
-    int				team_id;
-    int             egg_id;
-    int             hatched;
-    int             father_fd;
-    int             y;
-    int             x;
+	int				team_id;
+	int             egg_id;
+	int             hatched;
+	int             father_fd;
+	int             y;
+	int             x;
 }                   t_egg;
 
 typedef struct      s_team
 {
-    int             team_id;
-    char            team_name[MAX_TEAM_NAME];
-    int             cplayers;
-    int             max_players;
-    int             reach_max_level;
+	int             team_id;
+	char            team_name[MAX_TEAM_NAME];
+	int             cplayers;
+	int             max_players;
+	int             reach_max_level;
 	int				nb_client;
-    t_egg           egg[6];
-    int             egg_hatched;
-    int             egg_laid;
+	t_egg           egg[6];
+	int             egg_hatched;
+	int             egg_laid;
 }                   t_team;
 
 typedef struct      s_player
 {
 	int				fd;
-    int             player_id;
+	int             player_id;
 	int				team_id;
 	int				inventory[7];
 	int				y;
@@ -38,7 +38,8 @@ typedef struct      s_player
 	int				request_nb;
 	int				level;
 	int				dead;
-    int             status;
+	int				left;
+	int             status;
 	int				block;
 	int				direction;
 	int				alive;
@@ -64,19 +65,19 @@ typedef struct      s_player
 
 typedef struct          s_env
 {
-    char				port_name[6];
-    int                 authorized_clients;
-    int                 time_unit;
-    int                 nb_team;
-    int                 map[15][15][7];
-    int                 map_x;
-    int                 map_y;
-    t_event             *queue_head;
-  	char                buffer[MSG_SIZE];
-    int                 server_fd;
+	char				port_name[6];
+	int                 authorized_clients;
+	int                 time_unit;
+	int                 nb_team;
+	int                 map[15][15][7];
+	int                 map_x;
+	int                 map_y;
+	t_event             *queue_head;
+	char                buffer[MSG_SIZE];
+	int                 server_fd;
 	long int			ms_pre_tick;
 	int					res[7];
-    int                 gfx_fd;
+	int                 gfx_fd;
 }                       t_env;
 
 
