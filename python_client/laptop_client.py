@@ -333,7 +333,7 @@ def main ():
                     if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
                         start += 1
                         connect_game_server()
-                        picture = pygame.transform.scale(pygame.image.load('./image/usage/usage_white_word_color.png'), (600, 400))
+                        picture = pygame.transform.scale(pygame.image.load('./image/usage/usage_white_laptop.png'), (600, 400))
                         screen.blit(picture, (0, 0))  # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
                     elif event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                         sys.exit(0)

@@ -20,6 +20,7 @@ import time
 TCP_IP = '127.0.0.1'
 TCP_PORT = 4242
 TEAM_NAME = ""
+TEAM_NAME_MSG = ""
 BUFFER_SIZE = 8192
 s = 0
 # start = 0
@@ -107,6 +108,7 @@ def main ():
             usage()
         else:
             TEAM_NAME = sys.argv[2]
+            TEAM_NAME_MSG = sys.argv[2]
             # print ("[" + TEAM_NAME + "]")
             if TEAM_NAME == "":
                 usage()
@@ -318,8 +320,9 @@ def main ():
                             for x in range(BUFFER_SIZE - len("connect_nbr")):
                                 data += '#'
                         else:
-                            data = "broadcast hi"
-                            for x in range(BUFFER_SIZE - len("broadcast hi")):
+                            # broadcast_msg = ["broadcast from team <", TEAM_NAME_MSG, ">"]
+                            data = "broadcast I am here"
+                            for x in range(BUFFER_SIZE - len(data)):
                                 data += '#'
                         s.send(data)
         else:
