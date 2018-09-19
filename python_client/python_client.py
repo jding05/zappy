@@ -196,10 +196,10 @@ def main ():
                                 data += '#'
                         ##########################################################
                                     # take #
-                        # elif event.key == pygame.K_KP0:
-                        #     data = "take food"
-                        #     for x in range(BUFFER_SIZE - len("take food")):
-                        #         data += '#'
+                        elif event.key == pygame.K_KP0:
+                            data = "take food"
+                            for x in range(BUFFER_SIZE - len("take food")):
+                                data += '#'
                         elif event.key == pygame.K_KP1:
                             data = "take linemate"
                             for x in range(BUFFER_SIZE - len("take linemate")):
@@ -226,10 +226,6 @@ def main ():
                                 data += '#'
                         ##########################################################
                                     # put #
-                        elif event.key == pygame.K_0:
-                            data = "put food"
-                            for x in range(BUFFER_SIZE - len("put food")):
-                                data += '#'
                         elif event.key == pygame.K_1:
                             data = "put linemate"
                             for x in range(BUFFER_SIZE - len("put linemate")):
