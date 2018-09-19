@@ -18,19 +18,11 @@ from os import system, name
 import time
 
 def usage ():
-<<<<<<< HEAD
     print ("Usage: ./client -n <team> -p <port> [-h <hostname>]")
     print ("\t-n team\_name")
     print ("\t-p port")
     print ("\t-h name of the host, by default it'll be localhost")
     sys.exit(1)
-=======
-	print ("Usage: ./client -n <team> -p <port> [-h <hostname>]")
-	print ("\t-n team\\_name")
-	print ("\t-p port")
-	print ("\t-h name of the host, by default it'll be localhost")
-	sys.exit(1)
->>>>>>> 56b3e51bc6363f6b0261590b22a19a898af9fb54
 
 TCP_IP = '127.0.0.1'
 TCP_PORT = 4242

@@ -148,7 +148,8 @@ void	enqueue(int fd, char *msg)
 
 	i = 0;
 	bzero(msg_buf, MSG_SIZE);
-	i = check_valid_cmd(msg, msg_buf, 0);
+	if ((i = check_valid_cmd(msg, msg_buf, 0) > 15)
+		return ;
 	printf(YELLOW"cmd_index: [%d], msg: {%s}\n"RESET, i, msg);
 	if (i == 11)
 		cmd_connect_nbr(fd, msg);
@@ -216,7 +217,7 @@ void	exec_event(void)
 	int				i;
 	struct timeval	now;
 	t_event			*tmp;
-	char			*gfx_data;	
+	char			*gfx_data;
 
 	if (!g_env.queue_head)
 		return ;
