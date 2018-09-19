@@ -62,9 +62,9 @@ def connect_game_server ():
 
 # def start_game_page ():
 #
-# 	global start
+#     global start
 #
-# 	for event in pygame.event.get():
+#     for event in pygame.event.get():
 #         keys = pygame.key.get_pressed()
 #         if event.type == pygame.QUIT:
 #             # OVER = True
@@ -77,7 +77,7 @@ def connect_game_server ():
 #                 screen.blit(picture, (0, 0))  # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
 #             elif event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
 #                 sys.exit(0)
-# 	pygame.display.update()
+#     pygame.display.update()
 
 def main ():
 
@@ -90,7 +90,7 @@ def main ():
     global TEAM_NAME
     global BUFFER_SIZE
     global s
-	# global start
+    # global start
 
     ARGC = len(sys.argv)
     if ARGC < 5:
@@ -117,11 +117,11 @@ def main ():
     else:
         usage()
 
-	# pygame pop window init and title
+    # pygame pop window init and title
     pygame.init()
     pygame.display.set_caption('[Zappy]    player controller')
 
-	# set the size of the window, and show the starting page
+    # set the size of the window, and show the starting page
     screen = pygame.display.set_mode((600, 400))
     picture = pygame.transform.scale(pygame.image.load('./playtest.png'), (600, 400))
     screen.blit(picture, (0,0)) # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
@@ -132,8 +132,8 @@ def main ():
 
 
     OVER = False
-	BUFFER_SIZE = 8192
-	start = 0
+    # BUFFER_SIZE = 8192
+    start = 0
 
     while not OVER:
 
@@ -323,7 +323,7 @@ def main ():
                                 data += '#'
                         s.send(data)
         else:
-			# start_game_page()
+            # start_game_page()
             for event in pygame.event.get():
                 keys = pygame.key.get_pressed()
                 if event.type == pygame.QUIT:
