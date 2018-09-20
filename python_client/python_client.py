@@ -23,7 +23,7 @@ TEAM_NAME = ""
 TEAM_NAME_MSG = ""
 BUFFER_SIZE = 8192
 s = 0
-# start = 0
+start = 0
 
 def usage ():
 
@@ -43,42 +43,45 @@ def connect_game_server ():
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((TCP_IP, TCP_PORT))
-
-    # time.sleep(1)
+    # to send the team_name to server to verify
     for x in range(BUFFER_SIZE - len(TEAM_NAME)):
         TEAM_NAME += '#'
     s.send(TEAM_NAME)
-
+    # if team_name match, then the server send back welcome function
     data = s.recv(BUFFER_SIZE)
     welcome_msg = data.replace("#", "")
     print ("received data:" + welcome_msg)
-
+    # server send back how many more client can you connect
     data = s.recv(BUFFER_SIZE)
     connect_nbr = data.replace("#", "")
     print ("received data:" + connect_nbr)
-
+    # the total map size of the server map
     data = s.recv(BUFFER_SIZE)
     map_size = data.replace("#", "")
     print ("received data:\n" + map_size)
 
-# def start_game_page ():
-#
-#     global start
-#
-#     for event in pygame.event.get():
-#         keys = pygame.key.get_pressed()
-#         if event.type == pygame.QUIT:
-#             # OVER = True
-#             sys.exit(0)
-#         elif event.type == pygame.KEYDOWN:
-#             if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
-#                 start += 1
-#                 connect_game_server()
-#                 picture = pygame.transform.scale(pygame.image.load('./usage_white_word_color.png'), (600, 400))
-#                 screen.blit(picture, (0, 0))  # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
-#             elif event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
-#                 sys.exit(0)
-#     pygame.display.update()
+def start_game_page (screen):
+
+    global start
+
+    for event in pygame.event.get():
+        keys = pygame.key.get_pressed()
+        if event.type == pygame.QUIT:
+            sys.exit(0)
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
+                start += 1
+                connect_game_server()
+                picture = pygame.transform.scale(pygame.image.load('./image/usage/usage_white_word_color.png'), (600, 400))
+                screen.blit(picture, (0, 0))  # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
+            elif event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
+                sys.exit(0)
+
+def msg_padding (str):
+    
+    for x in range(BUFFER_SIZE - len(str)):
+        str += '#'
+    return str
 
 def main ():
 
@@ -91,7 +94,7 @@ def main ():
     global TEAM_NAME
     global BUFFER_SIZE
     global s
-    # global start
+    global start
 
     ARGC = len(sys.argv)
     if ARGC < 5:
@@ -132,9 +135,7 @@ def main ():
 
     system('clear')
 
-
     OVER = False
-    # BUFFER_SIZE = 8192
     start = 0
 
     while not OVER:
@@ -166,7 +167,6 @@ def main ():
                     else:
                         print ("invalid command")
             for i in writable:
-                # if not i == s:
                 for event in pygame.event.get():
                     keys = pygame.key.get_pressed()
                     if event.type == pygame.QUIT:
@@ -177,181 +177,96 @@ def main ():
                             # OVER = True
                             sys.exit(0)
                         elif event.key == pygame.K_UP:
-                            data = "advance"
-                            for x in range(BUFFER_SIZE - len("advance")):
-                                data += '#'
+                            data = msg_padding("advance")
                         elif event.key == pygame.K_RIGHT:
-                            data = "right"
-                            for x in range(BUFFER_SIZE - len("right")):
-                                data += '#'
+                            data = msg_padding("right")
                         elif event.key == pygame.K_LEFT:
-                            data = "left"
-                            for x in range(BUFFER_SIZE - len("left")):
-                                data += '#'
+                            data = msg_padding("left")
                         elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                            data = "see"
-                            for x in range(BUFFER_SIZE - len("see")):
-                                data += '#'
+                            data = msg_padding ("see")
                         elif event.key == pygame.K_KP_PERIOD or event.key == pygame.K_i:
-                            data = "inventory"
-                            for x in range(BUFFER_SIZE - len("inventory")):
-                                data += '#'
+                            data = msg_padding ("inventory")
                         ##########################################################
                                     # take #
                         elif event.key == pygame.K_KP0:
-                            data = "take food"
-                            for x in range(BUFFER_SIZE - len("take food")):
-                                data += '#'
+                            data = msg_padding ("take food")
                         elif event.key == pygame.K_KP1:
-                            data = "take linemate"
-                            for x in range(BUFFER_SIZE - len("take linemate")):
-                                data += '#'
+                            data = msg_padding ("take linemate")
                         elif event.key == pygame.K_KP2:
-                            data = "take deraumere"
-                            for x in range(BUFFER_SIZE - len("take deraumere")):
-                                data += '#'
+                            data = msg_padding ("take deraumere")
                         elif event.key == pygame.K_KP3:
-                            data = "take sibur"
-                            for x in range(BUFFER_SIZE - len("take sibur")):
-                                data += '#'
+                            data = msg_padding ("take sibur")
                         elif event.key == pygame.K_KP4:
-                            data = "take mendiane"
-                            for x in range(BUFFER_SIZE - len("take mendiane")):
-                                data += '#'
+                            data = msg_padding ("take mendiane")
                         elif event.key == pygame.K_KP5:
-                            data = "take phiras"
-                            for x in range(BUFFER_SIZE - len("take phiras")):
-                                data += '#'
+                            data = msg_padding ("take phiras")
                         elif event.key == pygame.K_KP6:
-                            data = "take thystame"
-                            for x in range(BUFFER_SIZE - len("take thystame")):
-                                data += '#'
+                            data = msg_padding ("take thystame")
                         ##########################################################
                                     # put #
                         elif event.key == pygame.K_1:
-                            data = "put linemate"
-                            for x in range(BUFFER_SIZE - len("put linemate")):
-                                data += '#'
+                            data = msg_padding ("put linemate")
                         elif event.key == pygame.K_2:
-                            data = "put deraumere"
-                            for x in range(BUFFER_SIZE - len("put deraumere")):
-                                data += '#'
+                            data = msg_padding ("put deraumere")
                         elif event.key == pygame.K_3:
-                            data = "put sibur"
-                            for x in range(BUFFER_SIZE - len("put sibur")):
-                                data += '#'
+                            data = msg_padding ("put sibur")
                         elif event.key == pygame.K_4:
-                            data = "put mendiane"
-                            for x in range(BUFFER_SIZE - len("put mendiane")):
-                                data += '#'
+                            data = msg_padding ("put mendiane")
                         elif event.key == pygame.K_5:
-                            data = "put phiras"
-                            for x in range(BUFFER_SIZE - len("put phiras")):
-                                data += '#'
+                            data = msg_padding ("put phiras")
                         elif event.key == pygame.K_6:
-                            data = "put thystame"
-                            for x in range(BUFFER_SIZE - len("put thystame")):
-                                data += '#'
+                            data = msg_padding ("put thystame")
                         ##########################################################
                         elif event.key == pygame.K_k:
-                            data = "kick"
-                            for x in range(BUFFER_SIZE - len("kick")):
-                                data += '#'
+                            data = msg_padding ("kick")
                         ###########################################################
                              # cheating -> kick and advance
                         elif event.key == pygame.K_a:
-                            cheating_data1 = "kick"
-                            for x in range(BUFFER_SIZE - len("kick")):
-                                cheating_data1 += '#'
+                            cheating_data1 = msg_padding ("kick")
                             s.send(cheating_data1)
 
-                            cheating_data2 = "advance"
-                            for x in range(BUFFER_SIZE - len("advance")):
-                                cheating_data2 += '#'
+                            cheating_data2 = msg_padding ("advance")
                             s.send(cheating_data2)
 
-                            cheating_data3 = "take food"
-                            for x in range(BUFFER_SIZE - len("take food")):
-                                cheating_data3 += '#'
+                            cheating_data3 = msg_padding ("take food")
                             s.send(cheating_data3)
 
-                            cheating_data4 = "take linemate"
-                            for x in range(BUFFER_SIZE - len("take linemate")):
-                                cheating_data4 += '#'
+                            cheating_data4 = msg_padding ("take linemate")
                             s.send(cheating_data4)
 
-                            cheating_data5 = "take deraumere"
-                            for x in range(BUFFER_SIZE - len("take deraumere")):
-                                cheating_data5 += '#'
+                            cheating_data5 = msg_padding ("take deraumere")
                             s.send(cheating_data5)
 
-                            cheating_data6 = "take sibur"
-                            for x in range(BUFFER_SIZE - len("take sibur")):
-                                cheating_data6 += '#'
+                            cheating_data6 = msg_padding ("take sibur")
                             s.send(cheating_data6)
 
-                            data = "take mendiane"
-                            for x in range(BUFFER_SIZE - len("take mendiane")):
-                                data += '#'
-                            # cheating_data7 = "take mendiane"
-                            # for x in range(BUFFER_SIZE - len("take mendiane")):
-                            #     cheating_data7 += '#'
-                            #     s.send(cheating_data7)
-                            #
-                            # cheating_data8 = "take phiras"
-                            # for x in range(BUFFER_SIZE - len("take phiras")):
-                            #     cheating_data8 += '#'
-                            # s.send(cheating_data8)
-                            #
-                            # data = "take thystame"
-                            # for x in range(BUFFER_SIZE - len("take thystame")):
-                            #     data += '#'
+                            cheating_data7 = msg_padding ("take mendiane")
+                            s.send(cheating_data7)
+
+                            cheating_data8 = msg_padding ("take phiras")
+                            s.send(cheating_data8)
+
+                            data = msg_padding ("take thystame")
                         ###########################################################
                         elif event.key == pygame.K_d:
-                            data = "incantation"
-                            for x in range(BUFFER_SIZE - len("incantation")):
-                                data += '#'
+                            data = msg_padding ("incantation")
                         elif event.key == pygame.K_f:
-                            data = "fork"
-                            for x in range(BUFFER_SIZE - len("fork")):
-                                data += '#'
+                            data = msg_padding ("fork")
                         elif event.key == pygame.K_SPACE:
-                            data = "connect_nbr"
-                            for x in range(BUFFER_SIZE - len("connect_nbr")):
-                                data += '#'
+                            data = msg_padding ("connect_nbr")
                         elif event.key == pygame.K_RSHIFT:
                             picture = pygame.transform.scale(pygame.image.load('./image/level_requirement.png'), (600, 400))
                             screen.blit(picture, (0, 0))
-                            data = "connect_nbr"
-                            for x in range(BUFFER_SIZE - len("connect_nbr")):
-                                data += '#'
+                            data = msg_padding ("connect_nbr")
                         elif event.key == pygame.K_LSHIFT:
                             picture = pygame.transform.scale(pygame.image.load('./image/usage/usage_white_word_color.png'), (600, 400))
                             screen.blit(picture, (0, 0))
-                            data = "connect_nbr"
-                            for x in range(BUFFER_SIZE - len("connect_nbr")):
-                                data += '#'
+                            data = msg_padding ("connect_nbr")
                         else:
-                            # broadcast_msg = ["broadcast from team <", TEAM_NAME_MSG, ">"]
-                            data = "broadcast I am here"
-                            for x in range(BUFFER_SIZE - len(data)):
-                                data += '#'
+                            data = msg_padding ("broadcast I am here")
                         s.send(data)
         else:
-            # start_game_page()
-            for event in pygame.event.get():
-                keys = pygame.key.get_pressed()
-                if event.type == pygame.QUIT:
-                    # OVER = True
-                    sys.exit(0)
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
-                        start += 1
-                        connect_game_server()
-                        picture = pygame.transform.scale(pygame.image.load('./image/usage/usage_white_word_color.png'), (600, 400))
-                        screen.blit(picture, (0, 0))  # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
-                    elif event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
-                        sys.exit(0)
+            start_game_page(screen)
         pygame.display.update()
 
 
