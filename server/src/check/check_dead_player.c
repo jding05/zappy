@@ -35,7 +35,7 @@ void	check_dead_player(void)
 				send_data(i, g_env.buffer, MSG_SIZE);
 				gfx_data = get_gfx_data();
 				if (g_env.gfx_fd > 0)
-					send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD * 4 + 1);
+					send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD + 1);
 				free(gfx_data);
 			}
 		}

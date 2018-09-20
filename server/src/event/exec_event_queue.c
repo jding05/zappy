@@ -171,7 +171,7 @@ void	enqueue(int fd, char *msg)
 			g_players[fd].status = 1;
 		gfx_data = get_gfx_data();
 		if (g_env.gfx_fd > 0)
-			send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD * 4 + 1);
+			send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD + 1);
 		free(gfx_data);
 		insert(node);
 	}
@@ -238,7 +238,7 @@ void	exec_event(void)
 					printf(LIGHTBLUE"\n[EXEC]\n"RESET);
 					gfx_data = get_gfx_data();
 					if (g_env.gfx_fd > 0)
-						send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD * 4 + 1);
+						send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD + 1);
 					free(gfx_data);
 				}
 				tmp = g_env.queue_head;

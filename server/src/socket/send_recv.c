@@ -71,7 +71,7 @@ int		recv_data_norm(int fd, int nbytes, char **buf, char **data)
 		msg = get_gfx_data();
 		if (g_env.gfx_fd > 0)
 			send_data(g_env.gfx_fd, msg, MAP_SIZE +
-						PLAYER_SIZE * MAX_FD * 4 + 1);
+						PLAYER_SIZE * MAX_FD + 1);
 		return (0);
 	}
 	return (1);
