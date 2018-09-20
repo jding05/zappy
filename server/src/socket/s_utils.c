@@ -102,6 +102,10 @@ int				s_add_to_team(char *team_name, int fd)
 			msg = ft_strjoin("joined team ", team_name);
 			send_data(fd, msg, MSG_SIZE);
 			free(msg);
+			send_data(i, g_env.buffer, MSG_SIZE);
+			msg = get_gfx_data();
+			if (g_env.gfx_fd > 0)
+				send_data(g_env.gfx_fd, msg, MAP_SIZE + PLAYER_SIZE * MAX_FD * 4 + 1);
 			return (EXIT_SUCCESS);
 		}
 	}

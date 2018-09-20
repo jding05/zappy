@@ -22,12 +22,12 @@ char	*get_map_data(void)
 	if (NULL == (map = ft_strnew(g_env.map_x * g_env.map_y * 4 + 1)))
 		return (NULL);
 	i = -1;
-	while (++i < g_env.map_x)
+	while (++i < g_env.map_y)
 	{
 		j = -1;
-		while (++j < g_env.map_y)
+		while (++j < g_env.map_x)
 		{
-			rv = ft_itoa(g_env.map[i][j][0] * pow(2, 6) +
+			rv = ft_itoa((g_env.map[i][j][0] > 0 ? 1 : 0) * pow(2, 6) +
 			g_env.map[i][j][1] * pow(2, 5) + g_env.map[i][j][2] * pow(2, 4) +
 			g_env.map[i][j][3] * pow(2, 3) + g_env.map[i][j][4] * pow(2, 2) +
 			g_env.map[i][j][5] * pow(2, 1) + g_env.map[i][j][6]);

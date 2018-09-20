@@ -16,6 +16,7 @@ void	check_dead_player(void)
 {
 	int				i;
 	struct timeval	curr_time;
+	char			*gfx_data;
 
 	i = -1;
 	bzero(g_env.buffer, 4096);
@@ -32,6 +33,10 @@ void	check_dead_player(void)
 				if (g_players[i].level == 8)
 					g_teams[g_players[i].team_id].reach_max_level--;
 				send_data(i, g_env.buffer, MSG_SIZE);
+				gfx_data = get_gfx_data();
+				if (g_env.gfx_fd > 0)
+					send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD * 4 + 1);
+				free(gfx_data);
 			}
 		}
 	}
