@@ -34,8 +34,9 @@ void	check_dead_player(void)
 					g_teams[g_players[i].team_id].reach_max_level--;
 				send_data(i, g_env.buffer, MSG_SIZE);
 				gfx_data = get_gfx_data();
+				printf("to gfx |%s|\n", gfx_data);
 				if (g_env.gfx_fd > 0)
-					send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD + 1);
+					send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);
 				free(gfx_data);
 			}
 		}

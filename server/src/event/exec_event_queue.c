@@ -170,8 +170,9 @@ void	enqueue(int fd, char *msg)
 		if (i == 9)
 			g_players[fd].status = 1;
 		gfx_data = get_gfx_data();
+		printf("to gfx |%s|\n", gfx_data);
 		if (g_env.gfx_fd > 0)
-			send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD + 1);
+			send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);
 		free(gfx_data);
 		insert(node);
 	}
@@ -237,8 +238,9 @@ void	exec_event(void)
 					g_cmd[i].func(g_env.queue_head->fd, g_env.queue_head->msg);
 					printf(LIGHTBLUE"\n[EXEC]\n"RESET);
 					gfx_data = get_gfx_data();
+					printf("to gfx |%s|\n", gfx_data);
 					if (g_env.gfx_fd > 0)
-						send_data(g_env.gfx_fd, gfx_data, MAP_SIZE + PLAYER_SIZE * MAX_FD + 1);
+						send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);
 					free(gfx_data);
 				}
 				tmp = g_env.queue_head;

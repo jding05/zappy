@@ -69,9 +69,9 @@ int		recv_data_norm(int fd, int nbytes, char **buf, char **data)
 		printf("socket %d left\n", fd);
 		g_players[fd].left = 1;
 		msg = get_gfx_data();
+		printf("to gfx |%s|\n", msg);
 		if (g_env.gfx_fd > 0)
-			send_data(g_env.gfx_fd, msg, MAP_SIZE +
-						PLAYER_SIZE * MAX_FD + 1);
+			send_data(g_env.gfx_fd, msg, MSG_SIZE);
 		return (0);
 	}
 	return (1);

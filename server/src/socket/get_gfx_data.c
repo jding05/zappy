@@ -38,7 +38,6 @@ char	*get_map_data(void)
 	}
 	map[strlen(map) - 1] = '\0';
 	strcat(map, "\n");
-	printf("%s", map);
 	return (map);
 }
 
@@ -87,7 +86,6 @@ char	*get_players_data(void)
 			format_player_data(i, &players);
 	}
 	strcat(players, "@");
-	printf("%s\n", players);
 	return (players);
 }
 

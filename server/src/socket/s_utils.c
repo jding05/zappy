@@ -1,4 +1,4 @@
-``/* ************************************************************************** */
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   s_utils.c                                          :+:      :+:    :+:   */
@@ -6,7 +6,7 @@
 /*   By: zfeng <zfeng@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/07 13:41:07 by zfeng             #+#    #+#             */
-/*   Updated: 2018/09/08 17:17:39 by sding            ###   ########.fr       */
+/*   Updated: 2018/09/19 23:35:23 by xzhu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,9 @@ int				s_add_to_team(char *team_name, int fd)
 			free(msg);
 			send_data(i, g_env.buffer, MSG_SIZE);
 			msg = get_gfx_data();
+			printf("to gfx |%s|\n", msg);
 			if (g_env.gfx_fd > 0)
-				send_data(g_env.gfx_fd, msg, MAP_SIZE + PLAYER_SIZE * MAX_FD + 1);
+				send_data(g_env.gfx_fd, msg, MSG_SIZE);
 			return (EXIT_SUCCESS);
 		}
 	}
