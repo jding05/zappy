@@ -78,16 +78,12 @@ def start_game_page (screen):
                 sys.exit(0)
 
 def msg_padding (str):
-    
+
     for x in range(BUFFER_SIZE - len(str)):
         str += '#'
     return str
 
 def main ():
-
-    # TCP_IP = '127.0.0.1'
-    # TCP_PORT = 4242
-    # TEAM_NAME = ""
 
     global TCP_IP
     global TCP_PORT
@@ -140,12 +136,12 @@ def main ():
 
     while not OVER:
 
-    # '''
-    #     readable -> one is server, the other one is stdin (0)
-    #     writable -> using pygame.event.get() by pressing the keybroad
-    # '''
+        """
+         readable -> one is server, the other one is stdin (0)
+         writable -> using pygame.event.get() by pressing the keybroad
+         """
         if start == 1:
-            readable, writable, exceptional = select.select([0, s], [1], [], 0.1)
+            readable, writable, exceptional = select.select([0, s], [1], [], 0.0)
             for i in readable:
                 if i == s:
                     data = s.recv(BUFFER_SIZE)
@@ -270,8 +266,5 @@ def main ():
         pygame.display.update()
 
 
-        # except KeyboardInterrupt:
-        #     print 'Interrupted.'
-        #     s.close()
-        #     break
-main()
+if __name__ == '__main__':
+    main()
