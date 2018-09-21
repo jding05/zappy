@@ -57,6 +57,26 @@ static int	check_flag_limit(int m, int number)
 	return (1);
 }
 
+static int	team_check_repeat(int nb_team)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < nb_team)
+	{
+		j = i + 1;
+		while (j < nb_team)
+		{
+			if (!strcmp(g_teams[i].team_name, g_teams[j].team_name))
+				return (0);
+			j++;
+		}
+		i++;
+	}
+	return (1);
+}
+
 static int	team_init(char **argv, int i, int nb_team)
 {
 	int ind;
@@ -73,6 +93,8 @@ static int	team_init(char **argv, int i, int nb_team)
 		g_teams[ind].egg_hatched = 0;
 		g_teams[ind].egg_laid = 0;
 	}
+	if (team_check_repeat(nb_team) == 0)
+		return (0);
 	return (1);
 }
 
