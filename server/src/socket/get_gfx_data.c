@@ -41,16 +41,6 @@ char	*get_map_data(void)
 	return (map);
 }
 
-void	num_to_str(int num, char **str, char *delim)
-{
-	char	*rv;
-
-	rv = ft_itoa(num);
-	strcat(*str, rv);
-	strcat(*str, delim);
-	free(rv);
-}
-
 void	format_player_data(int i, char **players)
 {
 	int		j;
@@ -110,9 +100,8 @@ char	*get_eggs_data(void)
 					num_to_str(g_teams[i].egg[j].team_id, &eggs, ",");
 					num_to_str(g_teams[i].egg[j].x, &eggs, ",");
 					num_to_str(g_teams[i].egg[j].y, &eggs, "\n");
-				}	
+				}
 			}
-			
 		}
 	}
 	return (eggs);

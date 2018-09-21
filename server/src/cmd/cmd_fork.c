@@ -26,7 +26,7 @@
 ** -> then we call cmd_hatch put into queue (that marked 600/t after)
 */
 
-static void    laid_egg(int fd)
+static void	laid_egg(int fd)
 {
 	int	id;
 
@@ -40,15 +40,15 @@ static void    laid_egg(int fd)
 	g_teams[id].egg_laid++;
 }
 
-void    	cmd_fork(int fd, char *msg)
+void		cmd_fork(int fd, char *msg)
 {
-    printf(CYAN"\n[Exec FORK]\n"RESET);
-    printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "fork");
+	printf(CYAN"\n[Exec FORK]\n"RESET);
+	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "fork");
 	printf(BLUE"Player %d, block: %d\n"RESET, fd, g_players[fd].block);
-    g_players[fd].request_nb--;
+	g_players[fd].request_nb--;
 	(void)msg;
-    laid_egg(fd);
-    g_players[fd].block = 0;
+	laid_egg(fd);
+	g_players[fd].block = 0;
 	enqueue(fd, "hatch");
 	printf(BLUE"Player %d, block: %d\n"RESET, fd, g_players[fd].block);
 	printf(CYAN"\n[FORK SUCCESS]\n"RESET);

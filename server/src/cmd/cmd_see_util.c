@@ -62,7 +62,7 @@ static void	print_resource(int y, int x, int fd)
 	find_cell_player(y, x, flag, fd);
 }
 
-int		update_y(int y)
+int			update_y(int y)
 {
 	while (y < 0 || y >= g_env.map_y)
 	{
@@ -74,7 +74,7 @@ int		update_y(int y)
 	return (y);
 }
 
-int		update_x(int x)
+int			update_x(int x)
 {
 	while (x < 0 || x >= g_env.map_x)
 	{
@@ -93,7 +93,7 @@ int		update_x(int x)
 **      -> to print the resource if exist, and player according to assign cell
 */
 
-void	print_cell_value(int y, int x, int fd)
+void		print_cell_value(int y, int x, int fd)
 {
 	if (y > g_env.map_y - 1)
 		y = y - g_env.map_y;

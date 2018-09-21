@@ -59,3 +59,13 @@ char		*ft_itoa(int n)
 		str[0] = '-';
 	return (str);
 }
+
+void		num_to_str(int num, char **str, char *delim)
+{
+	char	*rv;
+
+	rv = ft_itoa(num);
+	strcat(*str, rv);
+	strcat(*str, delim);
+	free(rv);
+}

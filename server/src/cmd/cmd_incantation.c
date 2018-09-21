@@ -33,12 +33,10 @@ void	cmd_incantation(int fd, char *msg)
 		if (g_players[i].y == g_players[fd].y &&
 			g_players[i].x == g_players[fd].x && g_players[i].level == level &&
 			check_prerequest(level, i) && g_players[i].block)
-				fds[count++] = i;
-
+			fds[count++] = i;
 	}
 	if (count >= (nb = level_require(level)) && nb > 0)
 		level_up_and_unblock(count, fds);
-
 	printf(CYAN"\n[INCANTATION SUCCESS]\n"RESET);
 	printf("players %d, level %d\n", fd, g_players[fd].level);
 }
@@ -70,6 +68,7 @@ void	level_up_and_unblock(int count, int fds[MAX_FD])
 }
 
 /*
+** check if players able to incantate
 ** get the current player's position input
 **    to see if there if other player in the same position (cell)
 **    if yes -> check if other player's level match the current player's level
@@ -81,21 +80,7 @@ void	level_up_and_unblock(int count, int fds[MAX_FD])
 **             no -> return 0 -> means the incantation command failed
 */
 
-void 	print_player_inventory(int fd)
-{
-	int	*inv;
-
-	inv = g_players[fd].inventory;
-	printf(DARKYELLOW"player%d level: %d,", fd, g_players[fd].level);
-	printf("inv: [1: %d] [2: %d] [3: %d] [4: %d] [5: %d] [6: %d]\n"RESET,
-				inv[1], inv[2], inv[3], inv[4], inv[5], inv[6]);
-
-}
-/*
-** check if players able to incantate
-*/
-
-int		cmd_incantation_check(t_event *node) // need to norm
+int		cmd_incantation_check(t_event *node)
 {
 	int		i;
 	int		count;
@@ -106,7 +91,6 @@ int		cmd_incantation_check(t_event *node) // need to norm
 	i = -1;
 	count = 0;
 	level = g_players[node->fd].level;
-	// printf("player: |%d|, level: |%d|\n", fd, level);
 	bzero(fds, sizeof(int) * MAX_FD);
 	if (level >= 8)
 		return (0);
@@ -114,14 +98,10 @@ int		cmd_incantation_check(t_event *node) // need to norm
 	{
 		if (g_players[i].y == g_players[node->fd].y && g_players[i].x ==
 			g_players[node->fd].x && g_players[i].alive && !g_players[i].block)
-		{
 			if (g_players[i].level == level && check_prerequest(level, i))
 				fds[count++] = i;
-		}
 	}
-	printf(RED"\n[level %d]\n"RESET, level);
 	nb_players_require = level_require(level);
-	printf("count: |%d|, nb_players_require: |%d|\n", count, nb_players_require);
 	if (count >= nb_players_require)
 		blocking(count, fds, node);
 	else
@@ -141,6 +121,6 @@ void	blocking(int count, int fds[MAX_FD], t_event *node)
 		send_data(fds[i], g_env.buffer, MSG_SIZE);
 		set_block_time(node, fds[i]);
 		g_players[fds[i]].block = 1;
-		g_players[fd].status = 1;
+		g_players[fds[i]].status = 1;
 	}
 }

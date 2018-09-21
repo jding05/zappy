@@ -48,8 +48,9 @@
 /*
 ** map x, y value
 */
-# define map_xy 15
+# define MAP_XY 15
 # define EGG_MAX 6
+
 /*
 ** socket.c
 */
@@ -72,7 +73,5 @@
 # define SOCKET_VARS struct addrinfo hints, *ai; struct protoent *proto;
 # define SELECT_VARS fd_set master, read_fds; int fdmax;
 # define ADD_TEAM_VARS 	int i; int egg_id; char *msg;
-
-
 
 #endif

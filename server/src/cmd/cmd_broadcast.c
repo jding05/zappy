@@ -17,121 +17,28 @@
 **     -> find 3 imagination spot, which might have neg value in either y or x
 */
 
-void	calc_four_pos(int *pos, int y, int x)
+static void	calc_four_pos(int *pos, int y, int x)
 {
 	if (y < g_env.map_y / 2)
 	{
-		// pos[1][0] += g_env.map_y;
-		// pos[2][0] += g_env.map_y;
 		pos[2] += g_env.map_y;
 		pos[4] += g_env.map_y;
 	}
 	else if (y > g_env.map_y / 2)
 	{
-		// pos[1][0] -= g_env.map_y;
-		// pos[2][0] -= g_env.map_y;
 		pos[2] -= g_env.map_y;
 		pos[4] -= g_env.map_y;
 	}
 	if (x < g_env.map_x / 2)
 	{
-		// pos[2][1] += g_env.map_x;
-		// pos[3][1] += g_env.map_x;
 		pos[5] += g_env.map_x;
 		pos[7] += g_env.map_x;
 	}
 	else if (x > g_env.map_x / 2)
 	{
-		// pos[2][1] -= g_env.map_x;
-		// pos[3][1] -= g_env.map_x;
 		pos[5] -= g_env.map_x;
 		pos[7] -= g_env.map_x;
 	}
-}
-
-/*
-**
-*/
-
-void	send_broadcast_msg(int nb_dir, int fd, char *msg)
-{
-	bzero(g_env.buffer, MSG_SIZE);
-	strcpy(g_env.buffer, RED"message ");
-	strcat(g_env.buffer, ft_itoa(nb_dir));
-	strcat(g_env.buffer, ",");
-	strcat(g_env.buffer, msg);
-	strcat(g_env.buffer, RESET);
-	printf(RED"player %d, %s\n"RESET, fd, g_env.buffer);
-	send_data(fd, g_env.buffer, MSG_SIZE);
-}
-
-/*
-** we first assign 4 * 2 int 2D array with the value of current player position
-**   then we called calc_four_pos function to
-**      -> update 3 other spots that might go over the board boundary
-**   later, we go thru every player to check if the player is the current player
-**   if no -> 1. we calc the 4 possible paths to find the shortest destination
-**            2. then call cal_direction function to find the square 1 - 8,
-**                                      also update with direction
-**            3. send to all the player the msg with square nb
-*/
-
-void	broadcast(int y, int x, int fd, char *msg)
-{
-	int i;
-	// int pos[4][2];
-	int	*pos;
-	int j;
-	int nb_dir;
-
-	pos = (int *)malloc(sizeof(int) * 8);
-	i = -1;
-	// while (++i < 4)
-	// {
-	// 	pos[i][0] = y;
-	// 	pos[i][1] = x;
-	// }
-	while (i < 7)
-	{
-		pos[++i] = y;
-		pos[++i] = x;
-	}
-	i = -1;
-	calc_four_pos(pos, y, x);
-	while (++i < MAX_FD)
-	{
-		if (i != fd && g_players[i].alive)
-		{
-			j = get_closest_pos(pos, g_players[i].y, g_players[i].x);
-			nb_dir = calc_direction(pos + j, g_players[i].y, g_players[i].x,
-									g_players[i].direction);
-			send_broadcast_msg(nb_dir, i, msg);
-		}
-	}
-}
-
-/*
-** all the players hear the broadcasts without knowing who emits.
-**	-> they perceive only the direction the sound comes from and the message
-**	the nb of the square crossed by the sound before it arrives to the player
-**	indicate the direction. the number is done thru the attribution of "1"
-**	to the square in front of the player, then count down of the squares
-**	surrounding the player in the trigonometric direction (counter-clockwise)
-**	the world is round therefore, we will choose the shortest tragectory for
-**	the sound between the transmitter to the player for which we calculate
-*/
-
-void	cmd_broadcast(int fd, char *msg)
-{
-	printf(CYAN"\n[Exec BROADCAST]\n"RESET);
-	printf(BLUE"Player [%d] -> [%s <%s>]\n"RESET, fd, "broadcast", msg);
-	g_players[fd].request_nb--;
-	broadcast(g_players[fd].y, g_players[fd].x, fd, msg);
-	printf("players %d, pos-> y: %d x: %d d: %d\n",
-			fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
-	printf(CYAN"\n[BROADCAST SUCCESS]\n"RESET);
-	send_data(fd, RED"BROADCAST OK"RESET, MSG_SIZE);
-
 }
 
 /*
@@ -140,7 +47,7 @@ void	cmd_broadcast(int fd, char *msg)
 **   -> compare 4 value to find the shortest one
 */
 
-int		get_closest_pos(int *pos, int pos_y, int pos_x)
+static int	get_closest_pos(int *pos, int pos_y, int pos_x)
 {
 	int		y;
 	int		x;
@@ -187,8 +94,7 @@ int		get_closest_pos(int *pos, int pos_y, int pos_x)
 **     we will then send the other player the direction from 0
 */
 
-// int		calc_direction(int pos[2], int y, int x, int direction)
-int		calc_direction(int *pos, int y, int x, int direction)
+static int	calc_direction(int *pos, int y, int x, int direction)
 {
 	int d;
 	int y_diff;
@@ -214,4 +120,67 @@ int		calc_direction(int *pos, int y, int x, int direction)
 	else if (direction == WEST)
 		d = (d > 2) ? d - 2 : d + 6;
 	return (d);
+}
+
+/*
+** we first assign 4 * 2 int 2D array with the value of current player position
+**   then we called calc_four_pos function to
+**      -> update 3 other spots that might go over the board boundary
+**   later, we go thru every player to check if the player is the current player
+**   if no -> 1. we calc the 4 possible paths to find the shortest destination
+**            2. then call cal_direction function to find the square 1 - 8,
+**                                      also update with direction
+**            3. send to all the player the msg with square nb
+*/
+
+static void	broadcast(int y, int x, int fd, char *msg)
+{
+	int i;
+	int	*pos;
+	int j;
+	int nb_dir;
+
+	pos = (int *)malloc(sizeof(int) * 8);
+	i = -1;
+	while (i < 7)
+	{
+		pos[++i] = y;
+		pos[++i] = x;
+	}
+	i = -1;
+	calc_four_pos(pos, y, x);
+	while (++i < MAX_FD)
+	{
+		if (i != fd && g_players[i].alive)
+		{
+			j = get_closest_pos(pos, g_players[i].y, g_players[i].x);
+			nb_dir = calc_direction(pos + j, g_players[i].y, g_players[i].x,
+									g_players[i].direction);
+			send_broadcast_msg(nb_dir, i, msg);
+		}
+	}
+	free(pos);
+}
+
+/*
+** all the players hear the broadcasts without knowing who emits.
+**	-> they perceive only the direction the sound comes from and the message
+**	the nb of the square crossed by the sound before it arrives to the player
+**	indicate the direction. the number is done thru the attribution of "1"
+**	to the square in front of the player, then count down of the squares
+**	surrounding the player in the trigonometric direction (counter-clockwise)
+**	the world is round therefore, we will choose the shortest tragectory for
+**	the sound between the transmitter to the player for which we calculate
+*/
+
+void		cmd_broadcast(int fd, char *msg)
+{
+	printf(CYAN"\n[Exec BROADCAST]\n"RESET);
+	printf(BLUE"Player [%d] -> [%s <%s>]\n"RESET, fd, "broadcast", msg);
+	g_players[fd].request_nb--;
+	broadcast(g_players[fd].y, g_players[fd].x, fd, msg);
+	printf("players %d, pos-> y: %d x: %d d: %d\n",
+			fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
+	printf(CYAN"\n[BROADCAST SUCCESS]\n"RESET);
+	send_data(fd, RED"BROADCAST OK"RESET, MSG_SIZE);
 }

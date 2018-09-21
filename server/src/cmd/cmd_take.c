@@ -16,32 +16,31 @@
 
 #include "../../include/server.h"
 
-void     cmd_take(int fd, char *msg)
+void	cmd_take(int fd, char *msg)
 {
-    int res_i;
+	int res_i;
 
 	printf(CYAN"\n[Exec TAKE]\n"RESET);
-    printf(BLUE"Player [%d] -> [%s %s]"RESET, fd, "take", msg);
-    g_players[fd].request_nb--;
-    if ((res_i = check_resource(msg)) == 7 ||
+	printf(BLUE"Player [%d] -> [%s %s]"RESET, fd, "take", msg);
+	g_players[fd].request_nb--;
+	if ((res_i = check_resource(msg)) == 7 ||
 			g_env.map[g_players[fd].y][g_players[fd].x][res_i] == 0)
 	{
 		send_data(fd, RED"TAKE KO"RESET, MSG_SIZE);
 		return ;
 	}
-    else
-    {
-        g_env.map[g_players[fd].y][g_players[fd].x][res_i]--;
-        g_players[fd].inventory[res_i]++;
+	else
+	{
+		g_env.map[g_players[fd].y][g_players[fd].x][res_i]--;
+		g_players[fd].inventory[res_i]++;
 		if (res_i == 0)
 			update_live(fd, 1);
-    }
-	printf("players %d, finish take -> %s\n", fd, msg);
+	}
 	printf(CYAN"\n[TAKE SUCCESS]\n"RESET);
 	send_data(fd, RED"TAKE OK"RESET, MSG_SIZE);
 }
 
-int     check_resource(char *msg)
+int		check_resource(char *msg)
 {
 	if (strcmp("food", msg) == 0)
 		return (0);
@@ -58,8 +57,5 @@ int     check_resource(char *msg)
 	else if (strcmp("thystame", msg) == 0)
 		return (6);
 	else
-	{
-		printf("check_resource, msg_buf for put and take: |%s|\n", msg);
 		return (7);
-	}
 }

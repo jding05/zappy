@@ -72,6 +72,7 @@ int		recv_data_norm(int fd, int nbytes, char **buf, char **data)
 		printf("to gfx |%s|\n", msg);
 		if (g_env.gfx_fd > 0)
 			send_data(g_env.gfx_fd, msg, MSG_SIZE);
+		free(msg);
 		return (0);
 	}
 	return (1);

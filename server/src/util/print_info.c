@@ -12,6 +12,16 @@
 
 #include "../../include/server.h"
 
+void	print_player_inventory(int fd)
+{
+	int		*inv;
+
+	inv = g_players[fd].inventory;
+	printf(DARKYELLOW"player%d level: %d,", fd, g_players[fd].level);
+	printf("inv: [1: %d] [2: %d] [3: %d] [4: %d] [5: %d] [6: %d]\n"RESET,
+				inv[1], inv[2], inv[3], inv[4], inv[5], inv[6]);
+}
+
 void	print_player_info(int fd)
 {
 	printf(" [player %d] ", fd);

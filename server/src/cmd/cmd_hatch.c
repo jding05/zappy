@@ -34,7 +34,6 @@ void	cmd_hatch(int fd, char *msg)
 		g_teams[id].egg[g_teams[id].egg_hatched].ffd, fd);
 	g_teams[id].egg_hatched++;
 	g_teams[id].nb_client++;
-
 	printf("team: %s, nb_client: %d, egg_hatch: %d\n", g_teams[id].team_name,
 		g_teams[id].nb_client, g_teams[id].egg_hatched);
 	printf(CYAN"\n[HATCH SUCCESS]\n"RESET);

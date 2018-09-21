@@ -40,9 +40,9 @@ static int	check_flag_limit(int m, int number)
 		printf("The server port range should be within 1024 to 49151\n");
 		return (0);
 	}
-	if ((m == 1 || m == 2) && (number > map_xy || number <= 0))
+	if ((m == 1 || m == 2) && (number > MAP_XY || number <= 0))
 	{
-		printf("The server map size y or x value cannot exceed %d\n", map_xy);
+		printf("The server map size y or x value cannot exceed %d\n", MAP_XY);
 		return (0);
 	}
 	if (m == 4 && (number > MAX_FD - 4 || number <= 0))

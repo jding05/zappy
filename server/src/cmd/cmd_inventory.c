@@ -15,8 +15,10 @@
 */
 #include "../../include/server.h"
 
-static void store_inventory_to_buffer(int fd)
+static void	store_inventory_to_buffer(int fd)
 {
+	char *str;
+
 	strcat(g_env.buffer, "food ");
 	strcat(g_env.buffer, str = ft_itoa(g_players[fd].inventory[0]));
 	free(str);
@@ -42,8 +44,6 @@ static void store_inventory_to_buffer(int fd)
 
 void		cmd_inventory(int fd, char *msg)
 {
-	char	*str;
-
 	(void)msg;
 	printf(CYAN"\n[Exec INVENTORY]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "inventory");
@@ -56,23 +56,3 @@ void		cmd_inventory(int fd, char *msg)
 	g_players[fd].request_nb--;
 	send_data(fd, g_env.buffer, MSG_SIZE);
 }
-
-/*
-can consider using vdprintf(fd, msg, arg)
-example:
-vsend(players->fd, "{food %d, linemate %d, deraumere %d, sibur %d,
-	mendiane %d, phiras %d, thstame %d", players->inventory[0],
-	players->inventory[1], players->inventory[2], players->inventory[3],
-	players->inventory[4], players->inventory[5], players->inventroy[6]);
-
-void	vsend(int socket, char *msg, ...)
-{
-	va_list	ap;
-
-	va_start(ap, msg);
-	vdprintf(socket, msg, ap);
-	va_end(ap);
-}
-** note: using dprintf() might be some issue,
-**       cuz sometime dprintf is used for debugging
-*/

@@ -21,13 +21,9 @@ void	cmd_left(int fd, char *msg)
 	(void)msg;
 	printf(CYAN"\n[Exec LEFT]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "left");
-	printf("players %d, pos-> y: %d x: %d d: %d\n", fd,
-			g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 	if (--(g_players[fd].direction) < NORTH)
 		g_players[fd].direction = WEST;
 	g_players[fd].request_nb--;
-	printf("players %d, pos-> y: %d x: %d d: %d\n", fd,
-			g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 	send_data(fd, RED"LEFT OK"RESET, MSG_SIZE);
 	printf(CYAN"\n[LEFT success]\n"RESET);
 }

@@ -25,30 +25,30 @@
 
 #include "../../include/server.h"
 
-static void		send_kick_msg(int fd, int direction)
+static void	send_kick_msg(int fd, int direction)
 {
 	if (direction == NORTH)
 	{
-		printf(RED"player %d, moving <SOUTH>\n"RESET, fd);
-		if (!send_data(fd, RED"moving <SOUTH>"RESET, MSG_SIZE))
+		printf(RED"player %d, moving SOUTH\n"RESET, fd);
+		if (!send_data(fd, RED"moving SOUTH"RESET, MSG_SIZE))
 			perror("Send [kick]");
 	}
 	else if (direction == EAST)
 	{
-		printf(RED"player %d, moving <WEST>\n"RESET, fd);
-		if (!send_data(fd, RED"moving <WEST>"RESET, MSG_SIZE))
+		printf(RED"player %d, moving WEST\n"RESET, fd);
+		if (!send_data(fd, RED"moving WEST"RESET, MSG_SIZE))
 			perror("Send [kick]");
 	}
 	else if (direction == SOUTH)
 	{
-		printf(RED"player %d, moving <NORTH>\n"RESET, fd);
-		if (!send_data(fd, RED"moving <NORTH>"RESET, MSG_SIZE))
+		printf(RED"player %d, moving NORTH\n"RESET, fd);
+		if (!send_data(fd, RED"moving NORTH"RESET, MSG_SIZE))
 			perror("Send [kick]");
 	}
 	else if (direction == WEST)
 	{
-		printf(RED"player %d, moving <EAST>\n"RESET, fd);
-		if (!send_data(fd, RED"moving <EAST>"RESET, MSG_SIZE))
+		printf(RED"player %d, moving EAST\n"RESET, fd);
+		if (!send_data(fd, RED"moving EAST"RESET, MSG_SIZE))
 			perror("Send [kick]");
 	}
 }
@@ -91,10 +91,9 @@ static int	find_cell_players(int y, int x, int direction, int fd)
 	check = 0;
 	while (++i < MAX_FD)
 	{
-		if (g_players[i].y == y && g_players[i].x == x && i != fd && !g_players[i].block && g_players[i].alive) // match player pos
+		if (g_players[i].y == y && g_players[i].x == x && i != fd &&
+			!g_players[i].block && g_players[i].alive)
 		{
-			// printf(RED"kick player %d, y: %d, x: %d, d: %d\n"RESET, fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
-			// printf(RED"move player %d, y: %d, x: %d, d: %d\n"RESET, i, g_players[i].y, g_players[i].x, g_players[i].direction);
 			if (direction == NORTH)
 				g_players[i].y -= 1;
 			else if (direction == EAST)
@@ -104,7 +103,6 @@ static int	find_cell_players(int y, int x, int direction, int fd)
 			else if (direction == WEST)
 				g_players[i].x -= 1;
 			update_player_pos(i);
-			// printf(RED"move player %d, y: %d, x: %d, d: %d\n"RESET, i, g_players[i].y, g_players[i].x, g_players[i].direction);
 			send_kick_msg(i, direction);
 			check = 1;
 		}
@@ -112,20 +110,20 @@ static int	find_cell_players(int y, int x, int direction, int fd)
 	return (check == 1 ? 1 : 0);
 }
 
-void			cmd_kick(int fd, char *msg)
+void		cmd_kick(int fd, char *msg)
 {
 	(void)msg;
 	printf(CYAN"\n[Exec KICK]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "kick");
 	g_players[fd].request_nb--;
-	if (find_cell_players(g_players[fd].y, g_players[fd].x, g_players[fd].direction, fd))
+	if (find_cell_players(g_players[fd].y, g_players[fd].x,
+			g_players[fd].direction, fd))
 		send_data(fd, RED"KICK OK"RESET, MSG_SIZE);
 	else
 	{
 		send_data(fd, RED"KICK KO"RESET, MSG_SIZE);
 		return ;
 	}
-	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
-
-	// maybe update graphic client regarding player position
+	printf("players %d, pos-> y: %d x: %d d: %d\n", fd, g_players[fd].y,
+			g_players[fd].x, g_players[fd].direction);
 }

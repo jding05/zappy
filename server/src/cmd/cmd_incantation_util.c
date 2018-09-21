@@ -82,9 +82,10 @@ int		check_prerequest(int level, int i)
 	else if (level == 6)
 		return ((inv[1] > 0 && inv[2] > 1 && inv[3] > 2 && inv[5] > 0) ? 1 : 0);
 	else if (level == 7)
-		return ((inv[1] > 1 && inv[2] > 1 && inv[3] > 1 && inv[4] > 1 && \
-		inv[5] > 1 && inv[6] > 0) ? 1 : 0);
-	return (0);
+		return ((inv[1] > 1 && inv[2] > 1 && inv[3] > 1
+			&& inv[4] > 1 && inv[5] > 1 && inv[6] > 0) ? 1 : 0);
+	else
+		return (0);
 }
 
 /*
