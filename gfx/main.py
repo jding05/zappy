@@ -94,7 +94,6 @@ def main():
             if data == old_data or data == '':
                 continue
             data_split = data.split("\n")
-            print(data_split)
             map_data = data_split.pop(0).split(",")
             if not grids:
                 for r in range(row):

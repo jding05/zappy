@@ -97,6 +97,7 @@ void	s_select_recv(int fd, fd_set *master)
 	if (!(req = recv_data(fd, MSG_SIZE)))
 	{
 		close(fd);
+		s_clear_player(fd);
 		FD_CLR(fd, master);
 		return ;
 	}
@@ -146,10 +147,7 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 		}
 		free(alarm);
 		if (check_winner())
-		{
-			printf(RED"[GAME END ...]\n"RESET);
-			exit(0);
-		}
+			break;
 	}
 }
 

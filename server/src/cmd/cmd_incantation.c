@@ -58,9 +58,9 @@ void	level_up_and_unblock(int count, int fds[MAX_FD])
 	{
 		g_players[fds[i]].status = 0;
 		if (g_players[fds[i]].level < 5)
-			low_level_envolving_digest(g_players[fds[i]].level, i);
+			low_level_envolving_digest(g_players[fds[i]].level, fds[i]);
 		else
-			high_level_envolving_digest(g_players[fds[i]].level, i);
+			high_level_envolving_digest(g_players[fds[i]].level, fds[i]);
 		g_players[fds[i]].level++;
 		g_players[fds[i]].block = 0;
 		if (g_players[fds[i]].level == 8)
@@ -117,7 +117,6 @@ int		cmd_incantation_check(t_event *node) // need to norm
 		{
 			if (g_players[i].level == level && check_prerequest(level, i))
 				fds[count++] = i;
-			print_player_inventory(i);
 		}
 	}
 	printf(RED"\n[level %d]\n"RESET, level);
@@ -137,7 +136,7 @@ void	blocking(int count, int fds[MAX_FD], t_event *node)
 	i = -1;
 	bzero(g_env.buffer, MSG_SIZE);
 	strcpy(g_env.buffer, RED"elevation in progress"RESET);
-	while (++i < count && i != node->fd)
+	while (++i < count)
 	{
 		send_data(fds[i], g_env.buffer, MSG_SIZE);
 		set_block_time(node, fds[i]);

@@ -147,10 +147,11 @@ void	enqueue(int fd, char *msg)
 			free(node);
 			return ;
 		}
-		if (i == 9 || i == 10)
-			g_players[fd].block = 1;
 		if (i == 9)
+		{
+			g_players[fd].block = 1;
 			g_players[fd].status = 1;
+		}
 		gfx_data = get_gfx_data();
 		printf("to gfx |%s|\n", gfx_data);
 		if (g_env.gfx_fd > 0)

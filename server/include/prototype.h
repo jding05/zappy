@@ -44,7 +44,7 @@ char	*ft_strjoin(char const *s1, char const *s2);
 */
 void	s_init_new_player(int fd);
 void	s_init_egg_player(int fd, int team_id, int egg_id);
-
+void	s_clear_player(int fd);
 /*
 ** print_info
 */

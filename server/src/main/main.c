@@ -36,7 +36,7 @@ void	zappy_game(void)
 	generate_resource();
 	g_env.queue_head = NULL;
 	setup_socket();
-	// printf(RED"[GAME END ...]\n"RESET);
+	printf(RED"[GAME END ...]\n"RESET);
 	free_malloc();
 }
 
