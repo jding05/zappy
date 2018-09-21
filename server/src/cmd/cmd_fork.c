@@ -40,7 +40,7 @@ static void    laid_egg(int fd)
 	g_teams[id].egg_laid++;
 }
 
-void    cmd_fork(int fd, char *msg)
+void    	cmd_fork(int fd, char *msg)
 {
     printf(CYAN"\n[Exec FORK]\n"RESET);
     printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "fork");
@@ -50,9 +50,8 @@ void    cmd_fork(int fd, char *msg)
     laid_egg(fd);
     g_players[fd].block = 0;
 	enqueue(fd, "hatch");
-
 	printf(BLUE"Player %d, block: %d\n"RESET, fd, g_players[fd].block);
 	printf(CYAN"\n[FORK SUCCESS]\n"RESET);
-	g_players[fd].status = 2;
+	g_players[fd].status = 0;
 	send_data(fd, RED"FORK OK"RESET, MSG_SIZE);
 }

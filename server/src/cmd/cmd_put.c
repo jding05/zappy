@@ -24,7 +24,7 @@ void	cmd_put(int fd, char *msg)
 	printf(BLUE"Player [%d] -> [%s %s]\n"RESET, fd, "put", msg);
 	g_players[fd].request_nb--;
 	if ((res_i = check_resource(msg)) == 7 || res_i == 0 ||
-			g_players[fd].inventory[res_i] == 0) // i think this can be handle in parse
+			g_players[fd].inventory[res_i] == 0)
 	{
 		send_data(fd, RED"PUT KO"RESET, MSG_SIZE);
 		return ;
@@ -34,10 +34,6 @@ void	cmd_put(int fd, char *msg)
 		g_players[fd].inventory[res_i]--;
 		g_env.map[g_players[fd].y][g_players[fd].x][res_i]++;
 	}
-	// printf("players %d, finish take -> %s\n", fd, msg);
 	printf(CYAN"\n[PUT SUCCESS]\n"RESET);
-
 	send_data(fd, RED"PUT OK"RESET, MSG_SIZE);
-
-	// update graphic client regarding player position
 }

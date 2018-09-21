@@ -22,7 +22,7 @@ typedef struct      s_team
 	int             max_players;
 	int             reach_max_level;
 	int				nb_client;
-	t_egg           egg[6];
+	t_egg           egg[EGG_MAX];
 	int             egg_hatched;
 	int             egg_laid;
 }                   t_team;

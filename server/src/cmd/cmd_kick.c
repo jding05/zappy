@@ -25,10 +25,6 @@
 
 #include "../../include/server.h"
 
-/*
-** if no colorize printing then, 15 or 16 bytes
-*/
-
 static void		send_kick_msg(int fd, int direction)
 {
 	if (direction == NORTH)

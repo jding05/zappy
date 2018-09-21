@@ -38,7 +38,7 @@ void	cmd_incantation(int fd, char *msg)
 	}
 	if (count >= (nb = level_require(level)) && nb > 0)
 		level_up_and_unblock(count, fds);
-	//	maybe update graphic client regarding player position
+
 	printf(CYAN"\n[INCANTATION SUCCESS]\n"RESET);
 	printf("players %d, level %d\n", fd, g_players[fd].level);
 }
@@ -141,5 +141,6 @@ void	blocking(int count, int fds[MAX_FD], t_event *node)
 		send_data(fds[i], g_env.buffer, MSG_SIZE);
 		set_block_time(node, fds[i]);
 		g_players[fds[i]].block = 1;
+		g_players[fd].status = 1;
 	}
 }

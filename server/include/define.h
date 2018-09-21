@@ -49,7 +49,7 @@
 ** map x, y value
 */
 # define map_xy 15
-
+# define EGG_MAX 6
 /*
 ** socket.c
 */

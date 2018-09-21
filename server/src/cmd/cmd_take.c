@@ -24,7 +24,7 @@ void     cmd_take(int fd, char *msg)
     printf(BLUE"Player [%d] -> [%s %s]"RESET, fd, "take", msg);
     g_players[fd].request_nb--;
     if ((res_i = check_resource(msg)) == 7 ||
-			g_env.map[g_players[fd].y][g_players[fd].x][res_i] == 0) // i think this can be handle in parse
+			g_env.map[g_players[fd].y][g_players[fd].x][res_i] == 0)
 	{
 		send_data(fd, RED"TAKE KO"RESET, MSG_SIZE);
 		return ;
@@ -38,7 +38,6 @@ void     cmd_take(int fd, char *msg)
     }
 	printf("players %d, finish take -> %s\n", fd, msg);
 	printf(CYAN"\n[TAKE SUCCESS]\n"RESET);
-
 	send_data(fd, RED"TAKE OK"RESET, MSG_SIZE);
 }
 

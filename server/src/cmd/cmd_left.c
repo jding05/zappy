@@ -31,11 +31,3 @@ void	cmd_left(int fd, char *msg)
 	send_data(fd, RED"LEFT OK"RESET, MSG_SIZE);
 	printf(CYAN"\n[LEFT success]\n"RESET);
 }
-
-/*
-** big note::
-** after acceptting the new client, we need to add it to global
-** for players[newfd]; and malloc the t_player
-** so when we can the player, we can call player[i]->direction
-** for that certain player_fd.
-*/
