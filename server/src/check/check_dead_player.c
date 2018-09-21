@@ -19,7 +19,7 @@ void	check_dead_player(void)
 	char			*gfx_data;
 
 	i = -1;
-	bzero(g_env.buffer, 4096);
+	bzero(g_env.buffer, MSG_SIZE);
 	strcpy(g_env.buffer, DARKYELLOW"\n[ Your player is dead ]\n"RESET);
 	gettimeofday(&curr_time, NULL);
 	while (++i < MAX_FD)

@@ -21,7 +21,7 @@ int		check_winner(void)
 	check = 0;
 	fd = 5;
 	i = -1;
-	bzero(g_env.buffer, 4096);
+	bzero(g_env.buffer, MSG_SIZE);
 	strcpy(g_env.buffer, YELLOW"\n\n[[[[YOUR TEAM HAS WON THE GAME ]]]]\n\n"RESET);
 	while (++i < g_env.nb_team)
 	{
@@ -30,7 +30,8 @@ int		check_winner(void)
 			printf(YELLOW"\n\n[ WINNER IS TEAM < %s >]\n\n"RESET, g_teams[i].team_name);
 			while (fd < MAX_FD)
 			{
-				if (g_players[fd].team_id == i)
+				if (g_players[fd].team_id == i &&
+					(g_players[fd].dead == 1 || g_players[fd].alive == 1))
 					send_data(fd, g_env.buffer, MSG_SIZE);
 				fd++;
 			}

@@ -1,6 +1,6 @@
 # include "../../include/server.h"
 
-void	init_live(int fd)
+static void	init_live(int fd)
 {
 	struct timeval	curr_time;
 
@@ -13,7 +13,7 @@ void	init_live(int fd)
 	update_live(fd, 1000);
 }
 
-void	s_init_egg_player(int fd, int team_id, int egg_id)
+void		s_init_egg_player(int fd, int team_id, int egg_id)
 {
 	g_players[fd].fd = fd;
 	g_players[fd].player_id = g_player_id++;
@@ -34,7 +34,7 @@ void	s_init_egg_player(int fd, int team_id, int egg_id)
 ** reset a player's data when the player_client is terminated
 */
 
-void	s_init_new_player(int fd)
+void		s_init_new_player(int fd)
 {
 	g_players[fd].fd = fd;
 	g_players[fd].player_id = g_player_id++;

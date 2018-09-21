@@ -124,11 +124,13 @@ void	s_select_recv(int fd, fd_set *master)
 void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 {
 	int				i;
+	struct timeval	*alarm;
 
 	while (1)
 	{
 		memcpy(read_fds, master, sizeof(*master));
-		if (select(*fdmax + 1, read_fds, NULL, NULL, set_timeout_alarm()) == -1)
+		alarm = set_timeout_alarm();
+		if (select(*fdmax + 1, read_fds, NULL, NULL, alarm) == -1)
 			perror("select error");
 		cycle_exec_event_loop();
 		i = -1;
@@ -138,15 +140,16 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			{
 				if (i == lfd)
 					s_select_accept(i, master, fdmax);
-				else
-				{
-					if (i != g_env.gfx_fd)
-						s_select_recv(i, master);
-				}
+				else if (i != g_env.gfx_fd)
+					s_select_recv(i, master);
 			}
 		}
+		free(alarm);
 		if (check_winner())
-			break ;
+		{
+			printf(RED"[GAME END ...]\n"RESET);
+			exit(0);
+		}
 	}
 }
 

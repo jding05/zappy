@@ -3,8 +3,8 @@ import sys
 import select
 import pygame
 from pygame.locals import *
-from grid_test import *
-from player_test import *
+from grid import *
+from player import *
 
 buf_sz = 8192
 

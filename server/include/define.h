@@ -46,6 +46,11 @@
 # define RESET		"\033[0m"
 
 /*
+** map x, y value
+*/
+# define map_xy 15
+
+/*
 ** socket.c
 */
 

@@ -102,7 +102,6 @@ int				s_add_to_team(char *team_name, int fd)
 			msg = ft_strjoin("joined team ", team_name);
 			send_data(fd, msg, MSG_SIZE);
 			free(msg);
-			send_data(i, g_env.buffer, MSG_SIZE);
 			msg = get_gfx_data();
 			printf("to gfx |%s|\n", msg);
 			if (g_env.gfx_fd > 0)
@@ -114,28 +113,46 @@ int				s_add_to_team(char *team_name, int fd)
 	return (EXIT_FAILURE);
 }
 
-struct timeval	*set_timeout_alarm(void)
-{
-	long int		time_diff;
-	struct timeval	*timeout;
-	struct timeval	now;
+/*
+** At first, we make the game with the [ event-driven ],
+**	-> only run if there is an event
+**  , but if no player send the command to server
+**		-> then the server WON'T update,
+**			and won't check if the player is dead or not
+**
+** Therefore, we change our game to the [ time-driven ],
+** -> instead of setting the timeout by (1.) the first queue event timeout time
+**							or  (2.) empty queue -> set as NULL, blocking status
+** **-> we change the timeout to the game_tick time for above two cases,
+** -> then we can check the player's status (dead or not) every time
+** 	[now become the Real-Time-Driven Sever]
+*/
 
-	timeout = NULL;
-	if (!g_env.queue_head)
-		return (NULL);
-	gettimeofday(&now, NULL);
-	time_diff = (g_env.queue_head->exec_time.tv_sec - now.tv_sec) * 1000000
-		+ (g_env.queue_head->exec_time.tv_usec - now.tv_usec);
-	timeout = (struct timeval *)malloc(sizeof(struct timeval));
-	if (time_diff <= 0)
-	{
-		timeout->tv_sec = 0;
-		timeout->tv_usec = 0;
-	}
-	else
-	{
-		timeout->tv_sec = time_diff / 1000000;
-		timeout->tv_usec = time_diff % 1000000;
-	}
-	return (timeout);
+
+struct timeval    *set_timeout_alarm(void)
+{
+    long int        time_diff;
+    struct timeval    *timeout;
+    struct timeval    now;
+
+    timeout = (struct timeval *)malloc(sizeof(struct timeval));
+    if (g_env.queue_head)
+    {
+        gettimeofday(&now, NULL);
+        time_diff = (g_env.queue_head->exec_time.tv_sec - now.tv_sec) * 1000000
+            + (g_env.queue_head->exec_time.tv_usec - now.tv_usec);
+        if (time_diff <= 0)
+            bzero(timeout, sizeof(struct timeval));
+        else
+        {
+            timeout->tv_sec = time_diff / 1000000;
+            timeout->tv_usec = time_diff % 1000000;
+        }
+    }
+    if (!g_env.queue_head || time_diff > g_env.ms_pre_tick)
+    {
+        timeout->tv_sec = g_env.ms_pre_tick == 1000000 ? 1 : 0;
+        timeout->tv_usec = g_env.ms_pre_tick == 1000000 ? 0 : g_env.ms_pre_tick;
+    }
+    return (timeout);
 }

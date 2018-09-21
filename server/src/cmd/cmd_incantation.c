@@ -81,8 +81,18 @@ void	level_up_and_unblock(int count, int fds[MAX_FD])
 **             no -> return 0 -> means the incantation command failed
 */
 
+void 	print_player_inventory(int fd)
+{
+	int	*inv;
+
+	inv = g_players[fd].inventory;
+	printf(DARKYELLOW"player%d level: %d,", fd, g_players[fd].level);
+	printf("inv: [1: %d] [2: %d] [3: %d] [4: %d] [5: %d] [6: %d]\n"RESET,
+				inv[1], inv[2], inv[3], inv[4], inv[5], inv[6]);
+
+}
 /*
-** change -> check if players able to incantate
+** check if players able to incantate
 */
 
 int		cmd_incantation_check(t_event *node) // need to norm
@@ -107,11 +117,12 @@ int		cmd_incantation_check(t_event *node) // need to norm
 		{
 			if (g_players[i].level == level && check_prerequest(level, i))
 				fds[count++] = i;
+			print_player_inventory(i);
 		}
 	}
-	// printf(RED"\n[level %d]\n"RESET, level);
+	printf(RED"\n[level %d]\n"RESET, level);
 	nb_players_require = level_require(level);
-	// printf("count: |%d|, nb_players_require: |%d|\n", count, nb_players_require);
+	printf("count: |%d|, nb_players_require: |%d|\n", count, nb_players_require);
 	if (count >= nb_players_require)
 		blocking(count, fds, node);
 	else
