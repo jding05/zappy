@@ -89,16 +89,51 @@ char	*get_players_data(void)
 	return (players);
 }
 
+char	*get_eggs_data(void)
+{
+	int		i;
+	int		j;
+	char	*eggs;
+
+	if (NULL == (eggs = ft_strnew(6 * MAX_TEAM * 6 + 1)))
+		return (NULL);
+	i = -1;
+	while (++i < MAX_TEAM)
+	{
+		j = -1;
+		while (++j < 6)
+		{
+			if (0 != *g_teams[i].team_name)
+			{
+				if (0 < g_teams[i].egg[j].ffd && 1 != g_teams[i].egg[j].hatched)
+				{
+					num_to_str(g_teams[i].egg[j].team_id, &eggs, ",");
+					num_to_str(g_teams[i].egg[j].x, &eggs, ",");
+					num_to_str(g_teams[i].egg[j].y, &eggs, "\n");
+				}	
+			}
+			
+		}
+	}
+	return (eggs);
+}
+
 char	*get_gfx_data(void)
 {
 	char	*map;
 	char	*players;
+	char	*eggs;
+	char	*tmp;
 	char	*gfx_data;
 
 	map = get_map_data();
+	eggs = get_eggs_data();
 	players = get_players_data();
-	gfx_data = ft_strjoin(map, players);
+	tmp = ft_strjoin(map, eggs);
+	gfx_data = ft_strjoin(tmp, players);
 	free(map);
+	free(eggs);
 	free(players);
+	free(tmp);
 	return (gfx_data);
 }

@@ -9,7 +9,7 @@ typedef struct      s_egg
 	int				team_id;
 	int             egg_id;
 	int             hatched;
-	int             father_fd;
+	int             ffd;
 	int             y;
 	int             x;
 }                   t_egg;
