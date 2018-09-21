@@ -19,7 +19,7 @@ static t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd)
 	node = (t_event *)malloc(sizeof(t_event));
 	bzero(node, sizeof(t_event));
 	node->fd = fd;
-    bzero(node->cmd, CMD_LEN);
+	bzero(node->cmd, CMD_LEN);
 	strcpy(node->cmd, cmd);
 	bzero(node->msg, MAX_MSG);
 	strcpy(node->msg, msg);
@@ -27,7 +27,7 @@ static t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd)
 	if (!strcmp(cmd, "fork") || !strcmp(cmd, "incantation"))
 		set_block_time(node, node->fd);
 	node->next = NULL;
-    printf("\n|node->fd %d|\n", node->fd);
+	printf("\n|node->fd %d|\n", node->fd);
 	return (node);
 }
 
@@ -59,9 +59,9 @@ static void		insert(t_event *node)
 	{
 		tmp = g_env.queue_head;
 		while (tmp->next &&
-			   node->exec_time.tv_sec * 1000000 + node->exec_time.tv_usec >=
-			   tmp->next->exec_time.tv_sec * 1000000 +
-			   tmp->next->exec_time.tv_usec)
+				node->exec_time.tv_sec * 1000000 + node->exec_time.tv_usec >=
+				tmp->next->exec_time.tv_sec * 1000000 +
+				tmp->next->exec_time.tv_usec)
 		{
 			tmp = tmp->next;
 		}
@@ -79,7 +79,7 @@ static void		insert(t_event *node)
 ** if cmd is broadcast, but doesn't have any additional msg -> false
 */
 
-static int	check_valid_cmd(char *msg, char *msg_buf, int i)
+static int		check_valid_cmd(char *msg, char *msg_buf, int i)
 {
 	char			*tmp;
 	unsigned long	len;
@@ -121,7 +121,7 @@ static int	check_valid_cmd(char *msg, char *msg_buf, int i)
 **		last. insert the node in priority queue to build an event engine
 */
 
-void	enqueue(int fd, char *msg)
+void			enqueue(int fd, char *msg)
 {
 	char	msg_buf[MSG_SIZE];
 	int		i;
@@ -153,7 +153,6 @@ void	enqueue(int fd, char *msg)
 			g_players[fd].status = 1;
 		}
 		gfx_data = get_gfx_data();
-		printf("to gfx |%s|\n", gfx_data);
 		if (g_env.gfx_fd > 0)
 			send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);
 		free(gfx_data);
@@ -161,33 +160,4 @@ void	enqueue(int fd, char *msg)
 	}
 	printf("request nb: %d\n", g_players[fd].request_nb);
 	print_queue();
-}
-
-void	print_queue(void)
-{
-	t_event			*e;
-	int				i;
-	struct timeval	now;
-
-	gettimeofday(&now, NULL);
-	printf("event curr.tv_usec < %d >\n", now.tv_usec);
-	printf("event curr.tv_sec < %ld >\n", now.tv_sec);
-	i = 0;
-	e = g_env.queue_head;
-	if (e)
-	{
-		while (e)
-		{
-			printf("--------EVENT-----------\n");
-			printf("event fd < %d >\n", e->fd);
-			printf("event cmd < %s >\nevent msg < %s >\n", e->cmd, e->msg);
-			printf("event exec_time.tv_usec < %d >\n", e->exec_time.tv_usec);
-			printf("event exec_time.tv_sec < %ld >\n", e->exec_time.tv_sec);
-			e = e->next;
-			printf("|event index: %d|\n", i++);
-			printf("--------EVENT-----------\n");
-		}
-	}
-	else
-		printf(RED"\n----- [ queue is empty ] -- \n"RESET);
 }

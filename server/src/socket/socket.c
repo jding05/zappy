@@ -127,14 +127,15 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 	int				i;
 	struct timeval	*alarm;
 
-	while (1)
+	i = -1;
+	while (i != -42)
 	{
 		memcpy(read_fds, master, sizeof(*master));
 		alarm = set_timeout_alarm();
 		if (select(*fdmax + 1, read_fds, NULL, NULL, alarm) == -1)
 			perror("select error");
-		cycle_exec_event_loop();
-		i = -1;
+		exec_event();
+		check_dead_player();
 		while (++i <= *fdmax)
 		{
 			if (FD_ISSET(i, read_fds))
@@ -146,8 +147,7 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			}
 		}
 		free(alarm);
-		if (check_winner())
-			break;
+		i = check_winner() ? -42 : -1;
 	}
 }
 

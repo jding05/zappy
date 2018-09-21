@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../../include/server.h"
+#include "../../include/server.h"
 
 static void	update_max_player_per_team(void)
 {
@@ -21,7 +21,8 @@ static void	update_max_player_per_team(void)
 		g_teams[i].max_players = g_env.authorized_clients / g_env.nb_team;
 }
 
-/*                         0    1   2    3    4    5
+/*
+**                         0    1   2    3    4    5
 ** char    *g_options[] = {"-p","-x","-y","-n","-c","-t"};
 **
 **  asssume every flag follow by 1 arg, there will be 13,

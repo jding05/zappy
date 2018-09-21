@@ -24,21 +24,18 @@ void	check_dead_player(void)
 	gettimeofday(&curr_time, NULL);
 	while (++i < MAX_FD)
 	{
-		if (g_players[i].fd && !g_players[i].dead)
+		if (g_players[i].fd && !g_players[i].dead &&
+			check_event_time(&curr_time, &(g_players[i].live)))
 		{
-			if (check_event_time(&curr_time, &(g_players[i].live)))
-			{
-				g_players[i].dead = 1;
-				g_players[i].alive = 0;
-				if (g_players[i].level == 8)
-					g_teams[g_players[i].team_id].reach_max_level--;
-				send_data(i, g_env.buffer, MSG_SIZE);
-				gfx_data = get_gfx_data();
-				printf("to gfx |%s|\n", gfx_data);
-				if (g_env.gfx_fd > 0)
-					send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);
-				free(gfx_data);
-			}
+			g_players[i].dead = 1;
+			g_players[i].alive = 0;
+			if (g_players[i].level == 8)
+				g_teams[g_players[i].team_id].reach_max_level--;
+			send_data(i, g_env.buffer, MSG_SIZE);
+			gfx_data = get_gfx_data();
+			if (g_env.gfx_fd > 0)
+				send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);
+			free(gfx_data);
 		}
 	}
 }

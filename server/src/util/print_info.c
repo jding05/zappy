@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../../include/server.h"
+#include "../../include/server.h"
 
 void	print_player_info(int fd)
 {
@@ -56,4 +56,33 @@ void	print_flags(void)
 	printf("-c Max Clients:%d\n", g_env.authorized_clients);
 	printf("-t Time:%d\n", g_env.time_unit);
 	printf("-------------------------------\n");
+}
+
+void	print_queue(void)
+{
+	t_event			*e;
+	int				i;
+	struct timeval	now;
+
+	gettimeofday(&now, NULL);
+	printf("event curr.tv_usec < %d >\n", now.tv_usec);
+	printf("event curr.tv_sec < %ld >\n", now.tv_sec);
+	i = 0;
+	e = g_env.queue_head;
+	if (e)
+	{
+		while (e)
+		{
+			printf("--------EVENT-----------\n");
+			printf("event fd < %d >\n", e->fd);
+			printf("event cmd < %s >\nevent msg < %s >\n", e->cmd, e->msg);
+			printf("event exec_time.tv_usec < %d >\n", e->exec_time.tv_usec);
+			printf("event exec_time.tv_sec < %ld >\n", e->exec_time.tv_sec);
+			e = e->next;
+			printf("|event index: %d|\n", i++);
+			printf("--------EVENT-----------\n");
+		}
+	}
+	else
+		printf(RED"\n----- [ queue is empty ] -- \n"RESET);
 }

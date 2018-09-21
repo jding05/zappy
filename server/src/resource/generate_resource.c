@@ -15,10 +15,11 @@
 /*
 ** for a team to win the game, there should be at least 6 players reach level 8
 ** -> for 6 players to reach max level, the min requirement resources, total:
-** 	 -> linemate 60, deraumere 60, sibur 60, mendiane 30, phiras 36, thystame 6
+** 	 -> linemate 54, deraumere 48, sibur 60, mendiane 30, phiras 36, thystame 6
 **
-** -> Total min resource should be 246, and the portion of each resources are:
-** -> linemate 22%, deraumere 24%, sibur 24% mendiane 12%, phiras 15%, thystame 2%
+** -> Total min resource should be 234, and the portion of each resources are:
+** -> linemate 23%, deraumere 19%, sibur 26%
+**	  mendiane 13%, phiras 15%, thystame 3%
 ** -> the chance to generate the stone resource in one random cell,
 **		it's the percentage value
 ** -> Total per stone resource should be [nb resource per stone * nb_team]
@@ -31,17 +32,17 @@ static int	resource_dropping_rate(void)
 
 	rand_nb = rand() % 100;
 	res = 0;
-	if (rand_nb < 22)
+	if (rand_nb < 23)
 		res = 1;
-	else if (rand_nb < (22 + 24))
+	else if (rand_nb < (23 + 19))
 		res = 2;
-	else if (rand_nb < (22 + 24 + 24))
+	else if (rand_nb < (23 + 19 + 26))
 		res = 3;
-	else if (rand_nb < (22 + 24 + 24 + 12))
+	else if (rand_nb < (23 + 19 + 26 + 13))
 		res = 4;
-	else if (rand_nb < (22 + 24 + 24 + 12 + 15))
+	else if (rand_nb < (23 + 19 + 26 + 13 + 15))
 		res = 5;
-	else if (rand_nb < (22 + 24 + 24 + 12 + 15 + 2))
+	else if (rand_nb < (23 + 19 + 26 + 13 + 15 + 3))
 		res = 6;
 	return (res);
 }
@@ -61,14 +62,13 @@ static int	resource_dropping_rate(void)
 ** 		for one team to win * nb of teams), then we generate the stone.
 */
 
-void	generate_resource(void)
+void		generate_resource(void)
 {
 	int		res;
 	int		food;
 	int		y;
 	int		x;
 
-	// printf(YELLOW"[Generate Resource]\n"RESET);
 	y = rand() % g_env.map_y;
 	x = rand() % g_env.map_x;
 	res = resource_dropping_rate();
@@ -82,5 +82,4 @@ void	generate_resource(void)
 			g_env.res[res]++;
 		}
 	}
-	// printf("[Finish Generate]\n");
 }

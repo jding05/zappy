@@ -13,16 +13,13 @@
 #include "../../include/server.h"
 
 /*
-** cmd_hatch will add to queue after the fork 42 cycle done
+** you don't need specify 16 of the size, when you declare this global,
+**   the compiler will count how many lines in your array, to allocate the size
+**	 for you. so when you test it, it will iterate through the whole array,
+**   also, because you set the NULL terminater, so it will stop either
+**	 1. when it matched or 2. hit the NULL.
+** -> so in both cases, you don't need to write 16 for it
 */
-// you don't need specify 16 of the size, when you declare this global, the compiler
-// will count how many lines in your array, to allocate the size for you.
-// so when you test it, it will iterate thru the whole array,
-// bc you set the NULL terminater, so it will stop either when it matched or hit the NULL.
-// so in both cases, you don't need to write 16 for it
-
-// when you write the actual array size between the brackets in the array declaration
-// -> as a reminder to not exceed the array size
 
 /*
 ** this is combination of declare + define the array

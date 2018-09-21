@@ -12,11 +12,11 @@
 
 #include "../../include/server.h"
 
-char	*ft_strnew(size_t size)
+char		*ft_strnew(size_t size)
 {
 	char	*new;
 
-	if (NULL == (new = (char*)malloc(sizeof(char) * (size + 1))))
+	if (!(new = (char*)malloc(sizeof(char) * (size + 1))))
 		return (NULL);
 	memset(new, 0, size + 1);
 	return (new);

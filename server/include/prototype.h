@@ -50,6 +50,7 @@ void	s_clear_player(int fd);
 void	print_player_info(int fd);
 void	print_team(void);
 void	print_flags(void);
+void	print_queue(void);
 
 /*
 ** read_flags.c
@@ -92,7 +93,6 @@ void	cycle_exec_event_loop(void);
 ** queue.c
 */
 void	enqueue(int fd, char *msg);
-void	print_queue(void);
 
 /*
 ** ******** [ time ] folder *****************************

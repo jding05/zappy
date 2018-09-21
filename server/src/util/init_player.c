@@ -1,6 +1,18 @@
-# include "../../include/server.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_player.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sding <sding@student.42.us.org>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/09/20 21:53:50 by sding             #+#    #+#             */
+/*   Updated: 2018/09/20 21:53:51 by sding            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void	update_live(int fd, int nb_food)
+#include "../../include/server.h"
+
+void		update_live(int fd, int nb_food)
 {
 	printf(BLUE"Player [%d] -> [Update %d live]\n"RESET, fd, nb_food);
 	g_players[fd].live.tv_sec += (g_players[fd].live.tv_usec +
@@ -14,7 +26,7 @@ static void	init_live(int fd)
 	struct timeval	curr_time;
 
 	gettimeofday(&curr_time, NULL);
-    gettimeofday(&(g_players[fd].live), NULL);
+	gettimeofday(&(g_players[fd].live), NULL);
 	g_players[fd].live.tv_sec = curr_time.tv_sec;
 	g_players[fd].live.tv_usec = curr_time.tv_usec;
 	g_players[fd].block_time.tv_sec = curr_time.tv_sec;
@@ -50,8 +62,8 @@ void		s_init_new_player(int fd)
 	g_players[fd].request_nb = 0;
 	memset(g_players[fd].inventory, 0, sizeof(int) * 7);
 	g_players[fd].inventory[1] = 9;
-	g_players[fd].inventory[2] = 10;
-	g_players[fd].inventory[3] = 8;
+	g_players[fd].inventory[2] = 8;
+	g_players[fd].inventory[3] = 10;
 	g_players[fd].inventory[4] = 5;
 	g_players[fd].inventory[5] = 6;
 	g_players[fd].inventory[6] = 1;

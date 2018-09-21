@@ -12,12 +12,12 @@
 
 #include "../../include/server.h"
 
-void	free_malloc(void)
+void				free_malloc(void)
 {
 	return ;
 }
 
-static void	zappy_game(void)
+static void			zappy_game(void)
 {
 	printf(RED"[GAME START ...]\n"RESET);
 	g_player_id = 1;
@@ -29,7 +29,7 @@ static void	zappy_game(void)
 	free_malloc();
 }
 
-static void update_nb_client(void)
+static inline void	update_nb_client(void)
 {
 	int	ind;
 
@@ -49,7 +49,7 @@ static void update_nb_client(void)
 **  10 + nb -t time unit divider (the greater t is, the faster the game will go)
 */
 
-static void	server_usage(void)
+static void			server_usage(void)
 {
 	printf("Usage: ./server -p <port> -x <width> -y <height> ");
 	printf("  -n <team> [<team>] [<team>] ... -c <nb> -t <t>\n");
@@ -60,15 +60,14 @@ static void	server_usage(void)
 	"  -t time unit divider (the greater t is, the faster the game will go)\n");
 }
 
-
-int		main(int argc, char **argv)
+int					main(int argc, char **argv)
 {
 	srand(time(NULL));
 	bzero(&g_env, sizeof(t_env));
 	if (argc < 13 || !read_flags(argc, argv, &g_env))
 	{
 		server_usage();
-		return (0);
+		return (1);
 	}
 	update_nb_client();
 	zappy_game();

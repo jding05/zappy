@@ -12,7 +12,7 @@
 
 #include "../../include/server.h"
 
-void	record_time(t_event *node, int delay_time)
+void		record_time(t_event *node, int delay_time)
 {
 	struct timeval	exec_time;
 
@@ -20,15 +20,19 @@ void	record_time(t_event *node, int delay_time)
 	{
 		exec_time.tv_sec = g_players[node->fd].block_time.tv_sec;
 		exec_time.tv_usec = g_players[node->fd].block_time.tv_usec;
-		exec_time.tv_sec += (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) / 1000000;
-		exec_time.tv_usec = (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) % 1000000;
+		exec_time.tv_sec += (exec_time.tv_usec + delay_time *
+							g_env.ms_pre_tick) / 1000000;
+		exec_time.tv_usec = (exec_time.tv_usec + delay_time *
+							g_env.ms_pre_tick) % 1000000;
 		node->exec_time = exec_time;
 	}
 	else
 	{
 		gettimeofday(&exec_time, NULL);
-		exec_time.tv_sec += (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) / 1000000;
-		exec_time.tv_usec = (exec_time.tv_usec + delay_time * g_env.ms_pre_tick) % 1000000;
+		exec_time.tv_sec += (exec_time.tv_usec + delay_time *
+							g_env.ms_pre_tick) / 1000000;
+		exec_time.tv_usec = (exec_time.tv_usec + delay_time *
+							g_env.ms_pre_tick) % 1000000;
 		node->exec_time = exec_time;
 	}
 }
@@ -46,7 +50,8 @@ inline void	set_block_time(t_event *node, int fd)
 **   return -> 0 if current time is smaller than exec_time ->(we stop)
 */
 
-int		check_event_time(struct timeval *curr_time, struct timeval *exec_time)
+int			check_event_time(struct timeval *curr_time,
+							struct timeval *exec_time)
 {
 	long int x;
 
@@ -58,7 +63,7 @@ int		check_event_time(struct timeval *curr_time, struct timeval *exec_time)
 		return (0);
 }
 
-void	calc_time_spead(void)
+void		calc_time_spead(void)
 {
 	g_env.ms_pre_tick = 1000000 / g_env.time_unit;
 	printf("\n|g_env.ms_pre_tick:%ld\n", g_env.ms_pre_tick);

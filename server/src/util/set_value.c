@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../../include/server.h"
+#include "../../include/server.h"
 
 static int	isnbr_str(char *str)
 {
@@ -26,9 +26,11 @@ static int	isnbr_str(char *str)
 }
 
 /*
-** if the flag nb param is not fully number, set the number to zero during set_value
-** -> so if number = 0, it's not valid game env
-** -> m == 1 or m == 2 -> means maps y, x value, -> we set the max map size is 20 * 20
+** if the flag nb param is not fully number,
+**	set the number to zero during set_value
+** -> so if number = 0, it's not valid game environement variable
+** -> m == 1 or m == 2 -> means maps y, x value,
+**    we set the max map size is 20 * 20
 */
 
 static int	check_flag_limit(int m, int number)
