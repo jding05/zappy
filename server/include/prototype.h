@@ -116,9 +116,9 @@ void	cmd_advance(int fd, char *msg);
 ** broadcast
 */
 void	cmd_broadcast(int fd, char *msg);
-void	calc_four_pos(int pos[4][2], int y, int x);  //-----------> Gaetan: fking ugly, Kwame: wtf is this shit
-int		get_closest_pos(int pos[4][2], int pos_y, int pos_x);
-int		calc_direction(int pos[2], int y, int x, int direction);
+void	calc_four_pos(int *pos, int y, int x);
+int		get_closest_pos(int *pos, int pos_y, int pos_x);
+int		calc_direction(int *pos, int y, int x, int direction);
 void	send_braodcast_msg(int nb_dir, int fd, char *msg);
 void	broadcast(int y, int x, int fd, char *msg);
 

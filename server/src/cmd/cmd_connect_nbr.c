@@ -30,9 +30,9 @@ void	cmd_connect_nbr(int fd, char *msg)
 	(void)msg;
 	printf(CYAN"\n[Exec CONNECT_NBR]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "connect_nbr");
-
-	printf("Player %d, team: %s, nb_client %d\n", fd, g_teams[g_players[fd].team_id].team_name, g_teams[g_players[fd].team_id].nb_client);
-
+	printf("Player %d, team: %s, nb_client %d\n", fd,
+			g_teams[g_players[fd].team_id].team_name,
+			g_teams[g_players[fd].team_id].nb_client);
 	g_players[fd].request_nb--;
 	bzero(g_env.buffer, MSG_SIZE);
 	strcpy(g_env.buffer, RED);
@@ -40,11 +40,9 @@ void	cmd_connect_nbr(int fd, char *msg)
 	strcat(g_env.buffer, str);
 	free(str);
 	strcat(g_env.buffer, RESET);
-
-	printf("Player %d, team: %s, nb_client %d\n", fd, g_teams[g_players[fd].team_id].team_name, g_teams[g_players[fd].team_id].nb_client);
+	printf("Player %d, team: %s, nb_client %d\n", fd,
+			g_teams[g_players[fd].team_id].team_name,
+			g_teams[g_players[fd].team_id].nb_client);
 	printf(CYAN"\n[CONNECT_NBR SUCCESS]\n"RESET);
-	
 	send_data(fd, g_env.buffer, MSG_SIZE);
-
-	// update graphic client regarding player position
 }
