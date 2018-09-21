@@ -97,6 +97,7 @@ char	*get_eggs_data(void)
 			{
 				if (0 < g_teams[i].egg[j].ffd && 1 != g_teams[i].egg[j].hatched)
 				{
+					strcat(eggs, "!,");
 					num_to_str(g_teams[i].egg[j].team_id, &eggs, ",");
 					num_to_str(g_teams[i].egg[j].x, &eggs, ",");
 					num_to_str(g_teams[i].egg[j].y, &eggs, "\n");

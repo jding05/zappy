@@ -33,7 +33,8 @@ def load_source():
         thystame: pygame.transform.scale(pygame.image.load('./textures/item/thystame54.png').convert_alpha(), (item_sz, item_sz))
     }
     dead = pygame.transform.scale(pygame.image.load('./sprites/dead.png').convert_alpha(), (45, 60))
-    return tile, items, dead
+    egg = pygame.transform.scale(pygame.image.load('./textures/item/egg.png').convert_alpha(), (80, 80))
+    return tile, items, dead, egg
 
 def start_game():
 
@@ -75,22 +76,22 @@ def main():
     start_game()
     col, row, s = connect_init()
     window = pygame.display.set_mode((col * tile_sz, row * tile_sz), DOUBLEBUF)
-    tile, items, dead = load_source()
+    tile, items, dead, egg = load_source()
     for r in range(row):
         for c in range(col):
             window.blit(tile, (c * tile_sz, r * tile_sz))
     pygame.display.flip()
-    ALL_PLAYER = {}
+    all_players = {}
     grids = []
     old_data = ''
     while True:
         readable, writable, exceptional = select.select([s], [1], [], 0.1)
         if s in readable:
             data = ''
-            GET_FULL_DATA = False
-            while not GET_FULL_DATA:
+            full_data = False
+            while not full_data:
                 data += s.recv(buf_sz).replace("#", "")
-                GET_FULL_DATA = "@" in data
+                full_data = "@" in data
             if data == old_data or data == '':
                 continue
             data_split = data.split("\n")
@@ -106,19 +107,23 @@ def main():
                 for r in range(row):
                     for c in range(col):
                         grids[r][c].updateitem(int(map_data.pop(0)))
+            eggs = []
+            while data_split[0][0] == '!':
+                egg_data = data_split.pop(0).split(",")
+                eggs.append([int(egg_data[1]), int(egg_data[2]), int(egg_data[3])])
             while data_split[0] != '@' and data_split[0] != '':
                 new_p = Player()
                 new_p.setup(data_split.pop(0))
-                if new_p.id in ALL_PLAYER and new_p.dead != 1 and new_p.left != 1:
-                    grids[ALL_PLAYER[new_p.id].coor[1]][ALL_PLAYER[new_p.id].coor[0]].removeplayer(new_p.id)
-                    ALL_PLAYER[new_p.id].coor = new_p.coor
+                if new_p.id in all_players and new_p.dead != 1 and new_p.left != 1:
+                    grids[all_players[new_p.id].coor[1]][all_players[new_p.id].coor[0]].removeplayer(new_p.id)
+                    all_players[new_p.id].coor = new_p.coor
                     grids[new_p.coor[1]][new_p.coor[0]].addplayer(new_p)
-                elif new_p.id in ALL_PLAYER and new_p.dead == 1:
+                elif new_p.id in all_players and new_p.dead == 1:
                     grids[new_p.coor[1]][new_p.coor[0]].updateplayer(new_p.id, 0, 0, dead)
-                elif new_p.id in ALL_PLAYER and new_p.left == 1:
+                elif new_p.id in all_players and new_p.left == 1:
                     grids[new_p.coor[1]][new_p.coor[0]].removeplayer(new_p.id)
                 else:
-                    ALL_PLAYER[new_p.id] = new_p
+                    all_players[new_p.id] = new_p
                     grids[new_p.coor[1]][new_p.coor[0]].addplayer(new_p)
             for r in range(row):
                 for c in range(col):
@@ -126,6 +131,10 @@ def main():
                     for x in range(7):
                         if grids[r][c].items[x][2] is 1:
                             window.blit(items[x], (c * tile_sz + (tile_sz - item_sz) * grids[r][c].items[x][0], r * tile_sz + (tile_sz - item_sz) * grids[r][c].items[x][1]))
+            olde = None
+            for e in eggs:
+                # if e[1] == olde[1] and e[2] == olde[2]:
+                window.blit(egg, (tile_sz * e[1] + 10, tile_sz * e[2]))
             for r in range(row):
                 for c in range(col):
                     for p in range(len(grids[r][c].players)):
@@ -142,5 +151,6 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     sys.exit(0)
+
 if __name__ == '__main__':
     main()

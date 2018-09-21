@@ -5,6 +5,7 @@ class Grid:
     def __init__(self):
         self.background = None
         self.items = [] #[{x0, y0, 0}, {x1, y1,1}, ...., {x6, y6,1}] # will always be length 7
+        self.eggs = []
         self.players = [] #[x0, y0, object], [x1, y1, object],......] # might be empty
         for i in range(0, 7):
             self.items.append([random.random(), random.random(), 0]) # set up the random xy coordinates and start with no item
