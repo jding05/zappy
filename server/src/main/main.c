@@ -12,23 +12,12 @@
 
 #include "../../include/server.h"
 
-
-
-void	update_live(int fd, int nb_food)
-{
-	printf(BLUE"Player [%d] -> [Update %d live]\n"RESET, fd, nb_food);
-	g_players[fd].live.tv_sec += (g_players[fd].live.tv_usec +
-								nb_food * 126 * g_env.ms_pre_tick) / 1000000;
-	g_players[fd].live.tv_usec = (g_players[fd].live.tv_usec +
-								nb_food * 126 * g_env.ms_pre_tick) % 1000000;
-}
-
 void	free_malloc(void)
 {
 	return ;
 }
 
-void	zappy_game(void)
+static void	zappy_game(void)
 {
 	printf(RED"[GAME START ...]\n"RESET);
 	g_player_id = 1;
@@ -63,12 +52,12 @@ static void update_nb_client(void)
 static void	server_usage(void)
 {
 	printf("Usage: ./server -p <port> -x <width> -y <height> ");
-	printf("-n <team> [<team>] [<team>] ... -c <nb> -t <t>\n");
-	printf("-p port number\n-x world width\n-y world height\n");
-	printf("-n team\\_name\\_1 team\\_name\\_2 ...\n");
-	printf("-c number of clients authorized at the beginning of the game\n");
-	printf("-t time unit divider \
-			(the greater t is, the faster the game will go)\n");
+	printf("  -n <team> [<team>] [<team>] ... -c <nb> -t <t>\n");
+	printf("  -p port number\n  -x world width\n  -y world height\n");
+	printf("  -n team\\_name\\_1 team\\_name\\_2 ...\n");
+	printf("  -c number of clients authorized at the beginning of the game\n");
+	printf(
+	"  -t time unit divider (the greater t is, the faster the game will go)\n");
 }
 
 
@@ -78,7 +67,6 @@ int		main(int argc, char **argv)
 	bzero(&g_env, sizeof(t_env));
 	if (argc < 13 || !read_flags(argc, argv, &g_env))
 	{
-		printf("reading flags\n");
 		server_usage();
 		return (0);
 	}

@@ -18,10 +18,7 @@
 /*
 ** main.c
 */
-
-void	game_loop(void);
 void	free_malloc(void);
-void	update_live(int fd, int food);
 
 /*
 ** ********* [ util ] folder *************************
@@ -42,9 +39,11 @@ char	*ft_strjoin(char const *s1, char const *s2);
 /*
 ** init_player.c
 */
+void	update_live(int fd, int food);
 void	s_init_new_player(int fd);
 void	s_init_egg_player(int fd, int team_id, int egg_id);
 void	s_clear_player(int fd);
+
 /*
 ** print_info
 */
