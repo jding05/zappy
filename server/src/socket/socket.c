@@ -48,7 +48,7 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	socklen_t				addrlen;
 	char					remote_ip[INET6_ADDRSTRLEN];
 	char					*msg;
-	char					map_size[7];
+	char					map_info[9];
 	char					*rv;
 
 	addrlen = sizeof(remoteaddr);
@@ -59,13 +59,16 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 	{
 		g_env.gfx_fd = newfd;
 		rv = ft_itoa(g_env.map_x);
-		strcpy(map_size, rv);
-		strcat(map_size, ",");
+		strcpy(map_info, rv);
+		strcat(map_info, ",");
 		rv = ft_itoa(g_env.map_y);
-		strcat(map_size, rv);
-		strcat(map_size, "@");
+		strcat(map_info, rv);
+		strcat(map_info, ",");
+		rv = ft_itoa(g_env.nb_team);
+		strcat(map_info, rv);
+		strcat(map_info, "@");
 		free(rv);
-		send_data(newfd, map_size, 7);
+		send_data(newfd, map_info, 9);
 		return ;
 	}
 	send_data(newfd, WELCOME, MSG_SIZE);
@@ -106,7 +109,7 @@ void	s_select_recv(int fd, fd_set *master)
 		send_data(fd, RED"Dead player cannot make request"RESET, MSG_SIZE);
 		return ;
 	}
-	if (g_players[fd].request_nb < 11)
+	if (g_players[fd].request_nb < 10)
 	{
 		send_data(fd, "received", MSG_SIZE);
 		if (enqueue(fd, req) == 1)

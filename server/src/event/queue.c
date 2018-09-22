@@ -144,7 +144,6 @@ int			enqueue(int fd, char *msg)
 		if (i == 9 && !cmd_incantation_check(node))
 		{
 			send_data(fd, RED"INCANTATION KO"RESET, MSG_SIZE);
-
 			free(node);
 			return (-1);
 		}

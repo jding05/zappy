@@ -8,6 +8,15 @@ from player import *
 
 buf_sz = 8192
 
+colors = {
+    0:(89, 73, 110),
+    1:(124, 85, 51),
+    2:(113, 178, 114),
+    3:(226, 111, 138),
+    4:(254, 232, 183),
+    5:(109, 108, 124),
+}
+
 tile_sz = 120
 item_sz = 25
 player_sz = 60
@@ -39,6 +48,7 @@ def load_source():
 def start_game():
 
     pygame.init()
+    pygame.font.init()
     pygame.display.set_caption('[Zappy]    gfx client')
     window = pygame.display.set_mode((1200, 923), DOUBLEBUF)
     intro = pygame.image.load('./textures/zappy.png').convert_alpha()
@@ -69,13 +79,25 @@ def connect_init():
     data = s.recv(buf_sz).split("@")[0].split(",")
     col = int(data[0])
     row = int(data[1])
-    return col, row, s
+    nb_team = int(data[2])
+    return col, row, s, nb_team
 
+def draw_progress(window, progress, row, col):
+    myfont = pygame.font.SysFont('Comic Sans MS', 30)
+    for p in range(len(progress)):
+        if progress[p] > 0:
+            fill = progress[p] / 216 * 100
+            print("fill is : " + str(fill))
+            pygame.draw.rect(window, colors[p], [10 + p * tile_sz, row * tile_sz + 10, 100, 50], 2)
+            pygame.draw.rect(window, colors[p], [10 + p * tile_sz, row * tile_sz + 10, fill, 50])
+            text_block = myfont.render(str(round(fill, 1))+"%", False, colors[p])
+            window.blit(text_block, (25 + p * tile_sz, row * tile_sz + 65))
 def main():
 
     start_game()
-    col, row, s = connect_init()
-    window = pygame.display.set_mode((col * tile_sz, row * tile_sz), DOUBLEBUF)
+    col, row, s, nb_team = connect_init()
+    print("number of teams = " + str(nb_team))
+    window = pygame.display.set_mode((col * tile_sz, (row + 1) * tile_sz), DOUBLEBUF)
     tile, items, dead, egg = load_source()
     for r in range(row):
         for c in range(col):
@@ -113,6 +135,7 @@ def main():
             while data_split[0][0] == '!':
                 egg_data = data_split.pop(0).split(",")
                 eggs.append([int(egg_data[1]), int(egg_data[2]), int(egg_data[3])])
+            progress = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             while data_split[0] != '@' and data_split[0] != '':
                 new_p = Player()
                 new_p.setup(data_split.pop(0))
@@ -120,6 +143,7 @@ def main():
                     grids[all_players[new_p.id].coor[1]][all_players[new_p.id].coor[0]].removeplayer(new_p.id)
                     all_players[new_p.id].coor = new_p.coor
                     grids[new_p.coor[1]][new_p.coor[0]].addplayer(new_p)
+                    progress[new_p.team] += new_p.level*(new_p.level + 1)/2
                 elif new_p.id in all_players and new_p.dead == 1:
                     grids[new_p.coor[1]][new_p.coor[0]].updateplayer(new_p.id, 0, 0, dead)
                 elif new_p.id in all_players and new_p.left == 1:
@@ -127,6 +151,8 @@ def main():
                 else:
                     all_players[new_p.id] = new_p
                     grids[new_p.coor[1]][new_p.coor[0]].addplayer(new_p)
+            print(progress)
+            window.fill((0, 0, 0))
             for r in range(row):
                 for c in range(col):
                     window.blit(grids[r][c].background, (c * tile_sz, r * tile_sz))
@@ -144,6 +170,7 @@ def main():
                                     grids[r][c].players[p][2].yshift * tile_sz)
                         window.blit((grids[r][c].players[p][2]).img, (xcoor, ycoor))
             old_data = data
+            draw_progress(window, progress, row, col)
         pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

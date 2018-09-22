@@ -81,10 +81,33 @@ void		s_init_new_player(int fd)
 
 void		s_clear_player(int fd)
 {
+	int i;
+
+	i = -1;
 	if (g_players[fd].dead != 1)
 	{
 		g_teams[g_players[fd].team_id].cplayers--;
 		g_teams[g_players[fd].team_id].nb_client++;
+	}
+	if (g_players[fd].block == 1)
+	{
+		if (g_players[fd].status == 1)
+		{
+			while (++i < MAX_FD && i != fd)
+			{
+				if (g_players[fd].block_time.tv_sec ==
+					g_players[i].block_time.tv_sec &&
+					g_players[fd].block_time.tv_usec ==
+					g_players[i].block_time.tv_usec)
+				{
+					g_players[i].block = 0;
+					g_players[i].status = 0;
+					send_data(i, RED"INCANTATION KO"RESET, MSG_SIZE);
+				}
+			}
+		}
+		else if (g_players[fd].status == 2)
+			g_teams[g_players[fd].team_id].egg_enqueued--;
 	}
 	g_players[fd].fd = 0;
 	g_players[fd].player_id = 0;
@@ -99,4 +122,6 @@ void		s_clear_player(int fd)
 	g_players[fd].dead = 0;
 	g_players[fd].block = 0;
 	g_players[fd].direction = 0;
+	memset(&g_players[fd].live, 0, sizeof(struct timeval));
+	memset(&g_players[fd].block_time, 0, sizeof(struct timeval));
 }

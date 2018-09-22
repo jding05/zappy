@@ -53,8 +53,10 @@ class Grid:
     """
     def addplayer(self, player):
 
-        x = 0.5
-        y = 0.5
+        size1 = 45 + 8 * (player.level - 1)
+        size2 = 60 + 8 * (player.level - 1)
+        x = (120 - size1) / float(120)
+        y = (120 - size2) / float(120)
         self.players.append([x, y, player])
 
     """

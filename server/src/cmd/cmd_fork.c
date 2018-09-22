@@ -52,6 +52,6 @@ void		cmd_fork(int fd, char *msg)
 	enqueue(fd, "hatch");
 	printf(BLUE"Player %d, block: %d\n"RESET, fd, g_players[fd].block);
 	printf(CYAN"\n[FORK SUCCESS]\n"RESET);
-	g_players[fd].status = 0;
 	send_data(fd, RED"FORK OK"RESET, MSG_SIZE);
+	g_players[fd].status = 0;
 }

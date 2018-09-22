@@ -37,7 +37,7 @@ void	exec_event(void)
 		{
 			if (!strcmp(g_cmd[i].cmd, g_env.queue_head->cmd))
 			{
-				if (g_players[g_env.queue_head->fd].alive)
+				if (g_players[g_env.queue_head->fd].alive || i == 12)
 				{
 					g_cmd[i].func(g_env.queue_head->fd, g_env.queue_head->msg);
 					gfx_data = get_gfx_data();

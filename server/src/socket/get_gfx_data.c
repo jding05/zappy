@@ -50,8 +50,6 @@ void	format_player_data(int i, char **players)
 	num_to_str(g_players[i].left, players, ",");
 	num_to_str(g_players[i].level, players, ",");
 	num_to_str(g_players[i].status, players, ",");
-	if (g_players[i].status == 2)
-		g_players[i].status = 0;
 	num_to_str(g_players[i].team_id, players, ",");
 	num_to_str(g_players[i].x, players, ",");
 	num_to_str(g_players[i].y, players, ",");
