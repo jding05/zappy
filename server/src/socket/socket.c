@@ -109,8 +109,8 @@ void	s_select_recv(int fd, fd_set *master)
 	if (g_players[fd].request_nb < 11)
 	{
 		send_data(fd, "received", MSG_SIZE);
-		enqueue(fd, req);
-		g_players[fd].request_nb++;
+		if (enqueue(fd, req) == 1)
+			g_players[fd].request_nb++;
 	}
 	else
 	{

@@ -92,7 +92,7 @@ static int	team_init(char **argv, int i, int nb_team)
 		strcpy(g_teams[ind].team_name, argv[i++]);
 		g_teams[ind].nb_client = g_env.authorized_clients / g_env.nb_team;
 		g_teams[ind].reach_max_level = 0;
-		g_teams[ind].egg_hatched = 0;
+		g_teams[ind].egg_enqueued = 0;
 		g_teams[ind].egg_laid = 0;
 	}
 	if (team_check_repeat(nb_team) == 0)

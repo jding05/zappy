@@ -81,6 +81,11 @@ void		s_init_new_player(int fd)
 
 void		s_clear_player(int fd)
 {
+	if (g_players[fd].dead != 1)
+	{
+		g_teams[g_players[fd].team_id].cplayers--;
+		g_teams[g_players[fd].team_id].nb_client++;
+	}
 	g_players[fd].fd = 0;
 	g_players[fd].player_id = 0;
 	g_players[fd].request_nb = 0;

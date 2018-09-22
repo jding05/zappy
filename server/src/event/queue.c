@@ -121,7 +121,7 @@ static int		check_valid_cmd(char *msg, char *msg_buf, int i)
 **		last. insert the node in priority queue to build an event engine
 */
 
-void			enqueue(int fd, char *msg)
+int			enqueue(int fd, char *msg)
 {
 	char	msg_buf[MSG_SIZE];
 	int		i;
@@ -133,7 +133,7 @@ void			enqueue(int fd, char *msg)
 	if ((i = check_valid_cmd(msg, msg_buf, 0)) > 15)
 	{
 		send_data(fd, RED"invalid command"RESET, MSG_SIZE);
-		return ;
+		return (-1);
 	}
 	printf(YELLOW"cmd_index: [%d], msg: {%s}\n"RESET, i, msg);
 	if (i == 11)
@@ -144,17 +144,19 @@ void			enqueue(int fd, char *msg)
 		if (i == 9 && !cmd_incantation_check(node))
 		{
 			send_data(fd, RED"INCANTATION KO"RESET, MSG_SIZE);
+
 			free(node);
-			return ;
+			return (-1);
 		}
 		if (i == 10)
 		{
-			if (g_teams[g_players[fd].team_id].egg_laid >= EGG_MAX)
+			if (g_teams[g_players[fd].team_id].egg_enqueued >= EGG_MAX)
 			{
 				send_data(fd, RED"FORK KO"RESET, MSG_SIZE);
 				free(node);
-				return ;
+				return (-1);
 			}
+			g_teams[g_players[fd].team_id].egg_enqueued++;
 			g_players[fd].block = 1;
 			g_players[fd].status = 2;
 		}
@@ -166,4 +168,5 @@ void			enqueue(int fd, char *msg)
 	}
 	printf("request nb: %d\n", g_players[fd].request_nb);
 	print_queue();
+	return(1);
 }

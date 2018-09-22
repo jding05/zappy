@@ -47,7 +47,7 @@ void	print_team(void)
 		printf("cplayers [%d]\n", g_teams[i].cplayers);
 		printf("max_players [%d]\n", g_teams[i].max_players);
 		printf("reach_max_level [%d]\n", g_teams[i].reach_max_level);
-		printf("egg_used [%d]\n", g_teams[i].egg_hatched);
+		printf("egg_used [%d]\n", g_teams[i].egg_enqueued);
 		printf("egg_used [%d]\n", g_teams[i].egg_laid);
 		printf("--------------------------------------\n");
 	}

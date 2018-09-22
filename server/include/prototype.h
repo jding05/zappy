@@ -94,7 +94,7 @@ void			cycle_exec_event_loop(void);
 /*
 ** queue.c
 */
-void			enqueue(int fd, char *msg);
+int				enqueue(int fd, char *msg);
 
 /*
 ** ******** [ time ] folder *****************************

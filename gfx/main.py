@@ -91,6 +91,8 @@ def main():
             full_data = False
             while not full_data:
                 data += s.recv(buf_sz).replace("#", "")
+                if not data:
+                    sys.exit(1)
                 full_data = "@" in data
             if data == old_data or data == '':
                 continue
@@ -131,9 +133,7 @@ def main():
                     for x in range(7):
                         if grids[r][c].items[x][2] is 1:
                             window.blit(items[x], (c * tile_sz + (tile_sz - item_sz) * grids[r][c].items[x][0], r * tile_sz + (tile_sz - item_sz) * grids[r][c].items[x][1]))
-            olde = None
             for e in eggs:
-                # if e[1] == olde[1] and e[2] == olde[2]:
                 window.blit(egg, (tile_sz * e[1] + 10, tile_sz * e[2]))
             for r in range(row):
                 for c in range(col):
