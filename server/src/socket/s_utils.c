@@ -66,9 +66,11 @@ char			*get_n_x_y(int fd)
 	memset(msg, 0, 10);
 	rv = ft_itoa(g_teams[g_players[fd].team_id].nb_client);
 	strcpy(msg, rv);
+	free(rv);
 	strcat(msg, "\n");
 	rv = ft_itoa(g_env.map_x);
 	strcat(msg, rv);
+	free(rv);
 	strcat(msg, " ");
 	rv = ft_itoa(g_env.map_y);
 	strcat(msg, rv);

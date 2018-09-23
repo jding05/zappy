@@ -60,24 +60,32 @@ void	s_select_accept(int fd, fd_set *master, int *fdmax)
 		g_env.gfx_fd = newfd;
 		rv = ft_itoa(g_env.map_x);
 		strcpy(map_info, rv);
+		free(rv);
 		strcat(map_info, ",");
 		rv = ft_itoa(g_env.map_y);
 		strcat(map_info, rv);
+		free(rv);
 		strcat(map_info, ",");
 		rv = ft_itoa(g_env.nb_team);
 		strcat(map_info, rv);
-		strcat(map_info, "@");
 		free(rv);
+		strcat(map_info, "@");
 		send_data(newfd, map_info, 9);
+		free(msg);
 		return ;
 	}
 	send_data(newfd, WELCOME, MSG_SIZE);
 	if (s_add_to_team(msg, newfd) == EXIT_FAILURE)
+	{
 		close(newfd);
+		free(msg);
+	}
 	else
 	{
+		free(msg);
 		msg = get_n_x_y(newfd);
 		send_data(newfd, msg, MSG_SIZE);
+		free(msg);
 		FD_SET(newfd, master);
 		if (newfd > *fdmax)
 			*fdmax = newfd;
@@ -102,12 +110,12 @@ void	s_select_recv(int fd, fd_set *master)
 		close(fd);
 		s_clear_player(fd);
 		FD_CLR(fd, master);
-		return ;
+		return (free(req));
 	}
 	if (g_players[fd].dead == 1)
 	{
 		send_data(fd, RED"Dead player cannot make request"RESET, MSG_SIZE);
-		return ;
+		return (free(req));
 	}
 	if (g_players[fd].request_nb < 10)
 	{
@@ -119,6 +127,7 @@ void	s_select_recv(int fd, fd_set *master)
 	{
 		send_data(fd, "request_nb limit", MSG_SIZE);
 	}
+	free(req);
 }
 
 /*

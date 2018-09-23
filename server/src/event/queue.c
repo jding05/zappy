@@ -32,7 +32,7 @@ static t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd)
 	else
 		strcpy(node->msg, msg);
 	record_time(node, delay_time);
-	if (!strcmp(cmd, "fork") || !strcmp(cmd, "incantation"))
+	if (!strcmp(cmd, "fork"))
 		set_block_time(node, node->fd);
 	node->next = NULL;
 	return (node);

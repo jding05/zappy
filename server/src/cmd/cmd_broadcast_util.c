@@ -14,9 +14,12 @@
 
 void	send_broadcast_msg(int nb_dir, int fd, char *msg)
 {
+	char *temp;
+
 	bzero(g_env.buffer, MSG_SIZE);
 	strcpy(g_env.buffer, RED"message ");
-	strcat(g_env.buffer, ft_itoa(nb_dir));
+	strcat(g_env.buffer, (temp = ft_itoa(nb_dir)));
+	free(temp);
 	strcat(g_env.buffer, ",");
 	strcat(g_env.buffer, msg);
 	strcat(g_env.buffer, RESET);

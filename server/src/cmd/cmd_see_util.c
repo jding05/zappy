@@ -31,6 +31,7 @@ static void	find_cell_player(int y, int x, int flag, int fd)
 				strcat(g_env.buffer, CYAN);
 				strcat(g_env.buffer, "player");
 				strcat(g_env.buffer, (id = ft_itoa(i)));
+				free(id);
 				strcat(g_env.buffer, RESET);
 			}
 		}

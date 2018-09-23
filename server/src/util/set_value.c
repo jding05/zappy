@@ -36,26 +36,17 @@ static int	isnbr_str(char *str)
 static int	check_flag_limit(int m, int number)
 {
 	if (m == 0 && (number < 1024 || number > 49151 || number <= 0))
-	{
-		printf("The server port range should be within 1024 to 49151\n");
-		return (0);
-	}
+		return (!printf("Server port range should be within 1024 to 49151\n"));
 	if ((m == 1 || m == 2) && (number > MAP_XY || number <= 0))
-	{
-		printf("The server map size y or x value cannot exceed %d\n", MAP_XY);
-		return (0);
-	}
+		return (!printf("Map size y or x value cannot exceed %d\n", MAP_XY));
+	if ((m == 1) && (number < g_env.nb_team))
+		return (!printf("Map x value cannot be less than number of team %s\n",
+				"(for graphics progress bar)"));
 	if (m == 4 && (number > MAX_FD - 4 || number <= 0))
-	{
-		printf("The server authorized_client cannot exceed %d\n", (MAX_FD - 4));
-		return (0);
-	}
+		return (!printf("Authorized client limit cannot exceed %d\n",
+				(MAX_FD - 4)));
 	if (m == 5 && (number > MAX_TIME_UNIT || number <= 0))
-	{
-		printf("The server time unit should be between 1 to %d\n",
-		MAX_TIME_UNIT);
-		return (0);
-	}
+		return (!printf("Time unit should be within 1 to %d\n", MAX_TIME_UNIT));
 	return (1);
 }
 

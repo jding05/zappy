@@ -93,12 +93,12 @@ void		s_clear_player(int fd)
 	{
 		if (g_players[fd].status == 1)
 		{
-			while (++i < MAX_FD && i != fd)
+			while (++i < MAX_FD)
 			{
 				if (g_players[fd].block_time.tv_sec ==
 					g_players[i].block_time.tv_sec &&
 					g_players[fd].block_time.tv_usec ==
-					g_players[i].block_time.tv_usec)
+					g_players[i].block_time.tv_usec  && i != fd)
 				{
 					g_players[i].block = 0;
 					g_players[i].status = 0;
