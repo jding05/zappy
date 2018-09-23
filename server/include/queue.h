@@ -21,6 +21,7 @@
 typedef struct		s_event
 {
 	int				fd;
+	int				player_id;
 	char			cmd[CMD_LEN];
 	char			msg[MAX_MSG];
 	struct timeval	exec_time;

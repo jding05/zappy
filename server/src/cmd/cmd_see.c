@@ -140,12 +140,13 @@ static void	see_west(int level, int y, int x, int fd)
 	}
 }
 
-void		cmd_see(int fd, char *msg)
+void		cmd_see(int fd, char *msg, int player_id)
 {
 	(void)msg;
 	printf(CYAN"\n[Exec SEE]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "see");
-	printf("current level: %d\n", g_players[fd].level);
+	if (player_id != g_players[fd].player_id)
+		return (error_return("player_id does not match"));
 	g_players[fd].request_nb--;
 	bzero(g_env.buffer, MSG_SIZE);
 	strcpy(g_env.buffer, BRED"{");

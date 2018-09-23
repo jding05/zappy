@@ -42,11 +42,13 @@ static void	store_inventory_to_buffer(int fd)
 	free(str);
 }
 
-void		cmd_inventory(int fd, char *msg)
+void		cmd_inventory(int fd, char *msg, int player_id)
 {
 	(void)msg;
 	printf(CYAN"\n[Exec INVENTORY]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "inventory");
+	if (player_id != g_players[fd].player_id)
+		return (error_return("player_id does not match"));
 	bzero(g_env.buffer, MSG_SIZE);
 	strcpy(g_env.buffer, RED"{");
 	store_inventory_to_buffer(fd);

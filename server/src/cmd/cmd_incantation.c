@@ -12,7 +12,7 @@
 
 #include "../../include/server.h"
 
-void	cmd_incantation(int fd, char *msg)
+void	cmd_incantation(int fd, char *msg, int player_id)
 {
 	int		i;
 	int		count;
@@ -23,7 +23,8 @@ void	cmd_incantation(int fd, char *msg)
 	(void)msg;
 	printf(CYAN"\n[Exec INCANTATION]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "incantation");
-	printf("players %d, level %d\n", fd, g_players[fd].level);
+	if (player_id != g_players[fd].player_id)
+		return (error_return("player_id does not match"));
 	g_players[fd].request_nb--;
 	i = -1;
 	count = 0;
@@ -38,7 +39,6 @@ void	cmd_incantation(int fd, char *msg)
 	if (count >= (nb = level_require(level)) && nb > 0)
 		level_up_and_unblock(count, fds);
 	printf(CYAN"\n[INCANTATION SUCCESS]\n"RESET);
-	printf("players %d, level %d\n", fd, g_players[fd].level);
 }
 
 void	level_up_and_unblock(int count, int fds[MAX_FD])

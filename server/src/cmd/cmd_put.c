@@ -16,12 +16,14 @@
 
 #include "../../include/server.h"
 
-void	cmd_put(int fd, char *msg)
+void	cmd_put(int fd, char *msg, int player_id)
 {
 	int res_i;
 
 	printf(CYAN"\n[Exec PUT]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s %s]\n"RESET, fd, "put", msg);
+	if (player_id != g_players[fd].player_id)
+		return (error_return("player_id does not match"));
 	g_players[fd].request_nb--;
 	if ((res_i = check_resource(msg)) == 7 || res_i == 0 ||
 			g_players[fd].inventory[res_i] == 0)

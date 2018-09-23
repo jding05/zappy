@@ -39,7 +39,8 @@ void	exec_event(void)
 			{
 				if (g_players[g_env.queue_head->fd].alive || i == 12)
 				{
-					g_cmd[i].func(g_env.queue_head->fd, g_env.queue_head->msg);
+					g_cmd[i].func(g_env.queue_head->fd, g_env.queue_head->msg,
+									g_env.queue_head->player_id);
 					gfx_data = get_gfx_data();
 					if (g_env.gfx_fd > 0)
 						send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);

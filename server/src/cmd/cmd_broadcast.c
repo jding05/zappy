@@ -173,10 +173,12 @@ static void	broadcast(int y, int x, int fd, char *msg)
 **	the sound between the transmitter to the player for which we calculate
 */
 
-void		cmd_broadcast(int fd, char *msg)
+void		cmd_broadcast(int fd, char *msg, int player_id)
 {
 	printf(CYAN"\n[Exec BROADCAST]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s <%s>]\n"RESET, fd, "broadcast", msg);
+	if (player_id != g_players[fd].player_id)
+		return (error_return("player_id does not match"));
 	g_players[fd].request_nb--;
 	broadcast(g_players[fd].y, g_players[fd].x, fd, msg);
 	printf("players %d, pos-> y: %d x: %d d: %d\n",

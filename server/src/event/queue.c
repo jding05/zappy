@@ -15,19 +15,26 @@
 static t_event	*init_event_node(int fd, char *msg, int delay_time, char *cmd)
 {
 	t_event	*node;
+	char	*str;
 
 	node = (t_event *)malloc(sizeof(t_event));
 	bzero(node, sizeof(t_event));
 	node->fd = fd;
+	node->player_id = g_players[fd].player_id;
 	bzero(node->cmd, CMD_LEN);
 	strcpy(node->cmd, cmd);
 	bzero(node->msg, MAX_MSG);
-	strcpy(node->msg, msg);
+	if (!strcmp(cmd, "hatch"))
+	{
+		strcpy(node->msg, (str = ft_itoa(g_players[fd].team_id)));
+		free(str);
+	}
+	else
+		strcpy(node->msg, msg);
 	record_time(node, delay_time);
 	if (!strcmp(cmd, "fork") || !strcmp(cmd, "incantation"))
 		set_block_time(node, node->fd);
 	node->next = NULL;
-	printf("\n|node->fd %d|\n", node->fd);
 	return (node);
 }
 
@@ -137,7 +144,7 @@ int			enqueue(int fd, char *msg)
 	}
 	printf(YELLOW"cmd_index: [%d], msg: {%s}\n"RESET, i, msg);
 	if (i == 11)
-		cmd_connect_nbr(fd, msg);
+		cmd_connect_nbr(fd, msg, g_players[fd].player_id);
 	else
 	{
 		node = init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd);

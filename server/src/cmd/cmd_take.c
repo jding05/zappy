@@ -16,12 +16,14 @@
 
 #include "../../include/server.h"
 
-void	cmd_take(int fd, char *msg)
+void	cmd_take(int fd, char *msg, int player_id)
 {
 	int res_i;
 
 	printf(CYAN"\n[Exec TAKE]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s %s]"RESET, fd, "take", msg);
+	if (player_id != g_players[fd].player_id)
+		return (error_return("player_id does not match"));
 	g_players[fd].request_nb--;
 	if ((res_i = check_resource(msg)) == 7 ||
 			g_env.map[g_players[fd].y][g_players[fd].x][res_i] == 0)

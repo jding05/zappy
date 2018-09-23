@@ -65,6 +65,11 @@ int				read_flags(int argc, char **argv, t_env *env);
 int				set_value(char **flag, int i, int m, t_env *env);
 
 /*
+** error_return.c
+*/
+void			error_return(char *msg);
+
+/*
 ** ******** [ resource ] folder *************************
 ** generate_resource.c
 */
@@ -113,12 +118,12 @@ void			calc_time_spead(void);
 /*
 ** advance
 */
-void			cmd_advance(int fd, char *msg);
+void			cmd_advance(int fd, char *msg, int player_id);
 
 /*
 ** broadcast
 */
-void			cmd_broadcast(int fd, char *msg);
+void			cmd_broadcast(int fd, char *msg, int player_id);
 
 /*
 ** broadcast util
@@ -128,22 +133,22 @@ void			send_broadcast_msg(int nb_dir, int fd, char *msg);
 /*
 ** connect_nbr
 */
-void			cmd_connect_nbr(int fd, char *msg);
+void			cmd_connect_nbr(int fd, char *msg, int player_id);
 
 /*
 ** fork
 */
-void			cmd_fork(int fd, char *msg);
+void			cmd_fork(int fd, char *msg, int player_id);
 
 /*
 ** hatch
 */
-void			cmd_hatch(int fd, char *msg);
+void			cmd_hatch(int fd, char *msg, int player_id);
 
 /*
 ** incantation
 */
-void			cmd_incantation(int fd, char *msg);
+void			cmd_incantation(int fd, char *msg, int player_id);
 void			level_up_and_unblock(int count, int fds[MAX_FD]);
 int				cmd_incantation_check(t_event *node);
 void			blocking(int count, int fds[MAX_FD], t_event *node);
@@ -159,33 +164,33 @@ int				level_require(int level);
 /*
 ** inventory
 */
-void			cmd_inventory(int fd, char *msg);
+void			cmd_inventory(int fd, char *msg, int player_id);
 
 /*
 ** kick
 */
-void			cmd_kick(int fd, char *msg);
+void			cmd_kick(int fd, char *msg, int player_id);
 void			update_player_pos(int fd);
 
 /*
 ** left
 */
-void			cmd_left(int fd, char *msg);
+void			cmd_left(int fd, char *msg, int player_id);
 
 /*
 ** put
 */
-void			cmd_put(int fd, char *msg);
+void			cmd_put(int fd, char *msg, int player_id);
 
 /*
 ** right
 */
-void			cmd_right(int fd, char *msg);
+void			cmd_right(int fd, char *msg, int player_id);
 
 /*
 ** see
 */
-void			cmd_see(int fd, char *msg);
+void			cmd_see(int fd, char *msg, int player_id);
 
 /*
 ** see_util
@@ -198,7 +203,7 @@ void			print_cell_value(int y, int x, int fd);
 ** take
 */
 int				check_resource(char *msg);
-void			cmd_take(int fd, char *msg);
+void			cmd_take(int fd, char *msg, int player_id);
 
 /*
 ** ************* [ socket ] folder *********************************

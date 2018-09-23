@@ -16,11 +16,13 @@
 */
 #include "../../include/server.h"
 
-void	cmd_left(int fd, char *msg)
+void	cmd_left(int fd, char *msg, int player_id)
 {
 	(void)msg;
 	printf(CYAN"\n[Exec LEFT]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "left");
+	if (player_id != g_players[fd].player_id)
+		return (error_return("player_id does not match"));
 	if (--(g_players[fd].direction) < NORTH)
 		g_players[fd].direction = WEST;
 	g_players[fd].request_nb--;

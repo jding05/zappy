@@ -25,15 +25,15 @@
 
 #include "../../include/server.h"
 
-void		cmd_advance(int fd, char *msg)
+void		cmd_advance(int fd, char *msg, int player_id)
 {
 	int	d;
 
 	(void)msg;
 	printf(CYAN"\n[Exec ADVANCE]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]"RESET, fd, "advance");
-	printf("players %d, pos-> y: %d x: %d d: %d\n",
-			fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
+	if (player_id != g_players[fd].player_id)
+		return (error_return("player_id does not match"));
 	d = g_players[fd].direction;
 	if (d == NORTH)
 		g_players[fd].y -= 1;
@@ -45,8 +45,6 @@ void		cmd_advance(int fd, char *msg)
 		g_players[fd].x -= 1;
 	update_player_pos(fd);
 	g_players[fd].request_nb--;
-	printf("players %d, pos-> y: %d x: %d d: %d\n",
-			fd, g_players[fd].y, g_players[fd].x, g_players[fd].direction);
 	printf(CYAN"\n[ADVANCE SUCCESS]\n"RESET);
 	send_data(fd, RED"ADVANCE OK"RESET, MSG_SIZE);
 }

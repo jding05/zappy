@@ -110,11 +110,13 @@ static int	find_cell_players(int y, int x, int direction, int fd)
 	return (check == 1 ? 1 : 0);
 }
 
-void		cmd_kick(int fd, char *msg)
+void		cmd_kick(int fd, char *msg, int player_id)
 {
 	(void)msg;
 	printf(CYAN"\n[Exec KICK]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "kick");
+	if (player_id != g_players[fd].player_id)
+		return (error_return("player_id does not match"));
 	g_players[fd].request_nb--;
 	if (find_cell_players(g_players[fd].y, g_players[fd].x,
 			g_players[fd].direction, fd))

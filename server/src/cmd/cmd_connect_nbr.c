@@ -23,11 +23,12 @@
 
 #include "../../include/server.h"
 
-void	cmd_connect_nbr(int fd, char *msg)
+void	cmd_connect_nbr(int fd, char *msg, int player_id)
 {
 	char	*str;
 
 	(void)msg;
+	(void)player_id;
 	printf(CYAN"\n[Exec CONNECT_NBR]\n"RESET);
 	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "connect_nbr");
 	printf("Player %d, team: %s, nb_client %d\n", fd,

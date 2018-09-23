@@ -17,14 +17,15 @@
 ** 		after 600/t waiting for the egg to hatch,
 */
 
-void	cmd_hatch(int fd, char *msg)
+void	cmd_hatch(int fd, char *msg, int player_id)
 {
 	int	id;
 
-	id = g_players[fd].team_id;
-	(void)msg;
+	(void)fd;
+	(void)player_id;
+	id = atoi(msg);
 	printf(CYAN"\n[Exec HATCH]\n"RESET);
-	printf(BLUE"Player [%d] -> [%s]\n"RESET, fd, "hatch");
+	printf(BLUE"Team [%s] -> [hatched an egg]\n"RESET, g_teams[id].team_name);
 	g_teams[id].egg[g_teams[id].egg_hatched].hatched = 1;
 	g_teams[id].egg_hatched++;
 	g_teams[id].nb_client++;
