@@ -29,26 +29,26 @@ static void	send_kick_msg(int fd, int direction)
 {
 	if (direction == NORTH)
 	{
-		printf(RED"player %d, moving SOUTH\n"RESET, fd);
-		if (!send_data(fd, RED"moving SOUTH"RESET, MSG_SIZE))
-			perror("Send [kick]");
-	}
-	else if (direction == EAST)
-	{
-		printf(RED"player %d, moving WEST\n"RESET, fd);
-		if (!send_data(fd, RED"moving WEST"RESET, MSG_SIZE))
-			perror("Send [kick]");
-	}
-	else if (direction == SOUTH)
-	{
 		printf(RED"player %d, moving NORTH\n"RESET, fd);
 		if (!send_data(fd, RED"moving NORTH"RESET, MSG_SIZE))
 			perror("Send [kick]");
 	}
-	else if (direction == WEST)
+	else if (direction == EAST)
 	{
 		printf(RED"player %d, moving EAST\n"RESET, fd);
 		if (!send_data(fd, RED"moving EAST"RESET, MSG_SIZE))
+			perror("Send [kick]");
+	}
+	else if (direction == SOUTH)
+	{
+		printf(RED"player %d, moving SOUTH\n"RESET, fd);
+		if (!send_data(fd, RED"moving SOUTH"RESET, MSG_SIZE))
+			perror("Send [kick]");
+	}
+	else if (direction == WEST)
+	{
+		printf(RED"player %d, moving WEST\n"RESET, fd);
+		if (!send_data(fd, RED"moving WEST"RESET, MSG_SIZE))
 			perror("Send [kick]");
 	}
 }

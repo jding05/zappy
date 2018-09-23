@@ -72,7 +72,7 @@ def start_game_page (screen):
             if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
                 start += 1
                 connect_game_server()
-                picture = pygame.transform.scale(pygame.image.load('./image/usage/usage_white_word_color.png'), (600, 400))
+                picture = pygame.transform.scale(pygame.image.load('./image/usage/usage_white_word_color.png'), (640, 480))
                 screen.blit(picture, (0, 0))  # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
             elif event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                 sys.exit(0)
@@ -123,8 +123,8 @@ def main ():
     pygame.display.set_caption('[Zappy]    player controller')
 
     # set the size of the window, and show the starting page
-    screen = pygame.display.set_mode((600, 400))
-    picture = pygame.transform.scale(pygame.image.load('./image/playtest.png'), (600, 400))
+    screen = pygame.display.set_mode((640, 480))
+    picture = pygame.transform.scale(pygame.image.load('./image/playtest.png'), (640, 480))
     screen.blit(picture, (0,0)) # 100, 50 -> is the starty point (x, y) from the top left (0, 0)
     pygame.display.update()
 
@@ -217,7 +217,7 @@ def main ():
                             data = msg_padding ("kick")
                         ###########################################################
                              # cheating -> kick and advance
-                        elif event.key == pygame.K_a:
+                        elif event.key == pygame.K_HOME:
                             cheating_data1 = msg_padding ("kick")
                             s.send(cheating_data1)
 
@@ -251,11 +251,12 @@ def main ():
                         elif event.key == pygame.K_SPACE:
                             data = msg_padding ("connect_nbr")
                         elif event.key == pygame.K_RSHIFT:
-                            picture = pygame.transform.scale(pygame.image.load('./image/level_requirement.png'), (600, 400))
-                            screen.blit(picture, (0, 0))
+                            picture = pygame.image.load('./image/level_requirement.png')
+                            screen.fill((0,0,0))
+                            screen.blit(picture, (0, 91))
                             data = msg_padding ("connect_nbr")
                         elif event.key == pygame.K_LSHIFT:
-                            picture = pygame.transform.scale(pygame.image.load('./image/usage/usage_white_word_color.png'), (600, 400))
+                            picture = pygame.transform.scale(pygame.image.load('./image/usage/usage_white_word_color.png'), (640, 480))
                             screen.blit(picture, (0, 0))
                             data = msg_padding ("connect_nbr")
                         else:
