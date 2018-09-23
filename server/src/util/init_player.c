@@ -12,15 +12,6 @@
 
 #include "../../include/server.h"
 
-void		update_live(int fd, int nb_food)
-{
-	printf(BLUE"Player [%d] -> [Update %d live]\n"RESET, fd, nb_food);
-	g_players[fd].live.tv_sec += (g_players[fd].live.tv_usec +
-								nb_food * 126 * g_env.ms_pre_tick) / 1000000;
-	g_players[fd].live.tv_usec = (g_players[fd].live.tv_usec +
-								nb_food * 126 * g_env.ms_pre_tick) % 1000000;
-}
-
 static void	init_live(int fd)
 {
 	struct timeval	curr_time;
@@ -79,16 +70,11 @@ void		s_init_new_player(int fd)
 	init_live(fd);
 }
 
-void		s_clear_player(int fd)
+static void	s_clear_unblock(int fd)
 {
 	int i;
 
 	i = -1;
-	if (g_players[fd].dead != 1)
-	{
-		g_teams[g_players[fd].team_id].cplayers--;
-		g_teams[g_players[fd].team_id].nb_client++;
-	}
 	if (g_players[fd].block == 1)
 	{
 		if (g_players[fd].status == 1)
@@ -109,6 +95,16 @@ void		s_clear_player(int fd)
 		else if (g_players[fd].status == 2)
 			g_teams[g_players[fd].team_id].egg_enqueued--;
 	}
+}
+
+void		s_clear_player(int fd)
+{
+	if (g_players[fd].dead != 1)
+	{
+		g_teams[g_players[fd].team_id].cplayers--;
+		g_teams[g_players[fd].team_id].nb_client++;
+	}
+	s_clear_unblock(fd);
 	g_players[fd].fd = 0;
 	g_players[fd].player_id = 0;
 	g_players[fd].request_nb = 0;

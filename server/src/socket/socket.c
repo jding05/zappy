@@ -37,100 +37,6 @@ int		s_create_socket(char *port, int reuse)
 }
 
 /*
-** if a fd == listener, i.e. there is a new connection request, accept and
-** connect
-*/
-
-void	s_select_accept(int fd, fd_set *master, int *fdmax)
-{
-	int						newfd;
-	struct sockaddr_storage remoteaddr;
-	socklen_t				addrlen;
-	char					remote_ip[INET6_ADDRSTRLEN];
-	char					*msg;
-	char					map_info[9];
-	char					*rv;
-
-	addrlen = sizeof(remoteaddr);
-	if ((newfd = accept(fd, (struct sockaddr *)&remoteaddr, &addrlen)) == -1)
-		perror("accept");
-	msg = recv_data(newfd, MSG_SIZE);
-	if (0 == strcmp(msg, "gfx"))
-	{
-		g_env.gfx_fd = newfd;
-		rv = ft_itoa(g_env.map_x);
-		strcpy(map_info, rv);
-		free(rv);
-		strcat(map_info, ",");
-		rv = ft_itoa(g_env.map_y);
-		strcat(map_info, rv);
-		free(rv);
-		strcat(map_info, ",");
-		rv = ft_itoa(g_env.nb_team);
-		strcat(map_info, rv);
-		free(rv);
-		strcat(map_info, "@");
-		send_data(newfd, map_info, 9);
-		free(msg);
-		return ;
-	}
-	send_data(newfd, WELCOME, MSG_SIZE);
-	if (s_add_to_team(msg, newfd) == EXIT_FAILURE)
-	{
-		close(newfd);
-		free(msg);
-	}
-	else
-	{
-		free(msg);
-		msg = get_n_x_y(newfd);
-		send_data(newfd, msg, MSG_SIZE);
-		free(msg);
-		FD_SET(newfd, master);
-		if (newfd > *fdmax)
-			*fdmax = newfd;
-		printf("new connection from %s on socket %d\n",
-				inet_ntop(remoteaddr.ss_family,
-					get_in_addr((struct sockaddr*)&remoteaddr),
-					remote_ip, INET6_ADDRSTRLEN), newfd);
-	}
-}
-
-/*
-** if a fd != listener, i.e. it's already connected to the server,
-** receive the buffer then store the data into structs.
-*/
-
-void	s_select_recv(int fd, fd_set *master)
-{
-	char	*req;
-
-	if (!(req = recv_data(fd, MSG_SIZE)))
-	{
-		close(fd);
-		s_clear_player(fd);
-		FD_CLR(fd, master);
-		return (free(req));
-	}
-	if (g_players[fd].dead == 1)
-	{
-		send_data(fd, RED"Dead player cannot make request"RESET, MSG_SIZE);
-		return (free(req));
-	}
-	if (g_players[fd].request_nb < 10)
-	{
-		send_data(fd, "received", MSG_SIZE);
-		if (enqueue(fd, req) == 1)
-			g_players[fd].request_nb++;
-	}
-	else
-	{
-		send_data(fd, "request_nb limit", MSG_SIZE);
-	}
-	free(req);
-}
-
-/*
 ** keep iterating through all select fds
 */
 
@@ -154,7 +60,7 @@ void	s_select_cycles(fd_set *master, fd_set *read_fds, int *fdmax, int lfd)
 			{
 				if (i == lfd)
 					s_select_accept(i, master, fdmax);
-				else if (i != g_env.gfx_fd)
+				else
 					s_select_recv(i, master);
 			}
 		}

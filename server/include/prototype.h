@@ -40,7 +40,6 @@ char			*ft_strjoin(char const *s1, char const *s2);
 /*
 ** init_player.c
 */
-void			update_live(int fd, int food);
 void			s_init_new_player(int fd);
 void			s_init_egg_player(int fd, int team_id, int egg_id);
 void			s_clear_player(int fd);
@@ -202,6 +201,7 @@ void			print_cell_value(int y, int x, int fd);
 /*
 ** take
 */
+void			update_live(int fd, int food);
 int				check_resource(char *msg);
 void			cmd_take(int fd, char *msg, int player_id);
 
@@ -213,9 +213,14 @@ void			cmd_take(int fd, char *msg, int player_id);
 int				setup_socket(void);
 void			s_select_cycles(fd_set *master, fd_set *read_fds,
 								int *fdmax, int lfd);
+int				s_create_socket(char *port, int reuse);
+
+/*
+** accept_recv.c
+*/
+
 void			s_select_recv(int fd, fd_set *master);
 void			s_select_accept(int fd, fd_set *master, int *fdmax);
-int				s_create_socket(char *port, int reuse);
 
 /*
 ** send_recv

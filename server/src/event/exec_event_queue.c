@@ -20,12 +20,23 @@
 ** xxx ** but fixed one player blocking issue
 */
 
-void	exec_event(void)
+static void	exec_norm(int i)
+{
+	char	*gfx_data;
+
+	g_cmd[i].func(g_env.queue_head->fd, g_env.queue_head->msg,
+					g_env.queue_head->player_id);
+	gfx_data = get_gfx_data();
+	if (g_env.gfx_fd > 0)
+		send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);
+	free(gfx_data);
+}
+
+void		exec_event(void)
 {
 	int				i;
 	struct timeval	now;
 	t_event			*tmp;
-	char			*gfx_data;
 
 	if (!g_env.queue_head)
 		return ;
@@ -38,15 +49,8 @@ void	exec_event(void)
 			if (!strcmp(g_cmd[i].cmd, g_env.queue_head->cmd))
 			{
 				if (g_players[g_env.queue_head->fd].alive || i == 12)
-				{
-					g_cmd[i].func(g_env.queue_head->fd, g_env.queue_head->msg,
-									g_env.queue_head->player_id);
-					gfx_data = get_gfx_data();
-					if (g_env.gfx_fd > 0)
-						send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);
-					generate_resource();
-					free(gfx_data);
-				}
+					exec_norm(i);
+				generate_resource();
 				tmp = g_env.queue_head;
 				g_env.queue_head = g_env.queue_head->next;
 				free(tmp);

@@ -1,6 +1,6 @@
 SRV = server
 INCLUDES = -I./include
-CFLAGS += -Wall -Werror -Wextra# -g -fsanitize=address
+CFLAGS += -Wall -Werror -Wextra -g #-fsanitize=address
 INCLUDES = -I./inc
 CC = gcc
 
@@ -45,7 +45,7 @@ SRC_CMD =	cmd_advance cmd_broadcast cmd_broadcast_util cmd_connect_nbr \
 
 SRC_EVENT =	exec_event_queue queue
 
-SRC_SOCKET = socket send_recv s_utils get_gfx_data
+SRC_SOCKET = socket send_recv s_utils get_gfx_data accept_recv
 
 SRC_GLOBAL = global
 

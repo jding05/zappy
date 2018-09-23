@@ -16,6 +16,15 @@
 
 #include "../../include/server.h"
 
+void	update_live(int fd, int nb_food)
+{
+	printf(BLUE"Player [%d] -> [Update %d live]\n"RESET, fd, nb_food);
+	g_players[fd].live.tv_sec += (g_players[fd].live.tv_usec +
+								nb_food * 126 * g_env.ms_pre_tick) / 1000000;
+	g_players[fd].live.tv_usec = (g_players[fd].live.tv_usec +
+								nb_food * 126 * g_env.ms_pre_tick) % 1000000;
+}
+
 void	cmd_take(int fd, char *msg, int player_id)
 {
 	int res_i;

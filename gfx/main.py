@@ -77,6 +77,8 @@ def connect_init():
         data += '#'
     s.send(data)
     data = s.recv(buf_sz).split("@")[0].split(",")
+    if not data[0]:
+        sys.exit(1)
     col = int(data[0])
     row = int(data[1])
     nb_team = int(data[2])
@@ -87,7 +89,6 @@ def draw_progress(window, progress, row, col):
     for p in range(len(progress)):
         if progress[p] > 0:
             fill = progress[p] / 216 * 100
-            print("fill is : " + str(fill))
             pygame.draw.rect(window, colors[p], [10 + p * tile_sz, row * tile_sz + 10, 100, 50], 2)
             pygame.draw.rect(window, colors[p], [10 + p * tile_sz, row * tile_sz + 10, fill, 50])
             text_block = myfont.render(str(round(fill, 1))+"%", False, colors[p])
@@ -96,7 +97,6 @@ def main():
 
     start_game()
     col, row, s, nb_team = connect_init()
-    print("number of teams = " + str(nb_team))
     window = pygame.display.set_mode((col * tile_sz, (row + 1) * tile_sz), DOUBLEBUF)
     tile, items, dead, egg = load_source()
     for r in range(row):
@@ -151,7 +151,6 @@ def main():
                 else:
                     all_players[new_p.id] = new_p
                     grids[new_p.coor[1]][new_p.coor[0]].addplayer(new_p)
-            print(progress)
             window.fill((0, 0, 0))
             for r in range(row):
                 for c in range(col):

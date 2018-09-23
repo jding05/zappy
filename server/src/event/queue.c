@@ -114,6 +114,33 @@ static int		check_valid_cmd(char *msg, char *msg_buf, int i)
 	return (18);
 }
 
+static int 	enqueue_norm(char *msg_buf, int fd, int i)
+{
+	t_event *node;
+
+	node = init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd);
+	if (i == 9 && !cmd_incantation_check(node))
+	{
+		send_data(fd, RED"INCANTATION KO"RESET, MSG_SIZE);
+		free(node);
+		return (-1);
+	}
+	if (i == 10)
+	{
+		if (g_teams[g_players[fd].team_id].egg_enqueued >= EGG_MAX)
+		{
+			send_data(fd, RED"FORK KO"RESET, MSG_SIZE);
+			free(node);
+			return (-1);
+		}
+		g_teams[g_players[fd].team_id].egg_enqueued++;
+		g_players[fd].block = 1;
+		g_players[fd].status = 2;
+	}
+	insert(node);
+	return (1);
+}
+
 /*
 ** [ enqueue ] the priority queue
 ** 		first. check which cmd index it is from check_valid_cmd()
@@ -128,51 +155,30 @@ static int		check_valid_cmd(char *msg, char *msg_buf, int i)
 **		last. insert the node in priority queue to build an event engine
 */
 
-int			enqueue(int fd, char *msg)
+int				enqueue(int fd, char *msg)
 {
 	char	msg_buf[MSG_SIZE];
 	int		i;
-	t_event *node;
 	char	*gfx_data;
 
 	i = 0;
 	bzero(msg_buf, MSG_SIZE);
 	if ((i = check_valid_cmd(msg, msg_buf, 0)) > 15)
-	{
-		send_data(fd, RED"invalid command"RESET, MSG_SIZE);
-		return (-1);
-	}
+		return (send_data(fd, RED"invalid command"RESET, MSG_SIZE));
 	printf(YELLOW"cmd_index: [%d], msg: {%s}\n"RESET, i, msg);
 	if (i == 11)
 		cmd_connect_nbr(fd, msg, g_players[fd].player_id);
 	else
 	{
-		node = init_event_node(fd, msg_buf, g_cmd[i].delay_time, g_cmd[i].cmd);
-		if (i == 9 && !cmd_incantation_check(node))
-		{
-			send_data(fd, RED"INCANTATION KO"RESET, MSG_SIZE);
-			free(node);
+		if (enqueue_norm(msg_buf, fd, i) == -1)
 			return (-1);
-		}
-		if (i == 10)
+		else
 		{
-			if (g_teams[g_players[fd].team_id].egg_enqueued >= EGG_MAX)
-			{
-				send_data(fd, RED"FORK KO"RESET, MSG_SIZE);
-				free(node);
-				return (-1);
-			}
-			g_teams[g_players[fd].team_id].egg_enqueued++;
-			g_players[fd].block = 1;
-			g_players[fd].status = 2;
+			gfx_data = get_gfx_data();
+			if (g_env.gfx_fd > 0)
+				send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);
+			free(gfx_data);
 		}
-		gfx_data = get_gfx_data();
-		if (g_env.gfx_fd > 0)
-			send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);
-		free(gfx_data);
-		insert(node);
 	}
-	printf("request nb: %d\n", g_players[fd].request_nb);
-	print_queue();
 	return(1);
 }
