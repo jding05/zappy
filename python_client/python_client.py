@@ -42,7 +42,12 @@ def connect_game_server ():
     global s
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((TCP_IP, TCP_PORT))
+    try:
+        s.connect((TCP_IP, TCP_PORT))
+    except Exception as e:
+        print("Connection Error: Connection refused")
+        sys.exit(1)
+
     # to send the team_name to server to verify
     for x in range(BUFFER_SIZE - len(TEAM_NAME)):
         TEAM_NAME += '#'

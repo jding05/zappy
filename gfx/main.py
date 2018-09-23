@@ -71,7 +71,11 @@ def connect_init():
     host_ip = '127.0.0.1'
     port = 4242
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((host_ip, port))
+    try:
+        s.connect((host_ip, port))
+    except Exception as e:
+        print("Connection Error: Connection refused")
+        sys.exit(1)
     data = "gfx"
     for x in range(buf_sz - len("gfx")):
         data += '#'
