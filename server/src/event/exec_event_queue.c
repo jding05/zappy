@@ -40,6 +40,7 @@ void		exec_event(void)
 
 	if (!g_env.queue_head)
 		return ;
+	generate_resource();
 	i = -1;
 	gettimeofday(&now, NULL);
 	if (check_event_time(&now, &(g_env.queue_head->exec_time)))
@@ -50,7 +51,6 @@ void		exec_event(void)
 			{
 				if (g_players[g_env.queue_head->fd].alive || i == 12)
 					exec_norm(i);
-				generate_resource();
 				tmp = g_env.queue_head;
 				g_env.queue_head = g_env.queue_head->next;
 				free(tmp);

@@ -91,7 +91,6 @@ static int		check_valid_cmd(char *msg, char *msg_buf, int i)
 	char			*tmp;
 	unsigned long	len;
 
-	printf("msg: |%s|%lu|\n", msg, strlen(msg));
 	while (g_cmd[i].cmd)
 	{
 		if (!(tmp = strstr(msg, g_cmd[i].cmd)))
