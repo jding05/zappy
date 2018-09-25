@@ -37,8 +37,10 @@ static int	check_flag_limit(int m, int number)
 {
 	if (m == 0 && (number < 1024 || number > 49151 || number <= 0))
 		return (!printf("Server port range should be within 1024 to 49151\n"));
-	if ((m == 1 || m == 2) && (number > MAP_XY || number <= 0))
-		return (!printf("Map size y or x value cannot exceed %d\n", MAP_XY));
+	if (m == 1 && (number > MAX_X || number <= 0))
+		return (!printf("Map x value cannot exceed %d\n", MAX_X));
+	if (m == 2 && (number > MAX_Y || number <= 0))
+		return (!printf("Map y value cannot exceed %d\n", MAX_Y));
 	if ((m == 1) && (number < g_env.nb_team))
 	{
 		printf("Map x value cannot be less than number of team %s\n",
