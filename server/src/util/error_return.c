@@ -12,7 +12,7 @@
 
 #include "../../include/server.h"
 
-inline void error_return(char *msg)
+inline void	error_return(char *msg)
 {
 	printf(RED"\n%s\n"RESET, msg);
 	return ;

@@ -40,11 +40,16 @@ static int	check_flag_limit(int m, int number)
 	if ((m == 1 || m == 2) && (number > MAP_XY || number <= 0))
 		return (!printf("Map size y or x value cannot exceed %d\n", MAP_XY));
 	if ((m == 1) && (number < g_env.nb_team))
-		return (!printf("Map x value cannot be less than number of team %s\n",
-				"(for graphics progress bar)"));
+	{
+		printf("Map x value cannot be less than number of team %s\n",
+				"(for graphics progress bar)");
+		return (0);
+	}
 	if (m == 4 && (number > MAX_FD - 4 || number <= 0))
-		return (!printf("Authorized client limit cannot exceed %d\n",
-				(MAX_FD - 4)));
+	{
+		printf("Authorized client limit cannot exceed %d\n", (MAX_FD));
+		return (0);
+	}
 	if (m == 5 && (number > MAX_TIME_UNIT || number <= 0))
 		return (!printf("Time unit should be within 1 to %d\n", MAX_TIME_UNIT));
 	return (1);

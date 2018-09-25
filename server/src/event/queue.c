@@ -113,7 +113,7 @@ static int		check_valid_cmd(char *msg, char *msg_buf, int i)
 	return (18);
 }
 
-static int 	enqueue_norm(char *msg_buf, int fd, int i)
+static int		enqueue_norm(char *msg_buf, int fd, int i)
 {
 	t_event *node;
 
@@ -179,5 +179,5 @@ int				enqueue(int fd, char *msg)
 			free(gfx_data);
 		}
 	}
-	return(1);
+	return (1);
 }

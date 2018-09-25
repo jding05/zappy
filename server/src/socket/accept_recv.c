@@ -46,7 +46,7 @@ static int	check_gfx(char *msg, int newfd)
 	return (0);
 }
 
-static void accept_norm(int newfd, fd_set *master, int *fdmax,
+static void	accept_norm(int newfd, fd_set *master, int *fdmax,
 						struct sockaddr_storage remoteaddr)
 {
 	char	*msg;
@@ -71,7 +71,6 @@ void		s_select_accept(int fd, fd_set *master, int *fdmax)
 	socklen_t				addrlen;
 	char					*msg;
 	int						check_return;
-
 
 	addrlen = sizeof(remoteaddr);
 	if ((newfd = accept(fd, (struct sockaddr *)&remoteaddr, &addrlen)) == -1)

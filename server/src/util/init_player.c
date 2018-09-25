@@ -78,7 +78,7 @@ static void	s_clear_unblock(int fd)
 				if (g_players[fd].block_time.tv_sec ==
 					g_players[i].block_time.tv_sec &&
 					g_players[fd].block_time.tv_usec ==
-					g_players[i].block_time.tv_usec  && i != fd)
+					g_players[i].block_time.tv_usec && i != fd)
 				{
 					g_players[i].block = 0;
 					g_players[i].status = 0;
