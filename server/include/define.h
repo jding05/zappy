@@ -48,7 +48,8 @@
 /*
 ** map x, y value
 */
-# define MAP_XY 15
+# define MAX_X 20
+# define MAX_Y 10
 # define EGG_MAX 6
 
 /*

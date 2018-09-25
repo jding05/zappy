@@ -46,10 +46,7 @@ static int	check_flag_limit(int m, int number)
 		return (0);
 	}
 	if (m == 4 && (number > MAX_FD - 4 || number <= 0))
-	{
-		printf("Authorized client limit cannot exceed %d\n", (MAX_FD));
-		return (0);
-	}
+		return (!printf("Authorized client limit cannot exceed %d\n", MAX_FD));
 	if (m == 5 && (number > MAX_TIME_UNIT || number <= 0))
 		return (!printf("Time unit should be within 1 to %d\n", MAX_TIME_UNIT));
 	return (1);

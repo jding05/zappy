@@ -82,7 +82,7 @@ typedef struct		s_env
 	int				authorized_clients;
 	int				time_unit;
 	int				nb_team;
-	int				map[MAP_XY][MAP_XY][7];
+	int				map[MAX_Y][MAX_X][7];
 	int				map_x;
 	int				map_y;
 	t_event			*queue_head;
