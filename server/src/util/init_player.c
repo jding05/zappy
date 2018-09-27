@@ -69,6 +69,8 @@ static void	s_clear_unblock(int fd)
 	int i;
 
 	i = -1;
+	if (g_players[fd].level == 8 && g_players[fd].dead != 1)
+		g_teams[g_players[fd].team_id].reach_max_level--;
 	if (g_players[fd].block == 1)
 	{
 		if (g_players[fd].status == 1)
