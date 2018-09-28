@@ -4,8 +4,8 @@ import select
 
 BUF_SIZE = 8192
 TAKE_FOOD_CYCLE = 600
-TAKE_RESOURCE_CYCLE = 600
-GO_THROUGH_MAP = 2
+TAKE_RESOURCE_CYCLE = 1800
+GO_THROUGH_MAP = 1
 S = []
 
 def msg_padding (str):
@@ -92,20 +92,23 @@ def get_cmd(state):
 def main():
     team_name, host_ip = init()
     limit = int(connect(team_name, host_ip))
-    count = 600
+    count = 0
     state = 0
     for x in range(5):
         connect(team_name, host_ip)
     while True:
         readable, writable, exceptional = select.select(S, S, [], 0.0)
         for i in readable:
-            data = i.recv(BUF_SIZE)
-            data += i.recv(BUF_SIZE)
-            data = data.replace("#", "")
+            data = ""
+            stop = False
+            while not stop:
+                data += i.recv(BUF_SIZE)
+                if not data:
+                    sys.exit(1)
+                data = data.replace("#", "")
+                stop = "KO" in data or "OK" in data or "elevation" in data or "level" in data
             print (data)
-            if not data:
-                sys.exit(1)
-            elif count < TAKE_FOOD_CYCLE:
+            if count < TAKE_FOOD_CYCLE:
                 if "TAKE OK" in data or "ADVANCE OK" in data:
                     if "TAKE OK" in data:
                         count += 1
@@ -118,7 +121,7 @@ def main():
                     data = get_cmd(count % 7 + 1)
                 else:
                     data = get_cmd(13)
-            elif count < TAKE_FOOD_CYCLE + TAKE_RESOURCE_CYCLE + (limit*2+4)*limit*GO_THROUGH_MAP and ("TAKE" in data or "OK" in data):
+            elif count < TAKE_FOOD_CYCLE + TAKE_RESOURCE_CYCLE + (limit*2+4)*limit*GO_THROUGH_MAP and ("KO" in data or "OK" in data or "moving" in data or "received" in data):
                 if i == S[0]:
                     if state % (limit * 2 + 4) == limit * 2:
                         data = get_cmd(15)  # right
@@ -136,16 +139,17 @@ def main():
                     count += 1
                 else:
                     data = get_cmd(1)
-            elif count == TAKE_FOOD_CYCLE + TAKE_RESOURCE_CYCLE + (limit*2+4)*limit*GO_THROUGH_MAP:
-                data = get_cmd(9)
-                count += 1
-            elif count > TAKE_FOOD_CYCLE + TAKE_RESOURCE_CYCLE + (limit*2+4)*limit*GO_THROUGH_MAP + 10:
-                if "level" in data:
-                    data = get_cmd(9)
-                    count += 1
+            elif count < TAKE_FOOD_CYCLE + TAKE_RESOURCE_CYCLE + (limit*2+4)*limit*GO_THROUGH_MAP + 10:
+                if i == S[0]:
+                    if "KO" in data or "OK" in data or "level" in data:
+                        data = get_cmd(9)
+                    else:
+                        data = ""
+                else:
+                    data = ""
             else:
-                    data = None
-            if data != None:
+                data = ""
+            if data is not "":
                 print("to sent:" + data.replace("#", "") + " count = " + str(count))
                 i.send(data)
 
