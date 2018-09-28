@@ -45,6 +45,9 @@ def connect(team_name, host_ip):
     data = s.recv(BUF_SIZE)
     data += s.recv(BUF_SIZE)
     data += s.recv(BUF_SIZE)
+    if "FULL" in data or "NOT FOUND" in data:
+        print(data.replace("#", ""))
+        sys.exit(1)
     data = data.replace("#", "")
     data = data.split("\n")[1]
     data = data.split(" ")
@@ -140,7 +143,7 @@ def main():
                     data = get_cmd(9)
             else:
                 data = get_cmd(1)
-            print("to sent:" + data)
+            print("to sent:" + data.replace("#", ""))
             i.send(data)
 
 if __name__ == '__main__':

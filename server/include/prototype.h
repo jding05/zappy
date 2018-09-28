@@ -16,11 +16,6 @@
 # include "server.h"
 
 /*
-** main.c
-*/
-void			free_malloc(void);
-
-/*
 ** ********* [ util ] folder *************************
 */
 

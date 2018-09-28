@@ -12,11 +12,6 @@
 
 #include "../../include/server.h"
 
-void				free_malloc(void)
-{
-	return ;
-}
-
 static void			zappy_game(void)
 {
 	printf(RED"[GAME START ...]\n"RESET);
@@ -26,7 +21,6 @@ static void			zappy_game(void)
 	g_env.queue_head = NULL;
 	setup_socket();
 	printf(RED"[GAME END ...]\n"RESET);
-	free_malloc();
 }
 
 static inline void	update_nb_client(void)
@@ -71,5 +65,7 @@ int					main(int argc, char **argv)
 	}
 	update_nb_client();
 	zappy_game();
+	if (g_env.gfx_fd > 0)
+		send_data(g_env.gfx_fd, "GAME OVER@", MSG_SIZE);
 	return (0);
 }

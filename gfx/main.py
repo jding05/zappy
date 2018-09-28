@@ -2,6 +2,7 @@ import socket
 import sys
 import select
 import pygame
+import time
 from pygame.locals import *
 from grid import *
 from player import *
@@ -120,6 +121,9 @@ def main():
                 if not data:
                     sys.exit(1)
                 full_data = "@" in data
+			if "OVER" in data:
+				time.sleep(15)
+				sys.exit(0)
             if data == old_data or data == '':
                 continue
             data_split = data.split("\n")
