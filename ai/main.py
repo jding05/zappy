@@ -3,8 +3,8 @@ import socket
 import select
 
 BUF_SIZE = 8192
-TAKE_FOOD_CYCLE = 1200
-TAKE_RESOURCE_CYCLE = 1200
+TAKE_FOOD_CYCLE = 600
+TAKE_RESOURCE_CYCLE = 600
 GO_THROUGH_MAP = 2
 S = []
 
@@ -92,7 +92,7 @@ def get_cmd(state):
 def main():
     team_name, host_ip = init()
     limit = int(connect(team_name, host_ip))
-    count = 0
+    count = 600
     state = 0
     for x in range(5):
         connect(team_name, host_ip)
@@ -138,13 +138,16 @@ def main():
                     data = get_cmd(1)
             elif count == TAKE_FOOD_CYCLE + TAKE_RESOURCE_CYCLE + (limit*2+4)*limit*GO_THROUGH_MAP:
                 data = get_cmd(9)
+                count += 1
             elif count > TAKE_FOOD_CYCLE + TAKE_RESOURCE_CYCLE + (limit*2+4)*limit*GO_THROUGH_MAP + 10:
                 if "level" in data:
                     data = get_cmd(9)
+                    count += 1
             else:
-                data = get_cmd(1)
-            print("to sent:" + data.replace("#", ""))
-            i.send(data)
+                    data = None
+            if data != None:
+                print("to sent:" + data.replace("#", "") + " count = " + str(count))
+                i.send(data)
 
 if __name__ == '__main__':
     main()
