@@ -89,8 +89,9 @@ def connect_init():
     nb_team = int(data[2])
     return col, row, s, nb_team
 
-def draw_progress(window, progress, row, col):
-    myfont = pygame.font.SysFont('Comic Sans MS', 30)
+def draw_progress(window, progress, row):
+
+    myfont = pygame.font.SysFont('Arial', 30)
     for p in range(len(progress)):
         if progress[p] > 0:
             fill = progress[p] / 216 * 100
@@ -98,11 +99,60 @@ def draw_progress(window, progress, row, col):
             pygame.draw.rect(window, colors[p], [10 + p * tile_sz, row * tile_sz + 10, fill, 50])
             text_block = myfont.render(str(round(fill, 1))+"%", False, colors[p])
             window.blit(text_block, (25 + p * tile_sz, row * tile_sz + 65))
+
+def blit_info(p, p_count, window, col, items):
+
+    myfont = pygame.font.SysFont('Arial', 12)
+    if p.status == 0:
+        status = "  Normal"
+    elif p.status == 1:
+        status = "  Leveling"
+    else:
+        status = "  Forking"
+    text_block = myfont.render("Player: " + str(p.id) + "  level: " + str(p.level) + status, False, colors[p.team])
+    window.blit(text_block, (col * tile_sz + 5, (p_count - 1) * tile_sz // 4))
+
+    window.blit(pygame.transform.scale(items[1], (12, 12)), (col * tile_sz + 3, (p_count - 1) * tile_sz // 4 + 12))
+    text_block = myfont.render(str(p.items[1]), False, colors[p.team])
+    window.blit(text_block, (col * tile_sz + 16, (p_count - 1) * tile_sz // 4 + 12))
+    w, h = text_block.get_size()
+    offset = w
+
+    window.blit(pygame.transform.scale(items[2], (12, 12)), (col * tile_sz + 16 + offset, (p_count - 1) * tile_sz // 4 + 12))
+    text_block = myfont.render(str(p.items[2]), False, colors[p.team])
+    window.blit(text_block, (col * tile_sz + 29 + offset, (p_count - 1) * tile_sz // 4 + 12))
+    w, h = text_block.get_size()
+    offset += w
+
+    window.blit(pygame.transform.scale(items[3], (12, 12)), (col * tile_sz + 29 + offset, (p_count - 1) * tile_sz // 4 + 12))
+    text_block = myfont.render(str(p.items[3]), False, colors[p.team])
+    window.blit(text_block, (col * tile_sz + 42 + offset, (p_count - 1) * tile_sz // 4 + 12))
+    w, h = text_block.get_size()
+    offset += w
+
+    window.blit(pygame.transform.scale(items[4], (12, 12)), (col * tile_sz + 42 + offset, (p_count - 1) * tile_sz // 4 + 12))
+    text_block = myfont.render(str(p.items[4]), False, colors[p.team])
+    window.blit(text_block, (col * tile_sz + 55 + offset, (p_count - 1) * tile_sz // 4 + 12))
+    w, h = text_block.get_size()
+    offset += w
+
+    window.blit(pygame.transform.scale(items[5], (12, 12)), (col * tile_sz + 55 + offset, (p_count - 1) * tile_sz // 4 + 12))
+    text_block = myfont.render(str(p.items[5]), False, colors[p.team])
+    window.blit(text_block, (col * tile_sz + 68 + offset, (p_count - 1) * tile_sz // 4 + 12))
+    w, h = text_block.get_size()
+    offset += w
+
+    window.blit(pygame.transform.scale(items[6], (12, 12)), (col * tile_sz + 68 + offset, (p_count - 1) * tile_sz // 4 + 12))
+    text_block = myfont.render(str(p.items[6]), False, colors[p.team])
+    window.blit(text_block, (col * tile_sz + 81 + offset, (p_count - 1) * tile_sz // 4 + 12))
+    w, h = text_block.get_size()
+    offset += w
+
 def main():
 
     start_game()
     col, row, s, nb_team = connect_init()
-    window = pygame.display.set_mode((col * tile_sz, (row + 1) * tile_sz), DOUBLEBUF)
+    window = pygame.display.set_mode((col * tile_sz + 160, (row + 1) * tile_sz), DOUBLEBUF)
     tile, items, dead, egg = load_source()
     for r in range(row):
         for c in range(col):
@@ -165,19 +215,23 @@ def main():
                     window.blit(grids[r][c].background, (c * tile_sz, r * tile_sz))
                     for x in range(7):
                         if grids[r][c].items[x][2] is 1:
-                            window.blit(items[x], (c * tile_sz + (tile_sz - item_sz) * grids[r][c].items[x][0], r * tile_sz + (tile_sz - item_sz) * grids[r][c].items[x][1]))
+                            window.blit(items[x], (c * tile_sz + (tile_sz - item_sz) * grids[r][c].items[x][0],
+                                                   r * tile_sz + (tile_sz - item_sz) * grids[r][c].items[x][1]))
             for e in eggs:
                 window.blit(egg, (tile_sz * e[1] + 10, tile_sz * e[2]))
+            p_count = 0
             for r in range(row):
                 for c in range(col):
                     for p in range(len(grids[r][c].players)):
+                        p_count += 1
                         xcoor = int(c * tile_sz + (tile_sz - player_sz) * grids[r][c].players[p][0] +
                                     grids[r][c].players[p][2].xshift * tile_sz)
                         ycoor = int(r * tile_sz + (tile_sz - player_sz) * grids[r][c].players[p][1] +
                                     grids[r][c].players[p][2].yshift * tile_sz)
                         window.blit((grids[r][c].players[p][2]).img, (xcoor, ycoor))
+                        blit_info(grids[r][c].players[p][2], p_count, window, col, items)
             old_data = data
-            draw_progress(window, progress, row, col)
+            draw_progress(window, progress, row)
         pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
