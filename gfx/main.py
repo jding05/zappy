@@ -202,7 +202,7 @@ def main():
                     all_players[new_p.id].coor = new_p.coor
                     grids[new_p.coor[1]][new_p.coor[0]].addplayer(new_p)
                     progress[new_p.team] += new_p.level*(new_p.level + 1)/2
-                elif new_p.id in all_players and new_p.dead == 1:
+                elif new_p.id in all_players and new_p.dead == 1 and new_p.left == 0:
                     grids[new_p.coor[1]][new_p.coor[0]].updateplayer(new_p.id, 0, 0, dead)
                 elif new_p.id in all_players and new_p.left == 1:
                     grids[new_p.coor[1]][new_p.coor[0]].removeplayer(new_p.id)
