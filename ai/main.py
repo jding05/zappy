@@ -3,8 +3,8 @@ import socket
 import select
 
 BUF_SIZE = 8192
-TAKE_FOOD_CYCLE = 600
-TAKE_RESOURCE_CYCLE = 1800
+TAKE_FOOD_CYCLE = 1200
+TAKE_RESOURCE_CYCLE = 1200
 GO_THROUGH_MAP = 1
 S = []
 
@@ -92,8 +92,9 @@ def get_cmd(state):
 def main():
     team_name, host_ip = init()
     limit = int(connect(team_name, host_ip))
-    count = 0
+    count = 2500
     state = 0
+    win_c = 0
     for x in range(5):
         connect(team_name, host_ip)
     while True:
@@ -106,7 +107,11 @@ def main():
                 if not data:
                     sys.exit(1)
                 data = data.replace("#", "")
-                stop = "KO" in data or "OK" in data or "elevation" in data or "level" in data
+                stop = "KO" in data or "OK" in data or "elevation" in data or "level" or "WON" in data
+                if "WON" in data:
+                    win_c += 1
+                    if win_c > 5:
+                        sys.exit(1)
             print (data)
             if count < TAKE_FOOD_CYCLE:
                 if "TAKE OK" in data or "ADVANCE OK" in data:
