@@ -92,7 +92,7 @@ def get_cmd(state):
 def main():
     team_name, host_ip = init()
     limit = int(connect(team_name, host_ip))
-    count = 2500
+    count = 0
     state = 0
     win_c = 0
     for x in range(5):
