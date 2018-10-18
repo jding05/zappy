@@ -150,8 +150,8 @@ struct timeval	*set_timeout_alarm(void)
 	// {
 		// timeout->tv_sec = g_env.ms_pre_tick == 1000000 ? 1 : 0;
 		// timeout->tv_usec = g_env.ms_pre_tick == 1000000 ? 0 : g_env.ms_pre_tick;
-		timeout->tv_sec = 0;
-		timeout->tv_usec = 0;
+		timeout->tv_sec = g_env.ms_pre_tick == 1000000 ? 1 : 0;
+		timeout->tv_usec = g_env.ms_pre_tick == 1000000 ? 0 : g_env.ms_pre_tick;
 
 	// }
 	return (timeout);
