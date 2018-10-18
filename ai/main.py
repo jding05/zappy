@@ -1,11 +1,12 @@
 import sys
 import socket
 import select
+import random
 
 BUF_SIZE = 8192
-TAKE_FOOD_CYCLE = 1200
+TAKE_FOOD_CYCLE = 1800
 TAKE_RESOURCE_CYCLE = 1200
-GO_THROUGH_MAP = 1
+GO_THROUGH_MAP = 2
 S = []
 
 def msg_padding (str):
@@ -95,6 +96,7 @@ def main():
     count = 0
     state = 0
     win_c = 0
+    food = True
     for x in range(5):
         connect(team_name, host_ip)
     while True:
@@ -107,11 +109,13 @@ def main():
                 if not data:
                     sys.exit(1)
                 data = data.replace("#", "")
-                stop = "KO" in data or "OK" in data or "elevation" in data or "level" or "WON" in data
+                stop = "KO" in data or "OK" in data or "elevation" in data or "level" in data or "WON" in data
                 if "WON" in data:
                     win_c += 1
                     if win_c > 5:
                         sys.exit(1)
+                if "DEAD" in data:
+                    sys.exit(0)
             print (data)
             if count < TAKE_FOOD_CYCLE:
                 if "TAKE OK" in data or "ADVANCE OK" in data:
@@ -119,11 +123,16 @@ def main():
                         count += 1
                     data = get_cmd(1)
                 else:
-                    data = get_cmd(13)
+                    data = get_cmd(random.randint(13, 15))
             elif count < TAKE_FOOD_CYCLE + TAKE_RESOURCE_CYCLE:
                 if "TAKE OK" in data or "ADVANCE OK" in data:
-                    count += 1
-                    data = get_cmd(count % 7 + 1)
+                    if food:
+                        data = get_cmd(count % 6 + 2)
+                        food = False
+                    else:
+                        count += 1
+                        data = get_cmd(1)
+                        food = True
                 else:
                     data = get_cmd(13)
             elif count < TAKE_FOOD_CYCLE + TAKE_RESOURCE_CYCLE + (limit*2+4)*limit*GO_THROUGH_MAP and ("KO" in data or "OK" in data or "moving" in data or "received" in data):
@@ -155,7 +164,7 @@ def main():
             else:
                 data = ""
             if data is not "":
-                print("to sent:" + data.replace("#", "") + " count = " + str(count))
+                print("to sent:" + data.replace("#", "") + "\ncount = " + str(count))
                 i.send(data)
 
 if __name__ == '__main__':
