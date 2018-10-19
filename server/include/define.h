@@ -74,5 +74,6 @@
 # define SOCKET_VARS struct addrinfo hints, *ai; struct protoent *proto;
 # define SELECT_VARS fd_set master, read_fds; int fdmax;
 # define ADD_TEAM_VARS 	int i; int egg_id; char *msg;
+# define GET_MAP_DATA_VARS	char *map; char *rv; int i; int j;
 
 #endif

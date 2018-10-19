@@ -14,11 +14,7 @@
 
 char	*get_map_data(void)
 {
-	char	*map;
-	char	*rv;
-	int		i;
-	int		j;
-
+	GET_MAP_DATA_VARS;
 	if (NULL == (map = ft_strnew(g_env.map_x * g_env.map_y * 4 + 1)))
 		return (NULL);
 	i = -1;
@@ -28,9 +24,12 @@ char	*get_map_data(void)
 		while (++j < g_env.map_x)
 		{
 			rv = ft_itoa((g_env.map[i][j][0] > 0 ? 1 : 0) * pow(2, 6) +
-			g_env.map[i][j][1] * pow(2, 5) + g_env.map[i][j][2] * pow(2, 4) +
-			g_env.map[i][j][3] * pow(2, 3) + g_env.map[i][j][4] * pow(2, 2) +
-			g_env.map[i][j][5] * pow(2, 1) + g_env.map[i][j][6]);
+			(g_env.map[i][j][1] > 0 ? 1 : 0) * pow(2, 5) +
+			(g_env.map[i][j][2] > 0 ? 1 : 0) * pow(2, 4) +
+			(g_env.map[i][j][3] > 0 ? 1 : 0) * pow(2, 3) +
+			(g_env.map[i][j][4] > 0 ? 1 : 0) * pow(2, 2) +
+			(g_env.map[i][j][5] > 0 ? 1 : 0) * pow(2, 1) +
+			(g_env.map[i][j][6] > 0 ? 1 : 0));
 			strcat(map, rv);
 			strcat(map, ",");
 			free(rv);
