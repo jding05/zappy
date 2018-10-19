@@ -67,5 +67,6 @@ int					main(int argc, char **argv)
 	zappy_game();
 	if (g_env.gfx_fd > 0)
 		send_data(g_env.gfx_fd, "GAME OVER@", MSG_SIZE);
+	sleep(15);
 	return (0);
 }
