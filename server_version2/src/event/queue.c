@@ -12,10 +12,9 @@
 
 #include "../../include/server.h"
 
-static int	init_event_node(int fd, char *msg, int i)
+static int		init_event_node(int fd, char *msg, int i)
 {
 	int		cend;
-	// char	*str;
 
 	cend = g_players[fd].cend;
 	g_players[fd].cbuff[cend].fd = fd;
@@ -24,16 +23,8 @@ static int	init_event_node(int fd, char *msg, int i)
 	bzero(g_players[fd].cbuff[cend].cmd, CMD_LEN);
 	strcpy(g_players[fd].cbuff[cend].cmd, g_cmd[i].cmd);
 	bzero(g_players[fd].cbuff[cend].msg, MAX_MSG);
-	// if (i == 12)
-	// {
-	// 	strcpy(g_players[fd].cbuff[cend].msg, (str = ft_itoa(g_players[fd].team_id)));
-	// 	free(str);
-	// }
-	// else
-		strcpy(g_players[fd].cbuff[cend].msg, msg);
+	strcpy(g_players[fd].cbuff[cend].msg, msg);
 	record_time(&(g_players[fd].cbuff[cend]), g_cmd[i].delay_time);
-	// if (i == 10)
-	// 	set_block_time(&(g_players[fd].cbuff[cend]), fd);
 	return (cend);
 }
 
@@ -91,7 +82,6 @@ static int		enqueue_norm(char *msg_buf, int fd, int i)
 			return (-1);
 		}
 		g_teams[g_players[fd].team_id].egg_enqueued++;
-		// g_players[fd].block = 1;
 		g_players[fd].status = 2;
 	}
 	g_players[fd].cend = (g_players[fd].cend + 1) % 10;

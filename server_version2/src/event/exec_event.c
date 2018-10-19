@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_event_queue.c                                 :+:      :+:    :+:   */
+/*   exec_event.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sding <sding@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/08/17 15:40:45 by sding             #+#    #+#             */
-/*   Updated: 2018/09/12 18:41:16 by zfeng            ###   ########.fr       */
+/*   Created: 2018/10/18 19:56:09 by sding             #+#    #+#             */
+/*   Updated: 2018/10/18 19:56:12 by sding            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 ** xxx ** but fixed one player blocking issue
 */
 
-static void	hatching_final()
+static void	hatching_final(void)
 {
 	t_hatch	*tmp;
 	int		id;
@@ -37,13 +37,27 @@ static void	hatching_final()
 	free(tmp);
 }
 
+static void	exec_circular_buffer_event(int j)
+{
+	int		i;
+	char	*gfx_data;
+
+	i = g_players[j].cbuff[g_players[j].cstart].i;
+	g_cmd[i].func(j, g_players[j].cbuff[g_players[j].cstart].msg,
+			g_players[j].cbuff[g_players[j].cstart].player_id);
+	gfx_data = get_gfx_data();
+	if (g_env.gfx_fd > 0)
+		send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);
+	free(gfx_data);
+	g_players[j].cstart = (g_players[j].cstart + 1) % 10;
+}
+
 void		exec_event(void)
 {
 	int				i;
 	int				j;
 	struct timeval	now;
 	int				count;
-	char	*gfx_data;
 
 	generate_resource();
 	gettimeofday(&now, NULL);
@@ -52,24 +66,15 @@ void		exec_event(void)
 	while (++j < MAX_FD && count < g_env.active)
 	{
 		i = -1;
-		if (g_players[j].alive && !g_players[j].dead && g_players[j].cstart != g_players[j].cend)
+		if (g_players[j].alive && !g_players[j].dead
+			&& g_players[j].cstart != g_players[j].cend
+			&& check_event_time(&now,
+				&(g_players[j].cbuff[g_players[j].cstart].exec_time)))
 		{
-			if (check_event_time(&now, &(g_players[j].cbuff[g_players[j].cstart].exec_time)))
-			{
-				i = g_players[j].cbuff[g_players[j].cstart].i;
-				g_cmd[i].func(j, g_players[j].cbuff[g_players[j].cstart].msg,
-						g_players[j].cbuff[g_players[j].cstart].player_id);
-				printf("[player %d] is exec cmd\n", j);
-				gfx_data = get_gfx_data();
-				if (g_env.gfx_fd > 0)
-					send_data(g_env.gfx_fd, gfx_data, MSG_SIZE);
-				free(gfx_data);
-				g_players[j].cstart = (g_players[j].cstart + 1) % 10;
-				count++;
-			}
+			exec_circular_buffer_event(j);
+			count++;
 		}
-		if (g_env.eggs > 1 && g_env.hatching != NULL &&
-		check_event_time(&now, &(g_env.hatching->exec_time)))
+		if (g_env.eggs && check_event_time(&now, &(g_env.hatching->exec_time)))
 			hatching_final();
 	}
 }

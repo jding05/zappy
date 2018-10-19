@@ -21,7 +21,6 @@ static void			zappy_game(void)
 	g_env.hatching = NULL;
 	memset(g_env.res, 0, sizeof(int) * 7);
 	generate_resource();
-	// g_env.queue_head = NULL;
 	setup_socket();
 	printf(RED"[GAME END ...]\n"RESET);
 }

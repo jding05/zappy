@@ -42,7 +42,6 @@ const t_cmd		g_cmd[] =
 	{"incantation", 300, cmd_incantation},
 	{"fork", 42, cmd_fork},
 	{"connect_nbr", 0, cmd_connect_nbr},
-	{"hatch", 600, cmd_hatch},
 	{NULL, 0, NULL}
 };
 

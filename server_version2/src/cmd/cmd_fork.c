@@ -33,9 +33,9 @@ static void	hatching_process(int team_id)
 	t_hatch			*tmp;
 
 	gettimeofday(&exec_time, NULL);
-	exec_time.tv_sec += (exec_time.tv_usec + 1260 *
+	exec_time.tv_sec += (exec_time.tv_usec + 600 *
 						g_env.ms_pre_tick) / 1000000;
-	exec_time.tv_usec = (exec_time.tv_usec + 1260 *
+	exec_time.tv_usec = (exec_time.tv_usec + 600 *
 						g_env.ms_pre_tick) % 1000000;
 	hatch_egg = (t_hatch*)malloc(sizeof(t_hatch));
 	hatch_egg->exec_time = exec_time;
@@ -77,8 +77,6 @@ void		cmd_fork(int fd, char *msg, int player_id)
 	g_players[fd].request_nb--;
 	(void)msg;
 	laid_egg(fd);
-	// g_players[fd].block = 0;
-	// enqueue(fd, "hatch");
 	printf(CYAN"\n[FORK SUCCESS]\n"RESET);
 	send_data(fd, RED"FORK OK"RESET, MSG_SIZE);
 	g_players[fd].block = 0;

@@ -39,11 +39,11 @@ SRC_UTIL =	read_flags ft_itoa print_info init_player ft_strjoin set_value \
 			error_return
 
 SRC_CMD =	cmd_advance cmd_broadcast cmd_broadcast_util cmd_connect_nbr \
-			cmd_fork cmd_hatch cmd_incantation cmd_incantation_util \
+			cmd_fork cmd_incantation cmd_incantation_util cmd_take cmd_see_util\
 			cmd_inventory cmd_kick cmd_left cmd_put cmd_right cmd_see \
-			cmd_see_util cmd_take
 
-SRC_EVENT =	exec_event_queue queue
+
+SRC_EVENT =	exec_event queue
 
 SRC_SOCKET = socket send_recv s_utils get_gfx_data accept_recv
 

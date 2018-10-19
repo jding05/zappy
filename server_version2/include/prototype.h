@@ -135,11 +135,6 @@ void			cmd_connect_nbr(int fd, char *msg, int player_id);
 void			cmd_fork(int fd, char *msg, int player_id);
 
 /*
-** hatch
-*/
-void			cmd_hatch(int fd, char *msg, int player_id);
-
-/*
 ** incantation
 */
 void			cmd_incantation(int fd, char *msg, int player_id);
