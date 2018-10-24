@@ -28,8 +28,8 @@ class Grid:
         self.background = img
         #print("setting up: " + str(bin(item)))
         for i in range(6,-1,-1):
-            self.items[i][2] = item % 2
-            item = item // 2
+            self.items[i][2] = item % 10
+            item = item // 10
         # print(self.items)
         # set up players (do we still need this now??)
         self.players = []
@@ -37,8 +37,8 @@ class Grid:
     def updateitem(self, item):
         #print("updating up: " + str(bin(item)))
         for i in range(6,-1,-1):
-            self.items[i][2] = item % 2
-            item = item / 2
+            self.items[i][2] = item % 10
+            item = item // 10
         #print(self.items)
     """
     Funciton to add a player

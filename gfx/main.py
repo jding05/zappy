@@ -16,6 +16,7 @@ colors = {
     3:(226, 111, 138),
     4:(254, 232, 183),
     5:(109, 108, 124),
+    6:(255, 255, 255),
 }
 
 tile_sz = 120
@@ -163,6 +164,7 @@ def main():
     old_data = ''
     while True:
         readable, writable, exceptional = select.select([s], [1], [], 0.1)
+        info_coor = [-1, -1]
         if s in readable:
             data = ''
             full_data = False
@@ -214,7 +216,7 @@ def main():
                 for c in range(col):
                     window.blit(grids[r][c].background, (c * tile_sz, r * tile_sz))
                     for x in range(7):
-                        if grids[r][c].items[x][2] is 1:
+                        if grids[r][c].items[x][2] > 0:
                             window.blit(items[x], (c * tile_sz + (tile_sz - item_sz) * grids[r][c].items[x][0],
                                                    r * tile_sz + (tile_sz - item_sz) * grids[r][c].items[x][1]))
             for e in eggs:
@@ -239,6 +241,50 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     sys.exit(0)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                if pos[0] > (col-1) * tile_sz:
+                    info_coor[1] = col - 1
+                else:
+                    info_coor[1] = pos[0] / tile_sz
+                if pos[1] > (row-1) * tile_sz:
+                    info_coor[0] = row - 1
+                else:
+                    info_coor[0] = pos[1] / tile_sz
+                if len(grids):
+                    pygame.draw.rect(window, (0,0,0), (col * tile_sz, row * tile_sz, 160, tile_sz), 0)
+                    myfont = pygame.font.SysFont('Arial', 12)
+                    text_block = myfont.render("Info on square (" + str(info_coor[0]) + ", " + str(info_coor[1]) + ") ", False, colors[6])
+                    window.blit(text_block, (col * tile_sz + 5, row * tile_sz + 5))
+
+                    p = grids[info_coor[0]][info_coor[1]]
+                    window.blit(pygame.transform.scale(items[0], (12, 12)), (col * tile_sz + 3, row * tile_sz + 17))
+                    text_block = myfont.render(str(p.items[0][2]), False, colors[6])
+                    window.blit(text_block, (col * tile_sz + 16, row * tile_sz + 17))
+
+                    window.blit(pygame.transform.scale(items[1], (12, 12)), (col * tile_sz + 21, row * tile_sz + 17))
+                    text_block = myfont.render(str(p.items[1][2]), False, colors[6])
+                    window.blit(text_block, (col * tile_sz + 34, row * tile_sz + 17))
+
+                    window.blit(pygame.transform.scale(items[2], (12, 12)), (col * tile_sz + 39, row * tile_sz + 17))
+                    text_block = myfont.render(str(p.items[2][2]), False, colors[6])
+                    window.blit(text_block, (col * tile_sz + 52, row * tile_sz + 17))
+
+                    window.blit(pygame.transform.scale(items[3], (12, 12)), (col * tile_sz + 57, row * tile_sz + 17))
+                    text_block = myfont.render(str(p.items[3][2]), False, colors[6])
+                    window.blit(text_block, (col * tile_sz + 70, row * tile_sz + 17))
+
+                    window.blit(pygame.transform.scale(items[4], (12, 12)), (col * tile_sz + 75, row * tile_sz + 17))
+                    text_block = myfont.render(str(p.items[4][2]), False, colors[6])
+                    window.blit(text_block, (col * tile_sz + 88, row * tile_sz + 17))
+
+                    window.blit(pygame.transform.scale(items[5], (12, 12)), (col * tile_sz + 93, row * tile_sz + 17))
+                    text_block = myfont.render(str(p.items[5][2]), False, colors[6])
+                    window.blit(text_block, (col * tile_sz + 106, row * tile_sz + 17))
+
+                    window.blit(pygame.transform.scale(items[6], (12, 12)), (col * tile_sz + 111, row * tile_sz + 17))
+                    text_block = myfont.render(str(p.items[6][2]), False, colors[6])
+                    window.blit(text_block, (col * tile_sz + 124, row * tile_sz + 17))
 
 if __name__ == '__main__':
     main()
