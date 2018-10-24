@@ -51,6 +51,9 @@ def start_game():
 
     pygame.init()
     pygame.font.init()
+    pygame.mixer.init()
+    pygame.mixer.music.load("./textures/bgm.mp3")
+    pygame.mixer.music.play(-1, 0.0)
     pygame.display.set_caption('[Zappy]    gfx client')
     window = pygame.display.set_mode((1200, 923), DOUBLEBUF)
     intro = pygame.image.load('./textures/zappy.png').convert_alpha()
