@@ -15,7 +15,7 @@ A multi-players, single process and single thread game within a TCP/IP network ð
 </br></br>
 
 ![](assets/Zappy.png)
-![](assets/Monitor.png)
+![](assets/Zappy.gif)
 
 </br></br>
 
