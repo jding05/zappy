@@ -14,7 +14,7 @@ A multi-players, single process and single thread game within a TCP/IP network ð
 * **Fun part**: Zappy is about creating families, surviving by eating food and collecting stones in order to level up. Each level has different requirements for a ritual, which makes the adventure more and more difficult for the AI players, which play on their own, without any help form their creator. The game is over once 6 members of one family reach the highest possible level (8). 
 </br></br>
 
-# Code Highlight from entire game
+# Code Highlight From Entire Game
 ```
 file: zappy/server/src/socket/s_utils.c
 
@@ -46,8 +46,10 @@ struct timeval	*set_timeout_alarm(void)
 	return (timeout);
 }
 ```
+The code above changes the main logic of our entire game.
+Originally, our logic to handle user requests is an **event-based engine**. We only take the events that users created into considerations. However, this will block the game if no requests sent by users. Therefore, added this "set_timeout_alarm()", we solved the blocking issue and replaced the original design to **realtime-driven engine**. This realtime-driven engine handles the game cycle more efficient in three cases. *case 1:* no events, *case 2:* the time to execute the event is longer than game tick, *case 3:* the time to execute the event is shorter than game tick
 
-
+# game demo
 ![](assets/Zappy.png)
 ![](assets/Zappy.gif)
 
