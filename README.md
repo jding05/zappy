@@ -14,6 +14,40 @@ A multi-players, single process and single thread game within a TCP/IP network ð
 * **Fun part**: Zappy is about creating families, surviving by eating food and collecting stones in order to level up. Each level has different requirements for a ritual, which makes the adventure more and more difficult for the AI players, which play on their own, without any help form their creator. The game is over once 6 members of one family reach the highest possible level (8). 
 </br></br>
 
+# Code Highlight from entire game
+```
+file: zappy/server/src/socket/s_utils.c
+
+struct timeval	*set_timeout_alarm(void)
+{
+	long int		time_diff;
+	struct timeval	*timeout;
+	struct timeval	now;
+
+	timeout = (struct timeval *)malloc(sizeof(struct timeval));
+	if (g_env.queue_head)
+	{
+		gettimeofday(&now, NULL);
+		time_diff = (g_env.queue_head->exec_time.tv_sec - now.tv_sec) * 1000000
+			+ (g_env.queue_head->exec_time.tv_usec - now.tv_usec);
+		if (time_diff <= 0)
+			bzero(timeout, sizeof(struct timeval));
+		else
+		{
+			timeout->tv_sec = time_diff / 1000000;
+			timeout->tv_usec = time_diff % 1000000;
+		}
+	}
+	if (!g_env.queue_head || time_diff > g_env.ms_pre_tick)
+	{
+		timeout->tv_sec = g_env.ms_pre_tick == 1000000 ? 1 : 0;
+		timeout->tv_usec = g_env.ms_pre_tick == 1000000 ? 0 : g_env.ms_pre_tick;
+	}
+	return (timeout);
+}
+```
+
+
 ![](assets/Zappy.png)
 ![](assets/Zappy.gif)
 
