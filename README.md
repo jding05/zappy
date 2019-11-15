@@ -161,8 +161,8 @@ Each level has different ritual requirements:
 ## Made by
 | | |
 |:-:|:-:|
-|🇺🇸[Ziyan Feng](https://github.com/ziyanfeng) | Server/client |
-|🇺🇸[Jeff Ding](https://github.com/jding05) | Server/client |
-|🇺🇸[Xuan Zhu](https://github.com/xlz447) | Gui/ai |
+|🇺🇸[Ziyan Feng](https://github.com/ziyanfeng) | Server/Client |
+|🇺🇸[Jeff Ding](https://github.com/jding05) | Server/Client |
+|🇺🇸[Xuan Zhu](https://github.com/xlz447) | GUI/AI |
 | | |
 </br>
